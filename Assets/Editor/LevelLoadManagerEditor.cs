@@ -13,21 +13,7 @@ public class LevelLoadManagerEditor : Editor
 		DrawDefaultInspector();
 
 		GUILayout.Space(10);
-		GUILayout.Label("Save Level", EditorStyles.boldLabel);
-		if (GUILayout.Button("Save", GUILayout.Height(30)))
-		{
-			manager.SaveLevel();
-
-			Debug.Log("Levels Saved!");
-		}
-
-
-
-		GUILayout.Space(10);
 		GUILayout.Label("Load Level", EditorStyles.boldLabel);
-
-
-
 		EditorGUILayout.BeginHorizontal();
 		GUILayout.Label("File Name:", GUILayout.Width(70));
 		levelName = EditorGUILayout.TextField(levelName);
@@ -35,11 +21,24 @@ public class LevelLoadManagerEditor : Editor
 
 
 
+		GUILayout.Space(10);
+		GUILayout.Label("Save Level", EditorStyles.boldLabel);
+
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button("Save", GUILayout.Height(30)))
+		{
+			manager.SaveLevel();
+		}
+
 		if (GUILayout.Button("Load", GUILayout.Height(30)))
 		{
 			manager.LoadLevel(levelName + ".json");
-
-			Debug.Log("Levels Loaded!");
 		}
+
+		if (GUILayout.Button("Clear", GUILayout.Height(30)))
+		{
+			manager.ClearLevel();
+		}
+		GUILayout.EndHorizontal();
 	}
 }

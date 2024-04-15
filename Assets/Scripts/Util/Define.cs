@@ -26,10 +26,15 @@ public static class Define
 
 	public const string SERVERURL = "http://localhost:3000"; // LOCALHOST
 
-	public const string TAG_GROUND = "Ground";
+	public const string PLAYER = "Player";
+	public const string GROUND = "Ground";
+	public const string COIN = "Coin";
+	public const string ENEMY = "Enemy";
 
 
 	public const string RUN = "Run";
 	public const string RUNSTATE = "RunState";
 	public const string SLIDE = "Slide";
+	public const string DIE = "Die";
+	public const string EDITCHK = "Editchk";
 }

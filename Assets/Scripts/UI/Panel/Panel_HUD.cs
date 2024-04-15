@@ -11,8 +11,12 @@ public class Panel_HUD : Panel_Base
 	Button btn_Down;
 	Button btn_Up;
 
+	Button btn_Pause;
+
 	TMP_Text txtmp_Coin;
 	TMP_Text txtmp_Score;
+
+	Button btn_Wear;
 
 	protected override void Awake()
 	{
@@ -25,11 +29,25 @@ public class Panel_HUD : Panel_Base
 		btn_Right = GetUI_Button(nameof(btn_Right), OnClick_Right);
 		btn_Down = GetUI_Button(nameof(btn_Down), OnClick_Down);
 		btn_Up = GetUI_Button(nameof(btn_Up), OnClick_Up);
+		btn_Pause = GetUI_Button(nameof(btn_Pause), OnClick_Pause);
+
+		btn_Wear = GetUI_Button(nameof(btn_Wear), OnClick_Wear);
 
 		btn_Left.UseAnimation();
 		btn_Right.UseAnimation();
 		btn_Down.UseAnimation();
 		btn_Up.UseAnimation();
+	}
+
+	public SPUM_SpriteList target;
+
+	private void OnClick_Wear()
+	{
+		string name = "Helmet_1";
+
+		SPUM_SpriteList testSPriteData = new SPUM_SpriteList();
+
+		target.LoadSprite(testSPriteData);
 	}
 
 	private void OnClick_Left()
@@ -52,6 +70,14 @@ public class Panel_HUD : Panel_Base
 		Debug.Log("OnClick_Up");
 	}
 
+	private void OnClick_Pause()
+	{
+		HidePanel();
+
+		GameManager.UI.StackPopup<Popup_Pause>();
+
+		GameManager.UI.FetchPopup<Popup_Pause>().callback_cancel = () => ShowPanel();
+	}
 
 	public void SaveScore()
 	{

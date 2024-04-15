@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class Scene_Main : SceneLogic
 {
-	private void OnDestroy()
-	{
-
-	}
-
 	protected override void Awake()
 	{
 		base.Awake();

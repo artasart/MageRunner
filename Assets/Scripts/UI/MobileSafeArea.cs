@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class MobileSafeArea : MonoBehaviour
 {
+#if UNITY_ANDROID
 	RectTransform _rectTransform;
 
 	Rect _safeArea;
@@ -24,4 +25,5 @@ public class MobileSafeArea : MonoBehaviour
 		_rectTransform.anchorMin = _minAnchor;
 		_rectTransform.anchorMax = _maxAnchor;
 	}
+#endif
 }

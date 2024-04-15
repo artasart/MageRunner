@@ -45,4 +45,9 @@ public class Popup_Base : UI_Base
 
 		callback_cancel?.Invoke();
 	}
+
+	protected virtual void UseDimClose()
+	{
+		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
+	}
 }

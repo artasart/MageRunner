@@ -155,7 +155,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		{
 			var peekPanel = (openPanels.Count > 0) ? openPanels.Peek() : string.Empty;
 
-			if(!string.IsNullOrEmpty(peekPanel))
+			if (!string.IsNullOrEmpty(peekPanel))
 			{
 				panels[peekPanel].GetComponent<CanvasGroup>().alpha = 0f;
 				panels[peekPanel].GetComponent<CanvasGroup>().blocksRaycasts = false;
@@ -170,7 +170,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 				panels[panelName].SetActive(true);
 				panels[panelName].GetComponent<CanvasGroup>().alpha = 1f;
 				panels[panelName].GetComponent<CanvasGroup>().blocksRaycasts = true;
-				panels[panelName].GetComponent<Panel_Base>().isInstant = true;				
+				panels[panelName].GetComponent<Panel_Base>().isInstant = true;
 			}
 
 			else ShowPanel(panels[panelName], true);
@@ -320,13 +320,13 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		else DebugManager.Log($"{popupName} does not exist in this scene.", DebugColor.UI);
 	}
 
-	public void PopPopup()
+	public void PopPopup(bool instant = false)
 	{
 		if (openPopups.Count <= 0) return;
 
 		var popupName = openPopups.Pop();
 
-		if (popups[popupName].GetComponent<Popup_Base>().isInstant)
+		if (instant)
 		{
 			popups[popupName].SetActive(false);
 			popups[popupName].GetComponent<CanvasGroup>().alpha = 0f;
