@@ -1,3 +1,6 @@
+using MEC;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -20,15 +23,24 @@ public class PlayerMovement : MonoBehaviour
 	Rigidbody2D rb;
 	Animator animator;
 
+	Action die;
+
+	bool isDead = false;
+
 	void Start()
 	{
 		rb = GetComponent<Rigidbody2D>();
 		animator = GetComponentInChildren<Animator>();
 		remainingJumps = maxJumps;
+
+		die += FindObjectOfType<Scene_Game>().SaveScore;
+		die += GameManager.UI.FetchPanel<Panel_HUD>().RefreshUI;
 	}
 
 	void Update()
 	{
+		if (isDead) return;
+
 		float moveInput = Input.GetAxis("Horizontal");
 
 		UpdateAnimator(moveInput);
@@ -85,6 +97,11 @@ public class PlayerMovement : MonoBehaviour
 				isGrounded = false;
 			}
 		}
+
+		if (Input.GetKeyDown(KeyCode.F))
+		{
+			Die();
+		}
 	}
 
 	void OnCollisionEnter2D(Collision2D collision)
@@ -102,5 +119,37 @@ public class PlayerMovement : MonoBehaviour
 		animator.SetBool("Run", moveInput != 0);
 		animator.SetFloat("RunState", Mathf.Abs(moveInput * .5f));
 		animator.SetBool("Slide", isSliding);
+	}
+
+	public void Die()
+	{
+		Util.RunCoroutine(Co_Die(), nameof(Co_Die));
+	}
+
+	private IEnumerator<float> Co_Die()
+	{
+		isDead = true;
+
+		animator.SetBool("Die", true);
+
+		yield return Timing.WaitForSeconds(1f);
+
+		GameManager.Scene.Fade(true);
+
+		yield return Timing.WaitUntilTrue(GameManager.Scene.IsFaded);
+
+		this.transform.position = Vector3.up * -0.2f;
+
+		animator.SetBool("Die", false);
+		animator.SetBool("Run", false);
+		animator.SetBool("Editchk", false);
+
+		die?.Invoke();
+
+		GameManager.Scene.Fade(false);
+
+		yield return Timing.WaitUntilFalse(GameManager.Scene.IsFaded);
+
+		isDead = false;
 	}
 }

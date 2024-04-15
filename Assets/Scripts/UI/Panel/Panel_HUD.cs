@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,15 @@ public class Panel_HUD : Panel_Base
 	Button btn_Down;
 	Button btn_Up;
 
+	TMP_Text txtmp_Coin;
+	TMP_Text txtmp_Score;
+
 	protected override void Awake()
 	{
 		base.Awake();
+
+		txtmp_Coin = GetUI_TMPText(nameof(txtmp_Coin), "0");
+		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), "0");
 
 		btn_Left = GetUI_Button(nameof(btn_Left), OnClick_Left);
 		btn_Right = GetUI_Button(nameof(btn_Right), OnClick_Right);
@@ -43,5 +50,29 @@ public class Panel_HUD : Panel_Base
 	private void OnClick_Up()
 	{
 		Debug.Log("OnClick_Up");
+	}
+
+
+	public void SaveScore()
+	{
+		RefreshUI();
+	}
+
+	public void RefreshUI()
+	{
+		DebugManager.Log("UI initialized.");
+
+		txtmp_Score.text = 0.ToString("N0");
+		txtmp_Coin.text = 0.ToString("N0");
+	}
+
+	public void SetScoreUI(int amount)
+	{
+		txtmp_Score.text = amount.ToString("N0");
+	}
+
+	public void SetCoinUI(int amount)
+	{
+		txtmp_Coin.text = amount.ToString("N0");
 	}
 }
