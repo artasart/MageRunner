@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Ground
   - Reward
-  - Enemy
+  - Monster
   layers:
   - Default
   - TransparentFX

@@ -25,9 +25,12 @@ public class PlayerActor : MonoBehaviour
 	[Header("Entity")]
 	[HideInInspector] public bool isDead = false;
 	[HideInInspector] public int health = 10;
+	[HideInInspector] public int attackPoint = 10;
 
 	[HideInInspector] public int healthOrigin = 10;
 	[HideInInspector] public float moveSpeedOrigin = 5;
+
+	public float dieVelocity = .75f;
 
 	Rigidbody2D rgbd2d;
 	Animator animator;
@@ -191,7 +194,11 @@ public class PlayerActor : MonoBehaviour
 		animator.SetBool(Define.DIE, true);
 		animator.SetBool(Define.EDITCHK, true);
 
+		rgbd2d.velocity *= dieVelocity;
+
 		game.SetCameraTarget(null);
+
+		this.transform.localEulerAngles = Vector3.forward * 13f;
 
 		Invoke(nameof(ShowGameOverUI), .75f);
 	}
@@ -206,6 +213,7 @@ public class PlayerActor : MonoBehaviour
 	public void Refresh()
 	{
 		this.transform.position = Vector3.up * -0.2f;
+		this.transform.rotation = Quaternion.identity;
 		animator.Rebind();
 		health = healthOrigin;
 		moveSpeed = moveSpeedOrigin;
@@ -223,11 +231,24 @@ public class PlayerActor : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.gameObject.CompareTag("Ground"))
+		if (collision.gameObject.CompareTag(Define.GROUND))
 		{
 			isGrounded = true;
 			remainingJumps = maxJumps;
-			jumpValue = jumpForce; // 기본 점프 힘으로 재설정
+			jumpValue = jumpForce;
+		}
+
+		if (collision.gameObject.CompareTag(Define.MONSTER))
+		{
+			Vector2 contactPoint = collision.GetContact(0).point;
+			Vector2 playerBottom = new Vector2(transform.position.x, transform.position.y - 0.5f);
+
+			if (contactPoint.y > playerBottom.y)
+			{
+				collision.gameObject.GetComponent<MonsterActor>().Damage(attackPoint, true);
+
+				DebugManager.ClearLog("Execute Monster", DebugColor.Game);
+			}
 		}
 	}
 

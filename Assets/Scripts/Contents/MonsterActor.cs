@@ -71,9 +71,10 @@ public class MonsterActor : LevelElement
 				attackRange = .75f;
 			}
 
-			else attackRange = 1f;
+			else attackRange = 1.5f;
 
-			if (Vector3.Distance(this.gameObject.transform.position, player.position) < attackRange)
+			if (Vector3.Distance(this.gameObject.transform.position, player.position) < attackRange &&
+				Mathf.Abs(this.gameObject.transform.position.y - player.position.y) <= .5f)
 			{
 				Attack();
 
@@ -113,17 +114,22 @@ public class MonsterActor : LevelElement
 		OnMonsterDie?.Invoke(score, coint);
 	}
 
-	private void Damage(int amount)
+	public void Damage(int amount = 0, bool execute = false)
 	{
+		if (execute) amount = health;
+
 		if (health <= amount)
 		{
 			health = 0;
 
-			//flash
+			animator.SetBool("Die", true);
+
+			//flash method goes here...
+
+			this.GetComponent<CapsuleCollider2D>().enabled = false;
+			this.GetComponent<BoxCollider2D>().enabled = false;
 
 			hp.GetComponent<TMP_Text>().text = 0.ToString();
-
-			animator.SetBool("Die", true);
 
 			FindObjectOfType<Scene_Game>().GainResource(score, coint);
 
