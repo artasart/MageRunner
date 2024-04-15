@@ -2,6 +2,7 @@ using MEC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(CapsuleCollider2D))]
@@ -19,6 +20,7 @@ public class MonsterActor : LevelElement
 
 	Animator animator;
 	CapsuleCollider2D capsuleCollider2D;
+	Transform hp;
 
 	public event Action<int, int> OnMonsterDie;
 
@@ -30,14 +32,19 @@ public class MonsterActor : LevelElement
 
 	#region Initialize
 
-	private void Awake()
+	protected override void Awake()
 	{
-		type = PropsType.Coin;
+		base.Awake();
+
+		type = PropsType.Monster;
 
 		capsuleCollider2D = GetComponent<CapsuleCollider2D>();
 		capsuleCollider2D.isTrigger = true;
 		capsuleCollider2D.offset = new Vector2(0, 0.325f);
 		capsuleCollider2D.size = new Vector2(0.5f, 0.65f);
+
+		hp = this.transform.Search(nameof(hp));
+		hp.GetComponent<TMP_Text>().text = health.ToString();
 	}
 
 	void Start()
@@ -59,8 +66,6 @@ public class MonsterActor : LevelElement
 	{
 		while (true)
 		{
-			Debug.Log(player.GetComponent<Rigidbody2D>().velocity.x);
-
 			if (player.GetComponent<Rigidbody2D>().velocity.x <= 3f)
 			{
 				attackRange = .75f;
@@ -80,18 +85,9 @@ public class MonsterActor : LevelElement
 
 					player.GetComponent<PlayerActor>().Damage(attack);
 
-					//player.GetComponent<PlayerActor>().Die();
-
 					yield break;
 				}
-
-				else
-				{
-					Debug.Log("Damge Player : " + attack);
-				}
 			}
-
-			Debug.Log("I am watching Player");
 
 			yield return Timing.WaitForOneFrame;
 		}
@@ -124,6 +120,8 @@ public class MonsterActor : LevelElement
 			health = 0;
 
 			//flash
+
+			hp.GetComponent<TMP_Text>().text = 0.ToString();
 
 			animator.SetBool("Die", true);
 

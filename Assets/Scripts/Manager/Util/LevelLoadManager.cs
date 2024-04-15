@@ -31,14 +31,14 @@ public class LevelLoadManager : MonoBehaviour
 
 		if (levelData == null)
 		{
-			Debug.Log("NO Data");
+			DebugManager.ClearLog("No Data.");
 
 			levelData = new LevelData();
 		}
 
 		else
 		{
-			Debug.Log("levelData is loaded.");
+			DebugManager.ClearLog("Levels Loaded!");
 
 			var levelHolder = new GameObject();
 			levelHolder.name = "LevelHolder";
@@ -51,8 +51,6 @@ public class LevelLoadManager : MonoBehaviour
 				Instantiate(prefab, new Vector3(float.Parse(levelData.elements[i].x), float.Parse(levelData.elements[i].y), 0f), Quaternion.identity, levelHolder.transform);
 			}
 		}
-
-		DebugManager.ClearLog("Levels Loaded!");
 	}
 
 	public void SaveLevel()

@@ -1,6 +1,3 @@
-using MEC;
-using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -29,6 +26,9 @@ public class PlayerActor : MonoBehaviour
 	[HideInInspector] public bool isDead = false;
 	[HideInInspector] public int health = 10;
 
+	[HideInInspector] public int healthOrigin = 10;
+	[HideInInspector] public float moveSpeedOrigin = 5;
+
 	Rigidbody2D rgbd2d;
 	Animator animator;
 	Transform hp;
@@ -51,6 +51,12 @@ public class PlayerActor : MonoBehaviour
 
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
+	}
+
+	private void Start()
+	{
+		healthOrigin = health;
+		moveSpeedOrigin = moveSpeed;
 	}
 
 	#endregion
@@ -192,13 +198,21 @@ public class PlayerActor : MonoBehaviour
 
 	private void ShowGameOverUI()
 	{
-		GameManager.UI.StackPopup<Popup_GameOver>();
+		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();
+
+		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
 
 	public void Refresh()
 	{
 		this.transform.position = Vector3.up * -0.2f;
 		animator.Rebind();
+		health = healthOrigin;
+		moveSpeed = moveSpeedOrigin;
+
+		hp.GetComponent<TMP_Text>().text = health.ToString();
+
+		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
 	}
 
 	#endregion

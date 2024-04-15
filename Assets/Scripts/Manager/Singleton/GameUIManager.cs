@@ -15,6 +15,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 	[NonReorderable] Dictionary<string, GameObject> splashs = new Dictionary<string, GameObject>();
 
 	[NonReorderable] public List<string> ignorePanels = new List<string>();
+	[NonReorderable] public List<string> ignorePopups = new List<string>();
 
 	Stack<string> openPanels = new Stack<string>();
 	Stack<string> openPopups = new Stack<string>();
@@ -34,11 +35,6 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 
 	#region Initialize
-
-	private void OnDestroy()
-	{
-		Timing.KillCoroutines((int)CoroutineTag.UI);
-	}
 
 	private void Awake()
 	{
@@ -91,7 +87,14 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 		if (openPopups.Count > 0)
 		{
-			PopPopup();
+			if(ignorePopups.Contains(openPopups.Peek()))
+			{
+				DebugManager.ClearLog("This popup is ignore popup.", DebugColor.UI);
+
+				return;
+			}
+
+			else PopPopup();
 		}
 
 		else if (openPanels.Count > 0)
@@ -357,6 +360,15 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 			DebugManager.Log($"Pop: {popupName}", DebugColor.UI);
 		}
+	}
+
+	public void StartPopup<T>() where T : Popup_Base
+	{
+		string popupName = typeof(T).ToString();
+
+		ignorePopups.Add(popupName);
+
+		StackPopup<T>();
 	}
 
 	public bool IsPopupOpen()
