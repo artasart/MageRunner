@@ -21,7 +21,7 @@ public class Scene_Logo : SceneLogic
 
 		GameManager.UI.Restart();
 
-		GameManager.UI.StartPanel<Panel_Logo>();
+		GameManager.UI.StartPanel<Panel_Logo>(true);
 
 		Util.RunCoroutine(Co_RunGame().Delay(2f), nameof(Co_RunGame));
 	}

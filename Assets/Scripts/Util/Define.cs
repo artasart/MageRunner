@@ -29,7 +29,9 @@ public static class Define
 	public const string PLAYER = "Player";
 	public const string GROUND = "Ground";
 	public const string COIN = "Coin";
+	public const string BIGCOIN = "BigCoin";
 	public const string MONSTER = "Monster";
+	public const string PORTAL = "Portal";
 
 
 	public const string RUN = "Run";

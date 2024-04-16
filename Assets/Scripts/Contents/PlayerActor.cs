@@ -1,3 +1,5 @@
+using MEC;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -115,6 +117,7 @@ public class PlayerActor : MonoBehaviour
 		{
 			if (CanJump())
 			{
+				Debug.Log("Jump : " + this.transform.position.x);
 				PerformJump();
 				HandleJumpCount();
 			}
@@ -164,6 +167,15 @@ public class PlayerActor : MonoBehaviour
 
 
 	#region Entity
+
+	public void Execute()
+	{
+		health = 0;
+
+		hp.GetComponent<TMP_Text>().text = "Busted";
+
+		Die();
+	}
 
 	public void Damage(int amount)
 	{
@@ -221,6 +233,35 @@ public class PlayerActor : MonoBehaviour
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
 		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
+	}
+
+	public void Stop()
+	{
+		isDead = true;
+		rgbd2d.velocity *= dieVelocity;
+
+		Util.RunCoroutine(Co_SmoothStop(), nameof(Co_SmoothStop));
+	}
+
+	IEnumerator<float>Co_SmoothStop()
+	{
+		var value = animator.GetFloat(Define.RUNSTATE);
+
+		while (value > 0)
+		{
+			value -= Time.deltaTime * .75f;
+
+			animator.SetFloat(Define.RUNSTATE, value);
+
+			yield return Timing.WaitForOneFrame;
+		}
+
+		animator.SetBool(Define.RUN, false);
+		animator.SetFloat(Define.RUNSTATE, 0f);
+
+		yield return Timing.WaitForSeconds(.5f);
+
+		ShowGameOverUI();
 	}
 
 	#endregion

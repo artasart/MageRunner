@@ -753,9 +753,9 @@ public static class TMPTextExtensions
 	{
 		txtmp.gameObject.AddComponent<TextAnimation>();
 	}
-	public static void StartPingPong(this TMP_Text txtmp)
+	public static void StartPingPong(this TMP_Text txtmp, float pingpongSpeed = 1f)
 	{
-		txtmp.GetComponent<TextAnimation>().StartPingPong();
+		txtmp.GetComponent<TextAnimation>().StartPingPong(pingpongSpeed);
 	}
 
 	public static void StopPingPong(this TMP_Text txtmp)

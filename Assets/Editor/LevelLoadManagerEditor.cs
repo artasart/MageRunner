@@ -5,6 +5,8 @@ using UnityEditor;
 public class LevelLoadManagerEditor : Editor
 {
 	private string levelName = "levelData";
+	public int groundCount = 2;
+	public int coinCount = 1;
 
 	public override void OnInspectorGUI()
 	{
@@ -35,10 +37,56 @@ public class LevelLoadManagerEditor : Editor
 			manager.LoadLevel(levelName + ".json");
 		}
 
-		if (GUILayout.Button("Clear", GUILayout.Height(30)))
+		if (GUILayout.Button("Destroy", GUILayout.Height(30)))
 		{
-			manager.ClearLevel();
+			manager.DestroyLevel();
 		}
 		GUILayout.EndHorizontal();
+
+		// Ground ------------------------------------------------------------
+
+		GUILayout.Space(40);
+		GUILayout.Label("Ground", EditorStyles.boldLabel);
+		EditorGUILayout.BeginHorizontal();
+		GUILayout.Label("Count:", GUILayout.Width(70));
+		groundCount = EditorGUILayout.IntField(groundCount);
+		EditorGUILayout.EndHorizontal();
+
+
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button("Geneate", GUILayout.Height(30)))
+		{
+			manager.GenerateGround(groundCount);
+		}
+		if (GUILayout.Button("Randomize", GUILayout.Height(30)))
+		{
+			manager.RandomizeGround();
+		}
+		if (GUILayout.Button("Destroy", GUILayout.Height(30)))
+		{
+			manager.DestroyGround();
+		}
+		EditorGUILayout.EndHorizontal();
+
+		// Coin --------------------------------------------------------------
+
+		GUILayout.Space(40);
+		GUILayout.Label("Coin", EditorStyles.boldLabel);
+		EditorGUILayout.BeginHorizontal();
+		GUILayout.Label("Count:", GUILayout.Width(70));
+		coinCount = EditorGUILayout.IntField(coinCount);
+		EditorGUILayout.EndHorizontal();
+
+
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button("Geneate", GUILayout.Height(30)))
+		{
+			manager.GenerateCoin(coinCount);
+		}
+		if (GUILayout.Button("Destroy", GUILayout.Height(30)))
+		{
+			manager.DestroyCoin();
+		}
+		EditorGUILayout.EndHorizontal();
 	}
 }

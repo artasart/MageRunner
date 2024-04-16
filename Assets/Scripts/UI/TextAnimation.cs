@@ -14,7 +14,6 @@ public class TextAnimation : MonoBehaviour
 
 	public float start = 1f; // 시작 알파값
 	public float end = .4f; // 끝 알파값
-	public float pingPongSpeed = .5f; // 왔다갔다하는 속도
 
 	private void OnDestroy()
 	{
@@ -27,29 +26,24 @@ public class TextAnimation : MonoBehaviour
 		canvasGroup = this.gameObject.AddComponent<CanvasGroup>();
 	}
 
-	private void Start()
-	{
-		StartPingPong();
-	}
-
 	public void SetAlphaRange(int start, int end)
 	{
 		this.start = start;
 		this.end = end;
 	}
 
-	public void StartPingPong()
+	public void StartPingPong(float pingpongSpeed = 1f)
 	{
 		Debug.Log("Start Pingpong");
 
-		Util.RunCoroutine(Co_PingPong(), nameof(Co_PingPong) + this.GetHashCode());
+		Util.RunCoroutine(Co_PingPong(pingpongSpeed), nameof(Co_PingPong) + this.GetHashCode());
 	}
 
-	private IEnumerator<float> Co_PingPong()
+	private IEnumerator<float> Co_PingPong(float pingpongSpeed = 1f)
 	{
 		while (true)
 		{
-			float alpha = Mathf.PingPong(Time.time * pingPongSpeed, 1f);
+			float alpha = Mathf.PingPong(Time.time * pingpongSpeed, 1f);
 
 			alpha = Mathf.Lerp(start, end, alpha);
 

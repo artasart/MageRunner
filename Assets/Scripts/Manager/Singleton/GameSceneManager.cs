@@ -72,7 +72,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public void LoadScene(SceneName sceneName, bool isAsync = true, float fadeSpeed = 1f) => Util.RunCoroutine(Co_LoadScene(sceneName, isAsync), nameof(Co_LoadScene));
 
-	private IEnumerator<float> Co_LoadScene(SceneName sceneName, bool isAsync = true, float fadeSpeed = .1f)
+	private IEnumerator<float> Co_LoadScene(SceneName sceneName, bool isAsync = true, float fadeSpeed = 1f)
 	{
 		Fade(true, fadeSpeed);
 
@@ -228,7 +228,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 		var lerpvalue = 0f;
 		var lerpspeed = lerpSpeed;
 
-		if (!isShow) canvasGroup.blocksRaycasts = false;
+		if (!isShow) canvasGroup.blocksRaycasts = true;
 		else gameObject.SetActive(true);
 
 		while (Mathf.Abs(canvasGroup.alpha - targetAlpha) >= 0.001f)
@@ -240,7 +240,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 		canvasGroup.alpha = targetAlpha;
 
-		if (isShow) canvasGroup.blocksRaycasts = true;
+		if (isShow) canvasGroup.blocksRaycasts = false;
 		else gameObject.SetActive(false);
 	}
 

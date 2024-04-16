@@ -15,6 +15,6 @@ public class Scene_Main : SceneLogic
 
 		GameManager.UI.Restart();
 
-		GameManager.UI.StartPanel<Panel_Main>();
+		GameManager.UI.StartPanel<Panel_Main>(true);
 	}
 }

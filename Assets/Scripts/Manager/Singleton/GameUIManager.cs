@@ -279,13 +279,13 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		return openPanels.Count > 1;
 	}
 
-	public void StartPanel<T>() where T : Panel_Base
+	public void StartPanel<T>(bool instant = false) where T : Panel_Base
 	{
 		string panelName = typeof(T).ToString();
 
 		ignorePanels.Add(panelName);
 
-		StackPanel<T>(true);
+		StackPanel<T>(instant);
 	}
 
 	public T FetchPopup<T>() where T : Popup_Base

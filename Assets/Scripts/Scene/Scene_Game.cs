@@ -15,6 +15,9 @@ public class Scene_Game : SceneLogic
 	CinemachineVirtualCamera virtualCamera;
 	PlayerActor player;
 
+	public int retryCount = 0;
+	public int randomCount = 0;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -26,14 +29,28 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		RefreshLevel();
+		LoadLevel();
 
 		GameManager.Scene.Fade(false, .1f);
 
 		GameManager.UI.Restart();
 
+		Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
+	}
+
+	IEnumerator<float> Co_GameStart()
+	{
+		virtualCamera.m_Lens.OrthographicSize = 5f;
+
+		Util.Zoom(virtualCamera, 3f, .05f);
+
+		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3.25f);
+
 		GameManager.UI.StartPanel<Panel_HUD>();
 	}
+
+
+
 
 	public void GainResource(int scoreAmount, int coinAmount)
 	{
@@ -68,10 +85,15 @@ public class Scene_Game : SceneLogic
 	public void SetCameraTarget(Transform target)
 	{
 		virtualCamera.Follow = target;
-		virtualCamera.LookAt = target;
+		virtualCamera.LookAt = target;	
 	}
 
-	public void Retry() => Util.RunCoroutine(Co_Retry(), nameof(Co_Retry));
+	public void Retry()
+	{
+		ShowAdWithRandomRetry();
+
+		Util.RunCoroutine(Co_Retry(), nameof(Co_Retry));
+	}
 
 	private IEnumerator<float> Co_Retry()
 	{
@@ -83,7 +105,7 @@ public class Scene_Game : SceneLogic
 
 		SetCameraTarget(player.transform);
 
-		RefreshLevel();
+		LoadLevel();
 
 		player.Refresh();
 
@@ -94,13 +116,38 @@ public class Scene_Game : SceneLogic
 		player.isDead = false;
 	}
 
-	public void RefreshLevel()
+	private void ShowAdWithRandomRetry()
 	{
-		foreach (Transform child in levelLoadManager.transform)
+		if (retryCount == 0)
 		{
-			Destroy(child.gameObject);
+			randomCount = UnityEngine.Random.Range(3, 5);
 		}
 
+		if (retryCount < randomCount)
+		{
+			retryCount++;
+		}
+
+		else
+		{
+			retryCount = 0;
+
+			DebugManager.Log("Show Ad.", DebugColor.AD);
+		}
+	}
+
+	public void LoadLevel()
+	{
+		levelLoadManager.DestroyLevel();
+
 		levelLoadManager.LoadLevel("levelData.json");
+	}
+
+
+	public void ShowTutorial()
+	{
+		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();
+
+		GameManager.UI.StackPanel<Panel_Tutorial>(true);
 	}
 }

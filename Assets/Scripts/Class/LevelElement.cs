@@ -21,4 +21,8 @@ public enum PropsType
 	Coin,
 	Monster,
 	Trigger,
+	Platform,
+	Obstacle,
+	Ground,
+	Portal,
 }

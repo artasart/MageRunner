@@ -15,6 +15,7 @@ public enum DebugColor
     Scene,
     Data,
     Game,
+    AD,
 }
 
 public class DebugManager

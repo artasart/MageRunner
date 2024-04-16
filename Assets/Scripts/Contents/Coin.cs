@@ -23,6 +23,8 @@ public class Coin : LevelElement
 			game.AddCoin(amount);
 
 			Destroy(gameObject);
+
+			// playsound
 		}
 	}
 }
