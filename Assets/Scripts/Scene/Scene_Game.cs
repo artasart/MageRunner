@@ -18,6 +18,8 @@ public class Scene_Game : SceneLogic
 	public int retryCount = 0;
 	public int randomCount = 0;
 
+	public bool isInfinteMode = false;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -29,7 +31,7 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		LoadLevel();
+		// LoadLevel();
 
 		GameManager.Scene.Fade(false, .1f);
 
@@ -44,9 +46,26 @@ public class Scene_Game : SceneLogic
 
 		Util.Zoom(virtualCamera, 3f, .05f);
 
-		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3.25f);
+		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
 
 		GameManager.UI.StartPanel<Panel_HUD>();
+
+		foreach (var item in FindObjectsOfType<Ground>())
+		{
+			item.SetMoveSpeed(5f);
+			item.Move();
+		}
+
+		float value = 0f;
+
+		while (value < 1f)
+		{
+			player.UpdateAnimator(value += Time.deltaTime);
+
+			yield return Timing.WaitForOneFrame;
+		}
+
+		player.UpdateAnimator(1f);
 	}
 
 
@@ -85,7 +104,7 @@ public class Scene_Game : SceneLogic
 	public void SetCameraTarget(Transform target)
 	{
 		virtualCamera.Follow = target;
-		virtualCamera.LookAt = target;	
+		virtualCamera.LookAt = target;
 	}
 
 	public void Retry()
@@ -105,9 +124,16 @@ public class Scene_Game : SceneLogic
 
 		SetCameraTarget(player.transform);
 
-		LoadLevel();
+		if (!isInfinteMode) LoadLevel();
 
 		player.Refresh();
+
+		foreach (var item in FindObjectsOfType<Ground>())
+		{
+			item.Refresh();
+		}
+
+		if (isInfinteMode) Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
 
 		GameManager.Scene.Fade(false);
 

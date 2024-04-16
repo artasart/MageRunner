@@ -32,6 +32,7 @@ public static class Define
 	public const string BIGCOIN = "BigCoin";
 	public const string MONSTER = "Monster";
 	public const string PORTAL = "Portal";
+	public const string OBSTACLE = "Obstacle";
 
 
 	public const string RUN = "Run";

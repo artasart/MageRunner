@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class PlayerActor : MonoBehaviour
 {
 	#region Members
@@ -40,6 +40,7 @@ public class PlayerActor : MonoBehaviour
 
 	Scene_Game game;
 
+	ParticleSystem particle_Dust;
 	#endregion
 
 
@@ -56,6 +57,9 @@ public class PlayerActor : MonoBehaviour
 
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
+
+		particle_Dust = this.transform.Search(nameof(particle_Dust)).GetComponent<ParticleSystem>();
+		particle_Dust.Play();
 	}
 
 	private void Start()
@@ -74,14 +78,14 @@ public class PlayerActor : MonoBehaviour
 	{
 		if (isDead) return;
 
-		float moveInput = Input.GetAxis("Horizontal");
+		//float moveInput = Input.GetAxis("Horizontal");
 
-		UpdateAnimator(moveInput);
-		HandleFacingDirection(moveInput);
+		//HandleFacingDirection(1f);
 		HandleSlideInput();
-		HandleMovement(moveInput);
+		//HandleMovement(moveInput);
 		HandleJumpInput();
 	}
+
 
 	private void HandleFacingDirection(float moveInput)
 	{
@@ -117,7 +121,8 @@ public class PlayerActor : MonoBehaviour
 		{
 			if (CanJump())
 			{
-				Debug.Log("Jump : " + this.transform.position.x);
+				particle_Dust.Stop();
+
 				PerformJump();
 				HandleJumpCount();
 			}
@@ -193,7 +198,7 @@ public class PlayerActor : MonoBehaviour
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 	}
 
-	void UpdateAnimator(float moveInput)
+	public void UpdateAnimator(float moveInput)
 	{
 		animator.SetBool(Define.RUN, moveInput != 0);
 		animator.SetFloat(Define.RUNSTATE, Mathf.Abs(moveInput * .5f));
@@ -202,6 +207,8 @@ public class PlayerActor : MonoBehaviour
 
 	public void Die()
 	{
+		if (isDead) return;
+
 		isDead = true;
 		animator.SetBool(Define.DIE, true);
 		animator.SetBool(Define.EDITCHK, true);
@@ -277,6 +284,8 @@ public class PlayerActor : MonoBehaviour
 			isGrounded = true;
 			remainingJumps = maxJumps;
 			jumpValue = jumpForce;
+
+			particle_Dust.Play();
 		}
 
 		if (collision.gameObject.CompareTag(Define.MONSTER))
@@ -290,6 +299,18 @@ public class PlayerActor : MonoBehaviour
 
 				DebugManager.ClearLog("Execute Monster", DebugColor.Game);
 			}
+		}
+
+		if (collision.gameObject.CompareTag(Define.OBSTACLE))
+		{
+			Die();
+
+			foreach (var item in FindObjectsOfType<Ground>())
+			{
+				item.Stop();
+			}
+
+			rgbd2d.AddForce(Vector2.left * 45f * Time.deltaTime);
 		}
 	}
 

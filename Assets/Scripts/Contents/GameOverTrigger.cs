@@ -16,6 +16,11 @@ public class GameOverTrigger : LevelElement
 	{
 		if(other.CompareTag(Define.PLAYER))
 		{
+			foreach (var item in FindObjectsOfType<Ground>())
+			{
+				item.Stop();
+			}
+
 			other.GetComponent<PlayerActor>().Die();
 		}
 	}
