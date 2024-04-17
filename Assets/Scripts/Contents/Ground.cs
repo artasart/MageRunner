@@ -10,6 +10,7 @@ public class Ground : LevelElement
 {
 	public GameObject[] blocks;
 
+	private Vector3 startPosition;
 	public int index = 0;
 
 	[Range(0f, 1f)] public float probability = .3f;
@@ -34,6 +35,7 @@ public class Ground : LevelElement
 		}
 
 		index = this.transform.GetSiblingIndex();
+		startPosition = this.transform.position;
 	}
 
 	public void Generate()
@@ -134,6 +136,8 @@ public class Ground : LevelElement
 		}
 
 		this.transform.SetSiblingIndex(index);
+
+		this.transform.position = startPosition;
 
 		moveSpeed = 0f;
 	}

@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
-public class PlayerActor : MonoBehaviour
+public class PlayerActor : Actor
 {
 	#region Members
 
@@ -95,7 +95,7 @@ public class PlayerActor : MonoBehaviour
 			SetFacingDirection(1);
 	}
 
-	private void HandleSlideInput()
+	public void HandleSlideInput()
 	{
 		if (Input.GetKeyDown(KeyCode.S) && isGrounded && !isSliding)
 			StartSlide();
@@ -115,7 +115,7 @@ public class PlayerActor : MonoBehaviour
 			rgbd2d.velocity = new Vector2(moveInput * moveSpeed, rgbd2d.velocity.y);
 	}
 
-	private void HandleJumpInput()
+	public void HandleJumpInput()
 	{
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
@@ -127,6 +127,29 @@ public class PlayerActor : MonoBehaviour
 				HandleJumpCount();
 			}
 		}
+	}
+
+	public void Slide()
+	{
+		if (isGrounded && !isSliding) StartSlide();
+
+		if (isSliding && slideTimer > 0)
+		{
+			slideTimer -= Time.deltaTime;
+
+			if (slideTimer <= 0)
+				EndSlide();
+		};
+	}
+
+	public void Jump()
+	{
+		if (!CanJump()) return;
+
+		particle_Dust.Stop();
+
+		PerformJump();
+		HandleJumpCount();
 	}
 
 	private void HandleJumpCount()
@@ -207,6 +230,8 @@ public class PlayerActor : MonoBehaviour
 
 	public void Die()
 	{
+		FindObjectOfType<GroundController>().StopGround();
+
 		if (isDead) return;
 
 		isDead = true;
@@ -295,6 +320,13 @@ public class PlayerActor : MonoBehaviour
 
 			if (contactPoint.y > playerBottom.y)
 			{
+				isGrounded = true;
+				remainingJumps = maxJumps;
+				jumpValue = jumpForce;
+
+				PerformJump();
+				HandleJumpCount();
+
 				collision.gameObject.GetComponent<MonsterActor>().Damage(attackPoint, true);
 
 				DebugManager.ClearLog("Execute Monster", DebugColor.Game);
@@ -305,14 +337,13 @@ public class PlayerActor : MonoBehaviour
 		{
 			Die();
 
-			foreach (var item in FindObjectsOfType<Ground>())
-			{
-				item.Stop();
-			}
+			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
 
-			rgbd2d.AddForce(Vector2.left * 45f * Time.deltaTime);
+			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
 		}
 	}
+
+	public float pushForce = -2f;
 
 	#endregion
 }

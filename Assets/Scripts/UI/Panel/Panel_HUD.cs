@@ -63,11 +63,15 @@ public class Panel_HUD : Panel_Base
 	private void OnClick_Down()
 	{
 		Debug.Log("OnClick_Down");
+
+		FindObjectOfType<PlayerActor>().Slide();
 	}
 
 	private void OnClick_Up()
 	{
 		Debug.Log("OnClick_Up");
+
+		FindObjectOfType<PlayerActor>().Jump();
 	}
 
 	private void OnClick_Pause()

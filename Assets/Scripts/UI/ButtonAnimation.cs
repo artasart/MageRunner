@@ -14,7 +14,12 @@ public class ButtonAnimation : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     CoroutineHandle handle_Button;
 
-    void Awake()
+	private void OnDestroy()
+	{
+		Timing.KillCoroutines(handle_Button);
+	}
+
+	void Awake()
     {
         button = GetComponent<Button>();
     }

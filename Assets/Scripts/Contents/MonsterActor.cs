@@ -26,6 +26,8 @@ public class MonsterActor : LevelElement
 
 	bool isDead = false;
 
+	public int healhtOrigin;
+
 	#endregion
 
 
@@ -34,10 +36,6 @@ public class MonsterActor : LevelElement
 
 	protected override void Awake()
 	{
-		base.Awake();
-
-		type = PropsType.Monster;
-
 		capsuleCollider2D = GetComponent<CapsuleCollider2D>();
 		capsuleCollider2D.isTrigger = true;
 		capsuleCollider2D.offset = new Vector2(0, 0.325f);
@@ -45,6 +43,8 @@ public class MonsterActor : LevelElement
 
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
+
+		healhtOrigin = health;
 	}
 
 	void Start()
@@ -66,12 +66,7 @@ public class MonsterActor : LevelElement
 	{
 		while (true)
 		{
-			if (player.GetComponent<Rigidbody2D>().velocity.x <= 3f)
-			{
-				attackRange = .75f;
-			}
-
-			else attackRange = 1.5f;
+			attackRange = 1.25f;
 
 			if (Vector3.Distance(this.gameObject.transform.position, player.position) < attackRange &&
 				Mathf.Abs(this.gameObject.transform.position.y - player.position.y) <= .5f)
@@ -135,6 +130,17 @@ public class MonsterActor : LevelElement
 
 			isDead = true;
 		}
+	}
+
+	public void Refresh()
+	{
+		animator.Rebind();
+		health = healhtOrigin;
+
+		hp.GetComponent<TMP_Text>().text = health.ToString();
+
+		this.GetComponent<CapsuleCollider2D>().enabled = true;
+		this.GetComponent<BoxCollider2D>().enabled = true;
 	}
 
 	#endregion

@@ -37,10 +37,11 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.Restart();
 
-		Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
+		GameStart();
 	}
 
-	IEnumerator<float> Co_GameStart()
+	public void GameStart() => Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
+	private IEnumerator<float> Co_GameStart()
 	{
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
@@ -48,13 +49,7 @@ public class Scene_Game : SceneLogic
 
 		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
 
-		GameManager.UI.StartPanel<Panel_HUD>();
-
-		foreach (var item in FindObjectsOfType<Ground>())
-		{
-			item.SetMoveSpeed(5f);
-			item.Move();
-		}
+		FindObjectOfType<GroundController>().MoveGround();
 
 		float value = 0f;
 
@@ -66,7 +61,28 @@ public class Scene_Game : SceneLogic
 		}
 
 		player.UpdateAnimator(1f);
+
+		GameManager.UI.StartPanel<Panel_HUD>();
 	}
+
+	public void Restart() => Util.RunCoroutine(Co_Restart(), nameof(Co_Restart));
+	
+	IEnumerator<float> Co_Restart()
+	{
+		player.UpdateAnimator(1f);
+
+		FindObjectOfType<GroundController>().MoveGround();
+
+		virtualCamera.m_Lens.OrthographicSize = 5f;
+
+		Util.Zoom(virtualCamera, 3f, .05f);
+
+		GameManager.UI.StartPanel<Panel_HUD>();
+
+		yield return Timing.WaitForOneFrame;
+	}
+
+
 
 
 
@@ -133,7 +149,12 @@ public class Scene_Game : SceneLogic
 			item.Refresh();
 		}
 
-		if (isInfinteMode) Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
+		foreach(var item in FindObjectsOfType<MonsterActor>())
+		{
+			item.Refresh();
+		}
+
+		if (isInfinteMode) Restart();
 
 		GameManager.Scene.Fade(false);
 
