@@ -20,7 +20,7 @@ public class PlayerActor : Actor
 
 	[Header("Jump and Slide")]
 	[SerializeField] float jumpValue = 10f;
-	[SerializeField] bool isGrounded = true;
+	[SerializeField] public bool isGrounded = true;
 	[SerializeField] bool isSliding = false;
 	[SerializeField] float slideTimer = 0f;
 	[SerializeField] int remainingJumps;
@@ -147,12 +147,34 @@ public class PlayerActor : Actor
 		HandleJumpCount();
 	}
 
-	private void HandleJumpCount()
+	private void HandleJumpCount(bool isKillJump = false)
 	{
 		if (!isGrounded)
 		{
 			jumpValue *= doubleJumpForceRatio;
 			remainingJumps--;
+
+			if (isKillJump)
+			{
+				Debug.Log("Kill Jump");
+
+				GameManager.Sound.PlaySound("Kill_1");
+			}
+
+			else
+			{
+				Debug.Log(remainingJumps);
+
+				if(remainingJumps >= 1)
+				{
+					GameManager.Sound.PlaySound("Jump_1");
+				}
+
+				else
+				{
+					GameManager.Sound.PlaySound("Jump_2");
+				}
+			}
 		}
 	}
 
@@ -174,7 +196,7 @@ public class PlayerActor : Actor
 		moveSpeed /= slideSpeedMultiplier;
 	}
 
-	private bool CanJump()
+	public bool CanJump()
 	{
 		return isGrounded || remainingJumps > 0;
 	}
@@ -225,9 +247,12 @@ public class PlayerActor : Actor
 
 	public void Die()
 	{
-		FindObjectOfType<GroundController>().StopGround();
-
 		if (isDead) return;
+
+		GameManager.Sound.PlaySound("BodyFall_1");
+
+		this.GetComponent<FootStepController>().StopWalk();
+		FindObjectOfType<GroundController>().StopGround();
 
 		isDead = true;
 		animator.SetBool(Define.DIE, true);
@@ -256,10 +281,12 @@ public class PlayerActor : Actor
 	{
 		this.transform.position = Vector3.up * -0.2f;
 		this.transform.rotation = Quaternion.identity;
+
 		animator.Rebind();
 		health = healthOrigin;
 		moveSpeed = moveSpeedOrigin;
 
+		this.GetComponent<BoxCollider2D>().enabled = true;
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
 		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
@@ -321,7 +348,7 @@ public class PlayerActor : Actor
 				jumpValue = jumpForce;
 
 				PerformJump();
-				HandleJumpCount();
+				HandleJumpCount(true);
 
 				collision.gameObject.GetComponent<MonsterActor>().Damage(attackPoint, true);
 

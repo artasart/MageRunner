@@ -129,6 +129,8 @@ public class Scene_Game : SceneLogic
 		}
 
 		player.UpdateAnimator(1f);
+		
+		player.GetComponent<FootStepController>().StartWalk();
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 
@@ -207,6 +209,8 @@ public class Scene_Game : SceneLogic
 		Util.Zoom(virtualCamera, 3f, .05f);
 
 		GameManager.UI.StartPanel<Panel_HUD>();
+
+		player.GetComponent<FootStepController>().StartWalk();
 
 		AddDifficulty();
 
