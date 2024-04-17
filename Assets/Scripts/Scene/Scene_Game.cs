@@ -19,7 +19,8 @@ public class Scene_Game : SceneLogic
 
 	LevelLoadManager levelLoadManager;
 	CinemachineVirtualCamera virtualCamera;
-	PlayerActor player;
+	public PlayerActor player { get; set; }
+	GameObject playerModel;
 
 	public int retryCount = 0;
 	public int randomCount = 0;
@@ -27,6 +28,9 @@ public class Scene_Game : SceneLogic
 	public bool isInfinteMode = false;
 
 	public GameState gameState = GameState.Playing;
+
+
+
 
 	private void OnDestroy()
 	{
@@ -39,7 +43,7 @@ public class Scene_Game : SceneLogic
 
 		LocalData.gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
 
-		if(LocalData.gameData == null)
+		if (LocalData.gameData == null)
 		{
 			LocalData.gameData = new GameData();
 		}
@@ -60,22 +64,8 @@ public class Scene_Game : SceneLogic
 		levelLoadManager = FindObjectOfType<LevelLoadManager>();
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		player = FindObjectOfType<PlayerActor>();
-	}
 
-	public void SaveGameData()
-	{
-		if (score > LocalData.gameData.highScore)
-		{
-			LocalData.gameData.highScore = score;
-		}
-
-		LocalData.gameData.coin += coin;
-		LocalData.gameData.exp += exp;
-
-		DebugManager.Log($"Player Gained {coin} coin.");
-		DebugManager.Log($"Player Gained {exp} exp.");
-
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		PoolManager.InitPool();
 	}
 
 	private void Start()
@@ -88,7 +78,27 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.StackLastPopup<Popup_Pause>();
 
+		playerModel = player.transform.GetChild(0).gameObject;
+		playerModel.SetActive(false);
+
 		GameStart();
+	}
+
+
+	public void SaveGameData()
+	{
+		if (score > LocalData.gameData.highScore)
+		{
+			LocalData.gameData.highScore = score;
+		}
+
+		LocalData.gameData.coin += coin;
+		LocalData.gameData.exp += (int)exp;
+
+		DebugManager.Log($"Player Gained {coin} coin.");
+		DebugManager.Log($"Player Gained {exp} exp.");
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	public void GameStart() => Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
@@ -100,6 +110,12 @@ public class Scene_Game : SceneLogic
 		Util.Zoom(virtualCamera, 3f, .05f);
 
 		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
+
+		PoolManager.Spawn("Thunder", new Vector3(0f, -0.2f, 0f), Quaternion.identity);
+
+		yield return Timing.WaitForSeconds(.1f);
+
+		playerModel.SetActive(true);
 
 		FindObjectOfType<GroundController>().MoveGround();
 
@@ -116,11 +132,47 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 
-		AddScorePerFrame();
+		ScoreCount();
+
+		AddDifficulty();
 	}
 
 
-	private void AddScorePerFrame()
+	public void AddDifficulty()
+	{
+		Util.RunCoroutine(Co_AddDifficulty(), nameof(Co_AddDifficulty), CoroutineTag.Content);		
+	}
+
+	private IEnumerator<float> Co_AddDifficulty()
+	{
+		yield return Timing.WaitForSeconds(5f);
+
+		var groundController = FindObjectOfType<GroundController>();
+
+		var currentSpeed = groundController.GetMoveSpeed();
+		var addSpeed = currentSpeed * .1f;
+
+		var probability = groundController.GetProbability();
+		var addProbability = probability * .1f;
+
+		while (true)
+		{
+			yield return Timing.WaitForSeconds(5f);
+
+			currentSpeed += addSpeed;
+			probability += addProbability;
+
+			groundController.MoveGround(currentSpeed);
+			groundController.AddProbability(addProbability);
+
+			DebugManager.ClearLog("현재 속도 : " + currentSpeed);
+			DebugManager.Log("현재 확률 : " + probability);
+		}
+	}
+
+
+
+	private void ScoreCount()
 	{
 		Util.RunCoroutine(Co_AddScorePerFrame(), nameof(Co_AddScorePerFrame));
 	}
@@ -143,7 +195,7 @@ public class Scene_Game : SceneLogic
 
 
 	public void Restart() => Util.RunCoroutine(Co_Restart(), nameof(Co_Restart));
-	
+
 	IEnumerator<float> Co_Restart()
 	{
 		player.UpdateAnimator(1f);
@@ -155,6 +207,8 @@ public class Scene_Game : SceneLogic
 		Util.Zoom(virtualCamera, 3f, .05f);
 
 		GameManager.UI.StartPanel<Panel_HUD>();
+
+		AddDifficulty();
 
 		yield return Timing.WaitForOneFrame;
 	}
@@ -195,7 +249,10 @@ public class Scene_Game : SceneLogic
 		virtualCamera.LookAt = target;
 	}
 
-
+	public void StopDifficult()
+	{
+		Util.KillCoroutine(nameof(Co_AddDifficulty));
+	}
 
 	public void Refresh()
 	{
@@ -236,7 +293,7 @@ public class Scene_Game : SceneLogic
 			item.Refresh();
 		}
 
-		foreach(var item in FindObjectsOfType<MonsterActor>())
+		foreach (var item in FindObjectsOfType<MonsterActor>())
 		{
 			item.Refresh();
 		}
@@ -249,7 +306,7 @@ public class Scene_Game : SceneLogic
 
 		player.isDead = false;
 
-		AddScorePerFrame();
+		ScoreCount();
 	}
 
 	private void ShowAdWithRandomRetry()

@@ -23,7 +23,7 @@ public class TextAnimation : MonoBehaviour
 	private void Awake()
 	{
 		txtmp = GetComponent<TMP_Text>();
-		canvasGroup = this.gameObject.AddComponent<CanvasGroup>();
+		canvasGroup = GetComponent<CanvasGroup>();
 	}
 
 	public void SetAlphaRange(int start, int end)
@@ -34,18 +34,20 @@ public class TextAnimation : MonoBehaviour
 
 	public void StartPingPong(float pingpongSpeed = 1f)
 	{
-		Util.RunCoroutine(Co_PingPong(pingpongSpeed), nameof(Co_PingPong) + this.GetHashCode());
+		Util.RunCoroutine(Co_PingPong(pingpongSpeed), nameof(Co_PingPong) + this.GetHashCode(), CoroutineTag.UI);
 	}
 
 	private IEnumerator<float> Co_PingPong(float pingpongSpeed = 1f)
 	{
+		canvasGroup = GetComponent<CanvasGroup>();
+
 		while (true)
 		{
 			float alpha = Mathf.PingPong(Time.time * pingpongSpeed, 1f);
 
 			alpha = Mathf.Lerp(start, end, alpha);
 
-			canvasGroup.alpha = alpha;
+			if (canvasGroup != null) canvasGroup.alpha = alpha;
 
 			yield return Timing.WaitForOneFrame;
 		}

@@ -752,6 +752,7 @@ public static class TMPTextExtensions
 	public static void UsePingPong(this TMP_Text txtmp)
 	{
 		txtmp.gameObject.AddComponent<TextAnimation>();
+		txtmp.gameObject.AddComponent<CanvasGroup>();
 	}
 	public static void StartPingPong(this TMP_Text txtmp, float pingpongSpeed = 1f)
 	{

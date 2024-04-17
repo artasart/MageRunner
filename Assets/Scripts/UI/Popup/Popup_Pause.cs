@@ -11,13 +11,15 @@ public class Popup_Pause : Popup_Base
 	Button btn_NoAds;
 	Button btn_Language;
 
+	Scene_Game game;
+
 	private void OnDisable()
 	{
 		if (!isInitialized) { isInitialized = true; return; }
 
-		FindObjectOfType<Scene_Game>().gameState = GameState.Playing;
+		game.gameState = GameState.Playing;
 
-		FindObjectOfType<PlayerActor>().ToggleSimulation(true);
+		game.player.ToggleSimulation(true);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
 	}
@@ -26,9 +28,9 @@ public class Popup_Pause : Popup_Base
 	{
 		if (!isInitialized) { return; }
 
-		FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
+		game.gameState = GameState.Paused;
 
-		FindObjectOfType<PlayerActor>().ToggleSimulation(false);
+		game.player.ToggleSimulation(false);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();		
 	}
@@ -46,6 +48,8 @@ public class Popup_Pause : Popup_Base
 		btn_SFX = GetUI_Button(nameof(btn_SFX), OnClick_SFX);
 		btn_NoAds = GetUI_Button(nameof(btn_NoAds), OnClick_NoAds);
 		btn_Language = GetUI_Button(nameof(btn_Language), OnClick_Language);
+
+		game = FindObjectOfType<Scene_Game>();
 	}
 
 	private void OnClick_Home()

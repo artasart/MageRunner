@@ -23,6 +23,8 @@ public static class Define
 	public const string KEY_SOUNDEFFECT = "EffectVolume";
 	public const string KEY_NICKNAME = "Nickname";
 
+	public const string SPAWN = "Spawn";
+	public const string POOL = "Pool";
 
 	public const string SERVERURL = "http://localhost:3000"; // LOCALHOST
 

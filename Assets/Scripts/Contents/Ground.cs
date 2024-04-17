@@ -133,6 +133,11 @@ public class Ground : LevelElement
 		}
 	}
 
+	public void SetProbability(float amount)
+	{
+		probability = Mathf.Clamp(probability += amount, 0f, .85f);
+	}
+
 
 	public void Refresh()
 	{

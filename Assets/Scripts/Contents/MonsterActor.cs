@@ -28,6 +28,8 @@ public class MonsterActor : LevelElement
 
 	public int healhtOrigin;
 
+	Rigidbody2D rgbd2d;
+
 	#endregion
 
 
@@ -45,6 +47,8 @@ public class MonsterActor : LevelElement
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
 		healhtOrigin = health;
+
+		rgbd2d = GetComponent<Rigidbody2D>();
 	}
 
 	void Start()
@@ -131,6 +135,26 @@ public class MonsterActor : LevelElement
 			isDead = true;
 		}
 	}
+
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.M))
+		{
+			DieFar();
+		}
+	}
+
+	public void DieFar()
+	{
+		var player = FindObjectOfType<PlayerActor>().gameObject;
+
+		Vector2 pushDirection = (player.transform.position - transform.position).normalized;
+
+		rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+	}
+
+	public float pushForce = 10f;
+
 
 	public void Refresh()
 	{

@@ -19,7 +19,7 @@ public class MasterData
 public class GameData
 {
 	public int level = 1;
-	public float exp;
+	public int exp;
 
 	public int coin;
 	public int highScore;

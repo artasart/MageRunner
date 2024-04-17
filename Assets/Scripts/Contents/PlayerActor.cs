@@ -41,7 +41,6 @@ public class PlayerActor : Actor
 
 	Scene_Game game;
 
-	ParticleSystem particle_Dust;
 	#endregion
 
 
@@ -58,9 +57,6 @@ public class PlayerActor : Actor
 
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
-
-		particle_Dust = this.transform.Search(nameof(particle_Dust)).GetComponent<ParticleSystem>();
-		particle_Dust.Play();
 	}
 
 	private void Start()
@@ -124,8 +120,6 @@ public class PlayerActor : Actor
 		{
 			if (CanJump())
 			{
-				particle_Dust.Stop();
-
 				PerformJump();
 				HandleJumpCount();
 			}
@@ -148,8 +142,6 @@ public class PlayerActor : Actor
 	public void Jump()
 	{
 		if (!CanJump()) return;
-
-		particle_Dust.Stop();
 
 		PerformJump();
 		HandleJumpCount();
@@ -244,6 +236,7 @@ public class PlayerActor : Actor
 		rgbd2d.velocity *= dieVelocity;
 
 		game.SetCameraTarget(null);
+		game.StopDifficult();
 
 		this.transform.localEulerAngles = Vector3.forward * 13f;
 
@@ -254,7 +247,7 @@ public class PlayerActor : Actor
 	{
 		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();
 
-		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.coin, game.exp = Mathf.RoundToInt(game.score * .1f));
+		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.coin, game.exp = Mathf.RoundToInt(game.score * .45f));
 
 		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
@@ -280,7 +273,7 @@ public class PlayerActor : Actor
 		Util.RunCoroutine(Co_SmoothStop(), nameof(Co_SmoothStop));
 	}
 
-	IEnumerator<float>Co_SmoothStop()
+	IEnumerator<float> Co_SmoothStop()
 	{
 		var value = animator.GetFloat(Define.RUNSTATE);
 
@@ -314,8 +307,6 @@ public class PlayerActor : Actor
 			isGrounded = true;
 			remainingJumps = maxJumps;
 			jumpValue = jumpForce;
-
-			particle_Dust.Play();
 		}
 
 		if (collision.gameObject.CompareTag(Define.MONSTER))
@@ -360,6 +351,8 @@ public class PlayerActor : Actor
 
 	public void ToggleSimulation(bool simulate)
 	{
+		if (animator == null) return;
+
 		if (simulate)
 		{
 			animator.speed = 1f;

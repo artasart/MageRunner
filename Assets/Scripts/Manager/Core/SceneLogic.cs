@@ -1,8 +1,15 @@
+using MEC;
 using UnityEngine;
 
 public class SceneLogic : MonoBehaviour
 {
 	const string GAMEMANAGER = "GameManager";
+
+	private void OnDestroy()
+	{
+		Timing.KillCoroutines((int)CoroutineTag.UI);
+		Timing.KillCoroutines((int)CoroutineTag.Content);
+	}
 
 	protected virtual void Awake()
 	{

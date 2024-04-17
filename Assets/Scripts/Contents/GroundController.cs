@@ -12,11 +12,21 @@ public class GroundController : MonoBehaviour
         grounds = FindObjectsOfType<Ground>().ToList();
 	}
 
-    public void MoveGround()
+	public float GetMoveSpeed()
+	{
+		return grounds[0].moveSpeed;
+	}
+
+	public float GetProbability()
+	{
+		return grounds[0].probability;
+	}
+
+	public void MoveGround(float moveSpeed = 5f)
     {
 		foreach (var item in grounds)
 		{
-			item.SetMoveSpeed(5f);
+			item.SetMoveSpeed(moveSpeed);
 			item.Move();
 		}
 	}
@@ -27,6 +37,14 @@ public class GroundController : MonoBehaviour
 		{
 			item.SetMoveSpeed(0f);
 			item.Stop();
+		}
+	}
+
+	public void AddProbability(float amount)
+	{
+		foreach (var item in grounds)
+		{
+			item.SetProbability(amount);
 		}
 	}
 }
