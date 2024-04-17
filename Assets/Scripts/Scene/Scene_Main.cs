@@ -7,6 +7,19 @@ public class Scene_Main : SceneLogic
 	protected override void Awake()
 	{
 		base.Awake();
+
+		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
+
+		if (LocalData.masterData == null)
+		{
+			DebugManager.Log("WARNING!! NO MASTER DATA.", DebugColor.Data);
+
+			GameManager.Scene.LoadScene(SceneName.Logo);
+
+			PlayerPrefs.SetString("Version", string.Empty);
+
+			return;
+		}
 	}
 
 	private void Start()

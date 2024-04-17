@@ -28,7 +28,7 @@ public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-	public void OnDestroy()
+	public virtual void OnDestroy()
 	{
 		Timing.KillCoroutines((int)CoroutineTag.Web);
 		Timing.KillCoroutines((int)CoroutineTag.UI);

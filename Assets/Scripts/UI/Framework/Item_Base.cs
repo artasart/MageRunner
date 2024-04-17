@@ -17,7 +17,7 @@ public class Item_Base : UI_Base
 
 		if (_sound == null)
 		{
-			button.onClick.AddListener(PlaySound);
+			button.onClick.AddListener(OpenSound);
 		}
 
 		else button.onClick.AddListener(() => _sound?.Invoke());

@@ -41,7 +41,7 @@ public static class GoogleSheets
 			yield return Timing.WaitUntilFalse(() => IsLoading);
 		}
 
-		JsonManager<MasterData>.SaveData(LocalData.masterData, "MasterData.json");
+		JsonManager<MasterData>.SaveData(LocalData.masterData, Define.JSON_MASTERDATA);
 
 		callback?.Invoke();
 	}

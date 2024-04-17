@@ -47,8 +47,8 @@ public class Popup_Basic : Popup_Base
 		img_Basic = GetUI_Image(nameof(img_Basic), null);
 
 		btn_Confirm = GetUI_Button(nameof(btn_Confirm), OnClick_Confirm);
-		btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close, () => GameManager.Sound.PlaySound("Click_1"));
-		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, () => GameManager.Sound.PlaySound("Click_1"));
+		btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
+		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 
 		txtmp_Description = GetUI_TMPText(nameof(txtmp_Description), string.Empty);
 		txtmp_Confirm = GetUI_TMPText(nameof(txtmp_Confirm), "OK");

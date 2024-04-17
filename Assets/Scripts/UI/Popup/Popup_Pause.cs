@@ -11,6 +11,28 @@ public class Popup_Pause : Popup_Base
 	Button btn_NoAds;
 	Button btn_Language;
 
+	private void OnDisable()
+	{
+		if (!isInitialized) { isInitialized = true; return; }
+
+		FindObjectOfType<Scene_Game>().gameState = GameState.Playing;
+
+		FindObjectOfType<PlayerActor>().ToggleSimulation(true);
+
+		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
+	}
+
+	private void OnEnable()
+	{
+		if (!isInitialized) { return; }
+
+		FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
+
+		FindObjectOfType<PlayerActor>().ToggleSimulation(false);
+
+		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();		
+	}
+
 	protected override void Awake()
 	{
 		isDefault = false;

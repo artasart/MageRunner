@@ -41,4 +41,10 @@ public static class Define
 	public const string DIE = "Die";
 	public const string EDITCHK = "Editchk";
 
+	public const string SOUND_CLOSE = "Click_1";
+	public const string SOUND_OPEN = "Click_2";
+
+	public const string	JSON_MASTERDATA = "MasterData.json";
+	public const string	JSON_LEVELDATA = "LevelData.json";
+	public const string	JSON_GAMEDATA = "GameData.json";
 }

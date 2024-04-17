@@ -254,7 +254,7 @@ public static class Util
 	public static Button FindButton(GameObject _gameObject, string _name, Action _action = null)
 	{
 		Button element = _gameObject.transform.Search(_name).GetComponent<Button>();
-		element.onClick.AddListener(() => GameManager.Sound.PlaySound("Click_2"));
+		element.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_OPEN));
 		element.onClick.AddListener(() => _action?.Invoke());
 
 		return element;

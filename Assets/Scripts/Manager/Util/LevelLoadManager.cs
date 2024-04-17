@@ -94,7 +94,7 @@ public class LevelLoadManager : MonoBehaviour
 			}
 		}
 
-		JsonManager<LevelData>.SaveData(levelData, "levelData.json");
+		JsonManager<LevelData>.SaveData(levelData, Define.JSON_LEVELDATA);
 
 		DebugManager.ClearLog("Levels Saved!");
 	}

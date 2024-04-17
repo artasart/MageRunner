@@ -75,12 +75,12 @@ public class Panel_HUD : Panel_Base
 	}
 
 	private void OnClick_Pause()
-	{
+	{		
 		HidePanel();
 
-		GameManager.UI.StackPopup<Popup_Pause>();
+		FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
 
-		GameManager.UI.FetchPopup<Popup_Pause>().callback_cancel = () => ShowPanel();
+		GameManager.UI.StackPopup<Popup_Pause>();
 	}
 
 	public void SaveScore()

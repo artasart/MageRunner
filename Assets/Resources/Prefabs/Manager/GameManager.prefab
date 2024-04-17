@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8440871012334537866}
   - component: {fileID: 8440871012334537867}
   - component: {fileID: 455905034393275651}
+  - component: {fileID: 2744464285632496454}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -59,6 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55c0ad04c5b7a484bb88eea2a1d9b1d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ignorePanels: []
+  ignorePopups: []
 --- !u!114 &8440871012334537867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,7 +77,7 @@ MonoBehaviour:
   bgm: {fileID: 0}
   soundEffect: {fileID: 0}
   bgmVolume: 1
-  effectVolume: 1
+  sfxVolume: 1
 --- !u!114 &455905034393275651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,5 +88,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7abd0395296091c428e1ccc20ba55f36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2744464285632496454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8440871012334537868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85c611c3f3eff7458f1127155c3986c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

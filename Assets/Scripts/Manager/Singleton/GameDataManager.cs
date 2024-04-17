@@ -47,11 +47,11 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 	public void GetSheet(Action callback = null)
 	{
-		DebugManager.ClearLog("Sheet 데이터를 가져옵니다.", DebugColor.Data);
+		DebugManager.Log("Sheet 데이터를 가져옵니다.", DebugColor.Data);
 
 		LocalData.masterData ??= new MasterData();
 
-		//GoogleSheets.AddJob(Define.LEVEL_MESSAGE, () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
+		GoogleSheets.AddJob(string.Empty, () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
 		//GoogleSheets.AddJob(Define.BRAND_MESSAGE, () => GoogleSheets.GetData(Url.BRAND_SHEETID, SaveData<Brand>));
 
 		GoogleSheets.GetDataAll(callback);
@@ -79,14 +79,10 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 	private void SetMasterData<T>(List<T> dataList)
 	{
-		//if (typeof(T) == typeof(Level))
-		//{
-		//	LocalData.masterData.levelData = dataList.Cast<Level>().ToList();
-		//}
-		//else if (typeof(T) == typeof(Brand))
-		//{
-		//	LocalData.masterData.brandData = dataList.Cast<Brand>().ToList();
-		//}
+		if (typeof(T) == typeof(Level))
+		{
+			LocalData.masterData.levelData = dataList.Cast<Level>().ToList();
+		}
 	}
 
 	public T CreateObject<T>(string[] values) where T : new()

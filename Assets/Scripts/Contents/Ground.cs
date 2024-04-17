@@ -17,6 +17,8 @@ public class Ground : LevelElement
 
 	public bool isDefault;
 
+	Scene_Game game;
+
 	private void OnDestroy()
 	{
 		Util.KillCoroutine(nameof(Co_Move) + this.GetHashCode());
@@ -36,6 +38,8 @@ public class Ground : LevelElement
 
 		index = this.transform.GetSiblingIndex();
 		startPosition = this.transform.position;
+
+		game = FindObjectOfType<Scene_Game>();
 	}
 
 	public void Generate()
@@ -92,6 +96,8 @@ public class Ground : LevelElement
 	{
 		while (this.transform.position.x >= -10f)
 		{
+			yield return Timing.WaitUntilTrue(() => game.gameState == GameState.Playing);
+
 			transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
 
 			yield return Timing.WaitForOneFrame;

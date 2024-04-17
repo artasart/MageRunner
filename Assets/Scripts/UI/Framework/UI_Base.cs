@@ -83,7 +83,7 @@ public class UI_Base : MonoBehaviour
 
 			if (_sound == null)
 			{
-				button.onClick.AddListener(PlaySound);
+				button.onClick.AddListener(OpenSound);
 			}
 
 			else button.onClick.AddListener(() => _sound?.Invoke());
@@ -232,7 +232,8 @@ public class UI_Base : MonoBehaviour
 	}
 
 
-	protected void PlaySound() => GameManager.Sound.PlaySound("Click_2");
+	protected void OpenSound() => GameManager.Sound.PlaySound(Define.SOUND_OPEN);
+	protected void CloseSound() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE);
 
 	protected void Display()
 	{

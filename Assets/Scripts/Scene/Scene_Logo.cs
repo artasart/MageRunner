@@ -23,10 +23,27 @@ public class Scene_Logo : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_Logo>(true);
 
-		Util.RunCoroutine(Co_RunGame().Delay(2f), nameof(Co_RunGame));
+		Util.RunCoroutine(Co_LogoStart(), nameof(Co_LogoStart));
 	}
 
-	IEnumerator<float> Co_RunGame()
+	private IEnumerator<float> Co_LogoStart()
+	{
+		yield return Timing.WaitForSeconds(.75f);
+
+		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
+
+		if (LocalData.masterData == null)
+		{
+			GameManager.Data.GetSheet(EnterGame);
+		}
+
+		else
+		{
+			GameManager.Data.GetVersion(EnterGame);
+		}
+	}
+
+	private void EnterGame()
 	{
 		if (isFirst)
 		{
@@ -34,8 +51,7 @@ public class Scene_Logo : SceneLogic
 
 			PlayerPrefs.SetInt(nameof(isFirst), Convert.ToInt32(true));
 		}
-		else GameManager.Scene.LoadScene(SceneName.Main);
 
-		yield return Timing.WaitForOneFrame;
+		else GameManager.Scene.LoadScene(SceneName.Main);
 	}
 }

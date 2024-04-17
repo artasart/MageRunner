@@ -1,14 +1,20 @@
 using Cinemachine;
 using MEC;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
+public enum GameState
+{
+	Playing,
+	Paused
+}
 
 public class Scene_Game : SceneLogic
 {
 	public int coin;
 	public int score;
+	public int exp;
 	public int monsterKilled;
 
 	LevelLoadManager levelLoadManager;
@@ -20,13 +26,56 @@ public class Scene_Game : SceneLogic
 
 	public bool isInfinteMode = false;
 
+	public GameState gameState = GameState.Playing;
+
+	private void OnDestroy()
+	{
+		Util.KillCoroutine(nameof(Co_AddScorePerFrame));
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
 
+		LocalData.gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
+
+		if(LocalData.gameData == null)
+		{
+			LocalData.gameData = new GameData();
+		}
+
+		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
+
+		if (LocalData.masterData == null)
+		{
+			DebugManager.Log("WARNING!! NO MASTER DATA.", DebugColor.Data);
+
+			GameManager.Scene.LoadScene(SceneName.Logo);
+
+			PlayerPrefs.SetString("Version", string.Empty);
+
+			return;
+		}
+
 		levelLoadManager = FindObjectOfType<LevelLoadManager>();
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		player = FindObjectOfType<PlayerActor>();
+	}
+
+	public void SaveGameData()
+	{
+		if (score > LocalData.gameData.highScore)
+		{
+			LocalData.gameData.highScore = score;
+		}
+
+		LocalData.gameData.coin += coin;
+		LocalData.gameData.exp += exp;
+
+		DebugManager.Log($"Player Gained {coin} coin.");
+		DebugManager.Log($"Player Gained {exp} exp.");
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	private void Start()
@@ -37,10 +86,13 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.Restart();
 
+		GameManager.UI.StackLastPopup<Popup_Pause>();
+
 		GameStart();
 	}
 
 	public void GameStart() => Util.RunCoroutine(Co_GameStart(), nameof(Co_GameStart));
+
 	private IEnumerator<float> Co_GameStart()
 	{
 		virtualCamera.m_Lens.OrthographicSize = 5f;
@@ -63,7 +115,32 @@ public class Scene_Game : SceneLogic
 		player.UpdateAnimator(1f);
 
 		GameManager.UI.StartPanel<Panel_HUD>();
+
+		AddScorePerFrame();
 	}
+
+
+	private void AddScorePerFrame()
+	{
+		Util.RunCoroutine(Co_AddScorePerFrame(), nameof(Co_AddScorePerFrame));
+	}
+
+	IEnumerator<float> Co_AddScorePerFrame()
+	{
+		while (!player.isDead)
+		{
+			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
+			score += 1 * scoreMultiplier;
+
+			GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
+
+			yield return Timing.WaitForSeconds(.5f);
+		}
+	}
+
+	public int scoreMultiplier = 1;
+
+
 
 	public void Restart() => Util.RunCoroutine(Co_Restart(), nameof(Co_Restart));
 	
@@ -112,19 +189,29 @@ public class Scene_Game : SceneLogic
 		coin = 0;
 	}
 
-	public void SetScore()
-	{
-		GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
-	}
-
 	public void SetCameraTarget(Transform target)
 	{
 		virtualCamera.Follow = target;
 		virtualCamera.LookAt = target;
 	}
 
+
+
+	public void Refresh()
+	{
+		score = 0;
+		coin = 0;
+
+		GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
+		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(coin);
+	}
+
 	public void Retry()
 	{
+		SaveGameData();
+
+		Refresh();
+
 		ShowAdWithRandomRetry();
 
 		Util.RunCoroutine(Co_Retry(), nameof(Co_Retry));
@@ -161,6 +248,8 @@ public class Scene_Game : SceneLogic
 		yield return Timing.WaitUntilFalse(GameManager.Scene.IsFaded);
 
 		player.isDead = false;
+
+		AddScorePerFrame();
 	}
 
 	private void ShowAdWithRandomRetry()
@@ -187,7 +276,7 @@ public class Scene_Game : SceneLogic
 	{
 		levelLoadManager.DestroyLevel();
 
-		levelLoadManager.LoadLevel("levelData.json");
+		levelLoadManager.LoadLevel(Define.JSON_LEVELDATA);
 	}
 
 

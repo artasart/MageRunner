@@ -19,8 +19,10 @@ public class GameSoundManager : SingletonManager<GameSoundManager>
 	public float bgmVolume = 1f;
 	public float sfxVolume = 1f;
 
-	private void OnDestroy()
+	public override void OnDestroy()
 	{
+		base.OnDestroy();
+
 		PlayerPrefs.SetFloat(Define.KEY_BGM, bgmVolume);
 		PlayerPrefs.SetFloat(Define.KEY_SOUNDEFFECT, sfxVolume);
 	}
@@ -38,6 +40,9 @@ public class GameSoundManager : SingletonManager<GameSoundManager>
 			sfxVolume = 1f;
 
 			PlayerPrefs.SetInt(Define.KEY_FIRST, Convert.ToInt32(true));
+
+			PlayerPrefs.SetFloat(Define.KEY_BGM, 1f);
+			PlayerPrefs.SetFloat(Define.KEY_SOUNDEFFECT, 1f);
 		}
 
 		bgmVolume = PlayerPrefs.GetFloat(Define.KEY_BGM);

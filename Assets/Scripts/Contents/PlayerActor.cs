@@ -2,6 +2,7 @@ using MEC;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -76,6 +77,8 @@ public class PlayerActor : Actor
 
 	void Update()
 	{
+		if (game.gameState == GameState.Paused) return;
+
 		if (isDead) return;
 
 		//float moveInput = Input.GetAxis("Horizontal");
@@ -251,6 +254,8 @@ public class PlayerActor : Actor
 	{
 		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();
 
+		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.coin, game.exp = Mathf.RoundToInt(game.score * .1f));
+
 		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
 
@@ -344,6 +349,31 @@ public class PlayerActor : Actor
 	}
 
 	public float pushForce = -2f;
+
+	#endregion
+
+
+
+	#region Util
+
+	float pausedTime;
+
+	public void ToggleSimulation(bool simulate)
+	{
+		if (simulate)
+		{
+			animator.speed = 1f;
+			animator.Play(animator.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, pausedTime);
+		}
+		else
+		{
+			AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+			pausedTime = currentState.normalizedTime;
+			animator.speed = 0f;
+		}
+
+		rgbd2d.simulated = simulate;
+	}
 
 	#endregion
 }

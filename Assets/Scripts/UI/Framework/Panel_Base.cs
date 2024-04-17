@@ -24,8 +24,8 @@ public class Panel_Base : UI_Base
 		if(closeButton)
 		{
 			btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close);
-			btn_Close.onClick.RemoveListener(PlaySound);
-			btn_Close.onClick.AddListener(() => GameManager.Sound.PlaySound("Click_1"));
+			btn_Close.onClick.RemoveListener(OpenSound);
+			btn_Close.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 		}
 	}
 

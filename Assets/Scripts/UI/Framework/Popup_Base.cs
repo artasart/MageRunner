@@ -11,6 +11,9 @@ public class Popup_Base : UI_Base
 	public Action callback_cancel;
 
 	protected bool isDefault = true;
+	protected bool isInitialized = false;
+
+	public Button DIM { get => btn_Dim; }
 
 	protected override void Awake()
 	{
@@ -26,10 +29,10 @@ public class Popup_Base : UI_Base
 
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
 		btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close);
-		btn_Dim.onClick.RemoveListener(PlaySound);
-		btn_Close.onClick.RemoveListener(PlaySound);
-		btn_Close.onClick.AddListener(() => GameManager.Sound.PlaySound("Click_1"));
-		btn_Dim.onClick.AddListener(() => GameManager.Sound.PlaySound("Click_1"));
+		btn_Dim.onClick.RemoveListener(OpenSound);
+		btn_Close.onClick.RemoveListener(OpenSound);
+		btn_Close.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
+		btn_Dim.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 	}
 
 	protected virtual void OnClick_Confirm()
@@ -48,6 +51,6 @@ public class Popup_Base : UI_Base
 
 	protected virtual void UseDimClose()
 	{
-		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
+		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, _sound: CloseSound);
 	}
 }

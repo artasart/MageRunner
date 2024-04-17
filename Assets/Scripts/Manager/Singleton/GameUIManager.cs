@@ -2,6 +2,7 @@ using MEC;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 using static EasingFunction;
@@ -20,6 +21,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 	Stack<string> openPanels = new Stack<string>();
 	Stack<string> openPopups = new Stack<string>();
 	Stack<string> openSplashs = new Stack<string>();
+
+	GameObject popup_LastStack;
 
 	GameObject group_MasterCanvas;
 	GameObject group_Panel;
@@ -83,36 +86,55 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	public void Back()
 	{
-		GameManager.Sound.PlaySound("Click_1");
-
 		if (openPopups.Count > 0)
 		{
-			if(ignorePopups.Contains(openPopups.Peek()))
+			if (ignorePopups.Contains(openPopups.Peek()))
 			{
 				DebugManager.ClearLog("This popup is ignore popup.", DebugColor.UI);
 
 				return;
 			}
 
-			else PopPopup();
+			else
+			{
+				PopPopup();
+
+				GameManager.Sound.PlaySound(Define.SOUND_CLOSE);
+			}
 		}
 
 		else if (openPanels.Count > 0)
 		{
 			if (ignorePanels.Contains(openPanels.Peek()))
 			{
+				DebugManager.ClearLog("Current Open Popups : " + openPopups.Count);
+
 				if (openPopups.Count <= 0)
 				{
-					FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, "Do you really want to exit?", "exit");
-					FetchPopup<Popup_Basic>().callback_confirm = () => Application.Quit();
+					var popupName = popup_LastStack.name;
 
-					StackPopup<Popup_Basic>();
+					if (popups.ContainsKey(popupName))
+					{
+						openPopups.Push(popup_LastStack.name);
+
+						popup_LastStack.transform.SetAsLastSibling();
+						
+						ShowPopup(popups[popupName], true);
+
+						GameManager.Sound.PlaySound(Define.SOUND_OPEN);
+
+						DebugManager.Log($"Push: {popupName}", DebugColor.UI);
+					}
+
+					else { DebugManager.Log($"No Popup name {popupName}", DebugColor.UI); }
 				}
 
 				return;
 			}
 
 			PopPanel();
+
+			GameManager.Sound.PlaySound(Define.SOUND_CLOSE);
 		}
 	}
 
@@ -131,8 +153,19 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		group_Panel = GameObject.Find(nameof(group_Panel));
 		group_Popup = GameObject.Find(nameof(group_Popup));
 
+		popup_LastStack = null;
+
 		CacheUI(group_Panel, panels);
 		CacheUI(group_Popup, popups);
+	}
+
+	public void StackLastPopup<T>()
+	{
+		string popupName = typeof(T).Name;
+
+		if (!popups.ContainsKey(popupName)) return;
+
+		popup_LastStack = popups[popupName];
 	}
 
 	#endregion
@@ -442,14 +475,23 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		Util.RunCoroutine(Co_Show(_gameObject, _isShow, 1f, _callback), nameof(Co_Show) + _gameObject.GetHashCode(), CoroutineTag.UI);
 	}
 
-	public void ShowPopup(GameObject _gameObject, bool _isShow)
+	public void ShowPopup(GameObject gameObject, bool isShow)
 	{
-		float showDelay = _isShow ? 0f : 0f;
-		float easeDelay = _isShow ? 0f : .1f;
-		float lerpSpeed = _isShow ? 3f : 1.5f;
+		float showDelay = isShow ? 0f : 0f;
+		float easeDelay = isShow ? 0f : .1f;
+		float lerpSpeed = isShow ? 3f : 1.5f;
 
-		Util.RunCoroutine(Co_Show(_gameObject, _isShow).Delay(easeDelay + showDelay), nameof(Co_Show) + _gameObject.GetHashCode(), CoroutineTag.UI);
-		Util.RunCoroutine(Co_Ease(_gameObject, _isShow, lerpSpeed).Delay(.1f - easeDelay), nameof(Co_Ease) + _gameObject.GetHashCode(), CoroutineTag.UI);
+		Action action_Target = () =>
+		{
+			var popup = gameObject.GetComponent<Popup_Base>();
+
+			if (popup == null || popup.DIM == null) return;
+
+			popup.DIM.interactable = isShow;
+		};
+
+		Util.RunCoroutine(Co_Show(gameObject, isShow, callback: action_Target).Delay(easeDelay + showDelay), nameof(Co_Show) + gameObject.GetHashCode(), CoroutineTag.UI);
+		Util.RunCoroutine(Co_Ease(gameObject, isShow, lerpSpeed).Delay(.1f - easeDelay), nameof(Co_Ease) + gameObject.GetHashCode(), CoroutineTag.UI);
 	}
 
 	public void Show(GameObject _gameObject, bool _isShow, float _lerpspeed = 1f, Action _callback = null)
@@ -457,7 +499,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		Util.RunCoroutine(Co_Show(_gameObject, _isShow, _lerpspeed, _callback), nameof(Co_Show) + _gameObject.GetHashCode(), CoroutineTag.UI);
 	}
 
-	private IEnumerator<float> Co_Show(GameObject _gameObject, bool _isShow, float _lerpspeed = 1f, Action _callback = null)
+	private IEnumerator<float> Co_Show(GameObject _gameObject, bool _isShow, float _lerpspeed = 1f, Action callback = null)
 	{
 		var canvasGroup = _gameObject.GetComponent<CanvasGroup>();
 		var targetAlpha = _isShow ? 1f : 0f;
@@ -483,7 +525,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		if (_isShow) canvasGroup.blocksRaycasts = true;
 		else _gameObject.SetActive(false);
 
-		_callback?.Invoke();
+		callback?.Invoke();
 	}
 
 	private IEnumerator<float> Co_Ease(GameObject _gameObject, bool _show, float _lerpspeed = 1f)

@@ -34,8 +34,6 @@ public class TextAnimation : MonoBehaviour
 
 	public void StartPingPong(float pingpongSpeed = 1f)
 	{
-		Debug.Log("Start Pingpong");
-
 		Util.RunCoroutine(Co_PingPong(pingpongSpeed), nameof(Co_PingPong) + this.GetHashCode());
 	}
 
