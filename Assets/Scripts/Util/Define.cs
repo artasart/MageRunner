@@ -15,6 +15,7 @@ public static class Define
 	public const string PATH_MONSTERS = PATH_CONTENTS + "Monsters/";
 	public const string PATH_CONTENTS = PATH_PREFAB + "Contents/";
 	public const string PATH_UNITS = PATH_CONTENTS + "Units/";
+	public const string PATH_ACTOR = PATH_CONTENTS + "Actor/";
 
 	public const string PATH_ITEM = PATH_SPRITE + "Icon/Item/";
 

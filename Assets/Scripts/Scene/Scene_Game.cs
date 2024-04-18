@@ -65,7 +65,8 @@ public class Scene_Game : SceneLogic
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		player = FindObjectOfType<PlayerActor>();
 
-		PoolManager.InitPool();
+
+		PoolManager.SetPoolData("Thunder", 10);
 	}
 
 	private void Start()

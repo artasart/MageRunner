@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class Scene_Main : SceneLogic
 {
+	EquipmentController equipmentController;
+
+	private void OnDestroy()
+	{
+		LocalData.gameData.equipment = equipmentController.equipments;
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -20,6 +29,11 @@ public class Scene_Main : SceneLogic
 
 			return;
 		}
+
+		PoolManager.InitPool();
+
+
+		equipmentController = FindObjectOfType<EquipmentController>();
 	}
 
 	private void Start()
@@ -28,6 +42,9 @@ public class Scene_Main : SceneLogic
 
 		GameManager.UI.Restart();
 
-		GameManager.UI.StartPanel<Panel_Main>(true);
+		//GameManager.UI.StartPanel<Panel_Main>(true);
+
+
+		PoolManager.SetPoolData("Puff", 10);
 	}
 }

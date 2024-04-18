@@ -16,21 +16,20 @@ public static class PoolManager
 
 		spawnParent = GameObject.Find(Define.SPAWN).transform;
 		poolParent = GameObject.Find(Define.POOL).transform;
-
-		SetPoolData();
 	}
 
-	public static void SetPoolData()
+	public static void SetPoolData(string name, int size)
 	{
 		var poolData = new PoolData();
-		poolData.name = "Thunder";
-		poolData.poolSize = 10;
+		poolData.name = name;
+		poolData.poolSize = size;
+
 		poolDatas.Add(poolData);
 
-		var prefab = UnityEngine.Resources.Load<RePoolObject>(Define.PATH_VFX + "Thunder");
+		var prefab = UnityEngine.Resources.Load<RePoolObject>(Define.PATH_VFX + name);
 		var objectPool = new ObjectPool<RePoolObject>(prefab, poolData, poolParent);
 
-		objectPools.Add(poolData.name, objectPool);		
+		objectPools.Add(poolData.name, objectPool);
 	}
 
 	public static RePoolObject GetPoolObject(string poolName)

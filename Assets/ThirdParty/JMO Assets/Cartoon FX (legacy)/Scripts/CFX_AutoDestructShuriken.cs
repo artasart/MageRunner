@@ -12,10 +12,11 @@ public class CFX_AutoDestructShuriken : MonoBehaviour
 {
 	// If true, deactivate the object instead of destroying it
 	public bool OnlyDeactivate;
-	
+	public bool isCheckAlive = true;
+
 	void OnEnable()
 	{
-		StartCoroutine("CheckIfAlive");
+		if(isCheckAlive) StartCoroutine("CheckIfAlive");
 	}
 	
 	IEnumerator CheckIfAlive ()

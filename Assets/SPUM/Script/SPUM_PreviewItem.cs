@@ -37,17 +37,17 @@ public class SPUM_PreviewItem : MonoBehaviour
     public int _itemType;
     public Sprite _sprite;
     public string _name;
-    public int _index;
+	public int _index;
 
-    public void SetSprite()
-    {   
-        _managerST.SetSprite(_itemType,_sprite,_name,_index);
-    }
+	public void SetSprite()
+	{
+		_managerST.SetSprite(_itemType, _sprite, _name, _index);
+	}
 
-    public GameObject DeleteButton;
-    public void DeleteObj()
-    {
-        _managerST.DeleteUnit(_index);
+	public GameObject DeleteButton;
+	public void DeleteObj()
+	{
+		_managerST.DeleteUnit(_index);
     }
     #endif
 }

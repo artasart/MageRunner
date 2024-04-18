@@ -26,7 +26,7 @@ public class GameData
 	public int highScore;
 
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
-	//public SerializableDictionary<EquipmentType, Weapon> weapon;
+	public Ride ride;
 }
 
 [Serializable]
@@ -42,4 +42,11 @@ public class Level
 {
 	public int level;
 	public int exp;
+}
+
+[Serializable]
+public class Ride
+{
+	public string name;
+	public int index;
 }
