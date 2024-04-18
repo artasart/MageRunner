@@ -968,7 +968,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3048053427698807143, guid: 4f90c404f05fcda4aa83d1e95990799e, type: 3}
       propertyPath: m_Name
-      value: Monster
+      value: MonsterActor
       objectReference: {fileID: 0}
     - target: {fileID: 4237847284920838390, guid: 4f90c404f05fcda4aa83d1e95990799e, type: 3}
       propertyPath: m_Materials.Array.data[0]

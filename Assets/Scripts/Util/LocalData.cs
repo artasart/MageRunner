@@ -13,6 +13,7 @@ public class MasterData
 {
 	public VersionData version;
 	public List<Level> levelData;
+	public List<Item> itemData;
 }
 
 [Serializable]
@@ -23,6 +24,9 @@ public class GameData
 
 	public int coin;
 	public int highScore;
+
+	public SerializableDictionary<EquipmentType, Equipment> equipment;
+	//public SerializableDictionary<EquipmentType, Weapon> weapon;
 }
 
 [Serializable]
