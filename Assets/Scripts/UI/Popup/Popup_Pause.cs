@@ -21,7 +21,7 @@ public class Popup_Pause : Popup_Base
 
 		game.player.ToggleSimulation(true);
 
-		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
+		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
 
 	private void OnEnable()
@@ -32,7 +32,7 @@ public class Popup_Pause : Popup_Base
 
 		game.player.ToggleSimulation(false);
 
-		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();		
+		GameManager.UI.FetchPanel<Panel_HUD>().Hide();		
 	}
 
 	protected override void Awake()

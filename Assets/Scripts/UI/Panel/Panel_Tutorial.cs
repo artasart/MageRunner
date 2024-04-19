@@ -26,7 +26,7 @@ public class Panel_Tutorial : Panel_Base
 
 	private void OnClick_Background()
 	{
-		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
+		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 
 		GameManager.UI.PopPanel();
 

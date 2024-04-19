@@ -270,7 +270,7 @@ public class PlayerActor : Actor
 
 	private void ShowGameOverUI()
 	{
-		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();
+		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
 
 		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.coin, game.exp = Mathf.RoundToInt(game.score * .45f));
 
@@ -289,7 +289,7 @@ public class PlayerActor : Actor
 		this.GetComponent<BoxCollider2D>().enabled = true;
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
-		GameManager.UI.FetchPanel<Panel_HUD>().ShowPanel();
+		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
 
 	public void Stop()

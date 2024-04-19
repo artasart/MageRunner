@@ -1,3 +1,5 @@
+using static System.Net.WebRequestMethods;
+
 public static class Url
 {
 	public const string SHEET_URL = "https://docs.google.com/spreadsheets/d/11tCRKDo8D-tIkAUMaqxOlsyoZwavTiu-VYaxzgGTYPI";

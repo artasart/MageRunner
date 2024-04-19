@@ -8,19 +8,22 @@ public class RideController : MonoBehaviour
 	public string horseName = "Horse";
 	public int index = 2;
 
+	GameObject horseAvatar;
+	GameObject defaultActor;
+
 	SPUM_SpriteList actorSpriteList;
 	SPUM_SpriteList rideSpriteList;
 	SPUM_Prefabs spumPrefabs;
-	GameObject horseAvatar;
-	GameObject defaultActor;
 	AnimatorController controller;
 
 	private void Awake()
 	{
 		defaultActor = GameObject.Find("DefaultActor");
+		horseAvatar = GameObject.Find("DefaultHorseActor");
 		controller = Resources.Load<AnimatorController>("SPUM/SPUM_Sprites/RideSource/Horse1/Animation/Horse1_Animation");
-		horseAvatar = Instantiate(Resources.Load<GameObject>(Define.PATH_ACTOR + "DefaultHorseActor"), Vector3.zero, Quaternion.identity);
+		
 		spumPrefabs = horseAvatar.GetComponent<SPUM_Prefabs>();
+		horseAvatar.transform.position = Vector3.zero;
 		horseAvatar.SetActive(false);
 	}
 
@@ -46,20 +49,14 @@ public class RideController : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.D))
 		{
-			PoolManager.Spawn("Puff", defaultActor.transform.position + Vector3.up * .5f, Quaternion.identity);
-
-			defaultActor.gameObject.SetActive(true);
-			horseAvatar.SetActive(false);
-
-			LocalData.gameData.ride.name = string.Empty;
-			LocalData.gameData.ride.index = 0;
+			RideOff();
 		}
 
 		if (Input.GetKeyDown(KeyCode.F))
 		{
 			PoolManager.Spawn("Puff", defaultActor.transform.position + Vector3.up * .5f, Quaternion.identity);
 
-			Ride(horseName, index);
+			ChangeRide(horseName, index);
 		}
 	}
 	public void Init(string name, int index)
@@ -68,10 +65,10 @@ public class RideController : MonoBehaviour
 
 		RideAndSave();
 
-		Ride(name, index);
+		ChangeRide(name, index);
 	}
 
-	public void Ride(string rideName, int rideIndex)
+	public void ChangeRide(string rideName, int rideIndex)
 	{
 		var path = rideName + "" + rideIndex;
 
@@ -81,6 +78,19 @@ public class RideController : MonoBehaviour
 		LocalData.gameData.ride = new Ride();
 		LocalData.gameData.ride.name = rideName;
 		LocalData.gameData.ride.index = rideIndex;
+	}
+
+	public void RideOff()
+	{
+		PoolManager.Spawn("Puff", defaultActor.transform.position + Vector3.up * .5f, Quaternion.identity);
+
+		defaultActor.gameObject.SetActive(true);
+		horseAvatar.SetActive(false);
+
+		LocalData.gameData.ride.name = string.Empty;
+		LocalData.gameData.ride.index = 0;
+
+		FindObjectOfType<Scene_Main>().DownCamera();
 	}
 
 	private void RideAndSave(bool isPreview = false)
@@ -100,6 +110,8 @@ public class RideController : MonoBehaviour
 		horseAvatar.GetComponent<SPUM_Prefabs>()._spriteOBj.ResyncData();
 
 		if (isPreview) LocalData.gameData.ride = new Ride { name = name, index = index, };
+
+		FindObjectOfType<Scene_Main>().UpCamera();
 	}
 
 	public void SetRide(string name)

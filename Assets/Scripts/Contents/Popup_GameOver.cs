@@ -23,13 +23,9 @@ public class Popup_GameOver : Popup_Base
 		txtmp_Coin = GetUI_TMPText(nameof(txtmp_Coin), string.Empty);
 		txtmp_Exp = GetUI_TMPText(nameof(txtmp_Exp), string.Empty);
 
-		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward);
-		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry);
-		btn_Home = GetUI_Button(nameof(btn_Home), OnClick_Home);
-
-		btn_Reward.UseAnimation();
-		btn_Retry.UseAnimation();
-		btn_Home.UseAnimation();
+		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
+		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
+		btn_Home = GetUI_Button(nameof(btn_Home), OnClick_Home, useAnimation: true);
 	}
 
 	private void OnClick_Reward()

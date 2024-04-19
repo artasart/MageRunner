@@ -632,12 +632,35 @@ public static class Util
 		rect.sizeDelta = target;
 	}
 
-	public static void FadePosition(RectTransform rect, Vector2 target, float lerpSpeed = 1f)
+	public static void LerpPosition(Transform transform, Vector3 target, float lerpSpeed = 1f)
 	{
-		RunCoroutine(Co_FadePosition(rect, target, lerpSpeed), nameof(FadePosition));
+		RunCoroutine(Co_LerpPosition(transform, target, lerpSpeed), nameof(Co_LerpPosition) + transform.GetHashCode());
 	}
 
-	private static IEnumerator<float> Co_FadePosition(RectTransform rect, Vector2 target, float lerpSpeed = 1f)
+	private static IEnumerator<float> Co_LerpPosition(Transform transform, Vector3 target, float lerpSpeed = 1f)
+	{
+		Vector3 current = transform.position;
+		float lerpValue = 0f;
+
+		while (Vector3.Distance(current, target) > 0.01f)
+		{
+			current = Vector3.Lerp(current, target, lerpValue += lerpSpeed * Time.deltaTime);
+
+			transform.position = current;
+
+			yield return Timing.WaitForOneFrame;
+		}
+
+		transform.position = target;
+	}
+
+
+	public static void LerpRectPosition(RectTransform rect, Vector2 target, float lerpSpeed = 1f)
+	{
+		RunCoroutine(Co_LerpRectPosition(rect, target, lerpSpeed), nameof(LerpRectPosition));
+	}
+
+	private static IEnumerator<float> Co_LerpRectPosition(RectTransform rect, Vector2 target, float lerpSpeed = 1f)
 	{
 		Vector2 current = rect.anchoredPosition;
 		float lerpValue = 0f;

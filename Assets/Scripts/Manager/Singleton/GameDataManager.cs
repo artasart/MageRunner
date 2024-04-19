@@ -22,6 +22,8 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 				var server = values[0];
 
+				Debug.Log(server + ", local : "  + localVersion);
+
 				if (Equals(server, localVersion))
 				{
 					DebugManager.Log("최신 버전 입니다.", DebugColor.Data);
@@ -29,11 +31,15 @@ public class GameDataManager : SingletonManager<GameDataManager>
 					break;
 				}
 
-				DebugManager.Log("버전을 업데이트합니다.", DebugColor.Data);
-
 				PlayerPrefs.SetString("Version", values[0]);
 				PlayerPrefs.SetString("Date", values[1]);
 				PlayerPrefs.SetString("Status", values[2]);
+
+				LocalData.masterData.version.version = values[0];
+				LocalData.masterData.version.date = values[1];
+				LocalData.masterData.version.status = values[2];
+
+				DebugManager.Log("버전을 업데이트합니다.", DebugColor.Data);
 			}
 
 			if (!isLatestVersion)
@@ -41,7 +47,7 @@ public class GameDataManager : SingletonManager<GameDataManager>
 				GetSheet(callback);
 			}
 
-			callback?.Invoke();
+			else callback?.Invoke();
 		});
 	}
 
@@ -51,8 +57,8 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 		LocalData.masterData ??= new MasterData();
 
-		GoogleSheets.AddJob(string.Empty, () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
-		GoogleSheets.AddJob(string.Empty, () => GoogleSheets.GetData(Url.BRAND_SHEETID, SaveData<Item>));
+		GoogleSheets.AddJob("Get Level Data", () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
+		GoogleSheets.AddJob("Get Equipment Data", () => GoogleSheets.GetData(Url.EQUIPMENT_SHEETID, SaveData<Item>));
 
 		GoogleSheets.GetDataAll(callback);
 	}

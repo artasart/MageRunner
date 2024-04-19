@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static EasingFunction;
 
 [RequireComponent(typeof(CapsuleCollider2D))]
 public class MonsterActor : LevelElement
@@ -165,6 +166,60 @@ public class MonsterActor : LevelElement
 
 		this.GetComponent<CapsuleCollider2D>().enabled = true;
 		this.GetComponent<BoxCollider2D>().enabled = true;
+	}
+
+	[Header("Damage Flash")]
+	[ColorUsage(true, true)]
+	[SerializeField] Color flashColor;
+	[SerializeField] float flashTime = .25f;
+
+	[SerializeField] SpriteRenderer[] spriteRenderers;
+	[SerializeField] Material[] materials;
+
+	public void DamageFlash()
+	{
+		Util.RunCoroutine(Co_DamageFlash(), nameof(Co_DamageFlash) + this.GetHashCode());
+	}
+
+	private void SetFlashColor()
+	{
+		for (int i = 0; i < materials.Length; i++)
+		{
+			materials[i].SetColor("_FlashColor", flashColor);
+		}
+	}
+
+	private void SetFlashAmount(float amount)
+	{
+		for (int i = 0; i < materials.Length; i++)
+		{
+			materials[i].SetFloat("_FlashAmount", amount);
+		}
+	}
+
+	private IEnumerator<float> Co_DamageFlash()
+	{
+		Debug.Log("Damage Flash");
+
+		SetFlashColor();
+
+		float currentFlashAmount = 1f;
+		float elapsedTime = 0f;
+
+		var fucntion = Ease.Spring;
+
+		while (currentFlashAmount > 0f)
+		{
+			Function function = GetEasingFunction(fucntion);
+
+			currentFlashAmount = function(1f, 0f, elapsedTime);
+
+			SetFlashAmount(currentFlashAmount);
+
+			elapsedTime += 2f * Time.deltaTime;
+
+			yield return Timing.WaitForOneFrame;
+		}
 	}
 
 	#endregion

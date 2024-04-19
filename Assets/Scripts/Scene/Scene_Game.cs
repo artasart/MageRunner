@@ -344,7 +344,7 @@ public class Scene_Game : SceneLogic
 
 	public void ShowTutorial()
 	{
-		GameManager.UI.FetchPanel<Panel_HUD>().HidePanel();
+		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
 
 		GameManager.UI.StackPanel<Panel_Tutorial>(true);
 	}

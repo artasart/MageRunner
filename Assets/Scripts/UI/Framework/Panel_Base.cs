@@ -8,7 +8,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasGroup))]
 public class Panel_Base : UI_Base
 {
-	protected Button btn_Close;
+	protected Button btn_Back;
+	protected Image img_Background;
 	protected string panelName;
 
 	[HideInInspector] public bool isInitialized = false;
@@ -19,14 +20,16 @@ public class Panel_Base : UI_Base
 				
 		CloseTabAll();
 
-		var closeButton = this.transform.Search(nameof(btn_Close));
+		var closeButton = this.transform.Search(nameof(btn_Back));
 
 		if(closeButton)
 		{
-			btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close);
-			btn_Close.onClick.RemoveListener(OpenSound);
-			btn_Close.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
+			btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Back);
+			btn_Back.onClick.RemoveListener(OpenSound);
+			btn_Back.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 		}
+
+		img_Background = GetUI_Image(nameof(img_Background));
 	}
 
 	private void Start()
@@ -69,19 +72,19 @@ public class Panel_Base : UI_Base
 		if (_isShow) canvasGroup.blocksRaycasts = true;
 	}
 
-	protected virtual void OnClick_Close()
+	protected virtual void OnClick_Back()
 	{
 		GameManager.UI.PopPanel();
 	}
 
-	public void HidePanel(Action start = null, Action end = null)
+	public void Hide(Action start = null, Action end = null)
 	{
 		var canvasGroup = this.GetComponent<CanvasGroup>();
 
 		GameManager.UI.FadeCanvasGroup(canvasGroup, 0f, .75f, _start: start, _end: end);
 	}
 
-	public void ShowPanel(Action start = null, Action end = null)
+	public void Show(Action start = null, Action end = null)
 	{
 		var canvasGroup = this.GetComponent<CanvasGroup>();
 

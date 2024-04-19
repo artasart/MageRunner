@@ -51,6 +51,6 @@ public class Popup_Base : UI_Base
 
 	protected virtual void UseDimClose()
 	{
-		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, _sound: CloseSound);
+		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, sound: CloseSound);
 	}
 }

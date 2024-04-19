@@ -4,29 +4,15 @@ using UnityEngine;
 
 public static class Enums
 {
-	public enum Style
+	public enum EquipmentType
 	{
-		Normal,
-		Casual,
-		Fancy,
-	}
-
-	public enum CustomerRank
-	{
-		Basic,
-		Special,
-		VIP,
-		VVIP,
-		BlackConsumer,
-	}
-
-	public enum SaleCategory
-	{
-		Outer,
-		Top,
-		Bottom,
-		Shoes,
-		Accessories,
-		Living,
+		Hair = 0,
+		FaceHair = 1,
+		Cloth = 2,
+		Pant = 3,
+		Helmet = 4,
+		Armor = 5,
+		Weapons = 6,
+		Back = 7,
 	}
 }

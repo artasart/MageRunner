@@ -2,18 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using static Enums;
 
 public class EquipmentController : MonoBehaviour
 {
 	public SerializableDictionary<EquipmentType, Equipment> equipments;
 
+	private GameObject actor;
 	private SPUM_Prefabs spumPrefabs;
+
+	public EquipmentType type;
+	public string weaponName;
+	public int weaponIndex;
+	public bool isRight;
 
 	#region Initialize
 
 	private void Awake()
 	{
-		spumPrefabs = GetComponent<SPUM_Prefabs>();
+		actor = GameObject.Find("DefaultActor");
+		spumPrefabs = actor.GetComponent<SPUM_Prefabs>();
 	}
 
 	private void Start()
@@ -42,14 +50,12 @@ public class EquipmentController : MonoBehaviour
 
 			if (!string.IsNullOrEmpty(LocalData.gameData.ride.name))
 			{
-				Debug.Log("You have Ride.");
-
 				FindObjectOfType<RideController>().Init(LocalData.gameData.ride.name, LocalData.gameData.ride.index);
 			}
 
 			else
 			{
-				Debug.Log("You don't have Ride.");
+
 			}
 		}
 	}
@@ -111,7 +117,7 @@ public class EquipmentController : MonoBehaviour
 				break;
 		}
 
-		spumPrefabs._spriteOBj.ResyncData();	
+		spumPrefabs._spriteOBj.ResyncData();
 	}
 
 	public void ClearEquipment(EquipmentType type)
@@ -183,20 +189,8 @@ public class EquipmentController : MonoBehaviour
 
 	#endregion
 
-	public EquipmentType type;
-	public string weaponName;
-	public int weaponIndex;
-	public bool isRight;
 
-	private void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.Z))
-		{
-			var weapon = new Equipment(type, weaponName, weaponIndex);
-
-			ChangeEquipment(weapon);
-		}
-	}
+	#region Util
 
 	private void SetHair(string path, int index)
 	{
@@ -238,95 +232,6 @@ public class EquipmentController : MonoBehaviour
 	{
 		spumPrefabs._spriteOBj._backListString[0] = path;
 	}
-}
 
-public enum EquipmentType
-{
-	Hair = 0,
-	FaceHair = 1,
-	Cloth = 2,
-	Pant = 3,
-	Helmet = 4,
-	Armor = 5,
-	Weapons = 6,
-	Back = 7,
-}
-
-[Serializable]
-public class ActorEquipment
-{
-	public EquipmentType type;
-	public string name;
-	public int index;
-
-	public ActorEquipment(EquipmentType type, string name, int index)
-	{
-		this.type = type;
-		this.name = name;
-		this.index = index;
-	}
-}
-
-
-[Serializable]
-public class Item
-{
-	public string name;
-	public string type;
-	public string payment;
-	public string rank;
-	public string stat;
-	public int price;
-	public string description;
-	public string filename;
-}
-
-[Serializable]
-public class Equipment
-{
-	public string name;
-	public EquipmentType type;
-	public int index;
-
-	protected readonly string basePath = "Assets/Resources/SPUM/SPUM_Sprites/";
-	protected readonly string[] categories = { "Items/", "Packages/" };
-	protected readonly string[] versions = { "", "Ver121/", "Ver300/", "F_SR/" };
-	protected readonly string path;
-
-	public Equipment(EquipmentType type, string name, int index)
-	{
-		this.type = type;
-		this.name = name;
-		this.index = index;
-
-		string fileName = $"{name}_{index}.png";
-
-		int categoryIndex = IsPackageItem(fileName) ? 1 : 0;
-		int versionIndex = GetVersionIndex(fileName);
-
-		string category = categories[categoryIndex];
-		string version = versions[versionIndex];
-
-		string typeName = $"{(int)type}_{type}/";
-
-		path = $"{basePath}{category}{version}{typeName}{fileName}";
-	}
-
-	private bool IsPackageItem(string fileName)
-	{
-		return fileName.Contains("Normal") || fileName.Contains("New") || fileName.Contains("F_SR");
-	}
-
-	private int GetVersionIndex(string fileName)
-	{
-		if (fileName.Contains("Normal"))
-			return 1;
-		if (fileName.Contains("New"))
-			return 2;
-		if (fileName.Contains("F_SR"))
-			return 3;
-		return 0;
-	}
-
-	public string GetPath() => path;
+	#endregion
 }

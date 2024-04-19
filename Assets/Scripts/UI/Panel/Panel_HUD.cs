@@ -16,8 +16,6 @@ public class Panel_HUD : Panel_Base
 	TMP_Text txtmp_Coin;
 	TMP_Text txtmp_Score;
 
-	Button btn_Wear;
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -25,18 +23,11 @@ public class Panel_HUD : Panel_Base
 		txtmp_Coin = GetUI_TMPText(nameof(txtmp_Coin), "0");
 		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), "0");
 
-		btn_Left = GetUI_Button(nameof(btn_Left), OnClick_Left);
-		btn_Right = GetUI_Button(nameof(btn_Right), OnClick_Right);
-		btn_Down = GetUI_Button(nameof(btn_Down), OnClick_Down);
-		btn_Up = GetUI_Button(nameof(btn_Up), OnClick_Up);
-		btn_Pause = GetUI_Button(nameof(btn_Pause), OnClick_Pause);
-
-		btn_Wear = GetUI_Button(nameof(btn_Wear), OnClick_Wear);
-
-		btn_Left.UseAnimation();
-		btn_Right.UseAnimation();
-		btn_Down.UseAnimation();
-		btn_Up.UseAnimation();
+		btn_Left = GetUI_Button(nameof(btn_Left), OnClick_Left, useAnimation: true);
+		btn_Right = GetUI_Button(nameof(btn_Right), OnClick_Right, useAnimation: true);
+		btn_Down = GetUI_Button(nameof(btn_Down), OnClick_Down, useAnimation: true);
+		btn_Up = GetUI_Button(nameof(btn_Up), OnClick_Up, useAnimation: true);
+		btn_Pause = GetUI_Button(nameof(btn_Pause), OnClick_Pause, useAnimation: true);
 	}
 
 	public SPUM_SpriteList target;
@@ -76,7 +67,7 @@ public class Panel_HUD : Panel_Base
 
 	private void OnClick_Pause()
 	{		
-		HidePanel();
+		Hide();
 
 		FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
 

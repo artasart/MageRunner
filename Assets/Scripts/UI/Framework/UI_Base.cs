@@ -48,52 +48,54 @@ public class UI_Base : MonoBehaviour
 
 	#region Basic Methods
 
-	public TMP_Text GetUI_TMPText(string _hierarchyName, string _message)
+	public TMP_Text GetUI_TMPText(string hierarchyName, string message)
 	{
-		if (childUI.ContainsKey(_hierarchyName))
+		if (childUI.ContainsKey(hierarchyName))
 		{
-			var txtmp = childUI[_hierarchyName].GetComponent<TMP_Text>();
-			txtmp.text = _message;
+			var txtmp = childUI[hierarchyName].GetComponent<TMP_Text>();
+			txtmp.text = message;
 
 			return txtmp;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { Debug.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
 	}
 
-	public TMP_Text GetUI_TMPText(string _hierarchyName, LocalMasterData masterData)
+	public TMP_Text GetUI_TMPText(string hierarchyName, LocalMasterData masterData)
 	{
-		if (childUI.ContainsKey(_hierarchyName))
+		if (childUI.ContainsKey(hierarchyName))
 		{
-			var txtmp = childUI[_hierarchyName].GetComponent<TMP_Text>();
+			var txtmp = childUI[hierarchyName].GetComponent<TMP_Text>();
 
 			txtmp.text = masterData.value;
 
 			return txtmp;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { Debug.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
 	}
 
-	public virtual Button GetUI_Button(string _hierarchyName, Action _action = null, Action _sound = null)
+	public virtual Button GetUI_Button(string hierarchyName, Action action = null, Action sound = null, bool useAnimation = false)
 	{
-		if (childUI.ContainsKey(_hierarchyName))
+		if (childUI.ContainsKey(hierarchyName))
 		{
-			var button = childUI[_hierarchyName].GetComponent<Button>();
+			var button = childUI[hierarchyName].GetComponent<Button>();
 
-			if (_sound == null)
+			if (sound == null)
 			{
 				button.onClick.AddListener(OpenSound);
 			}
 
-			else button.onClick.AddListener(() => _sound?.Invoke());
+			else button.onClick.AddListener(() => sound?.Invoke());
 
-			button.onClick.AddListener(() => _action?.Invoke());
+			button.onClick.AddListener(() => action?.Invoke());
+
+			if (useAnimation) button.UseAnimation();
 
 			return button;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { Debug.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public Image GetUI_Image(string _hierarchyName, Sprite _sprite = null, bool _default = true)
@@ -189,19 +191,19 @@ public class UI_Base : MonoBehaviour
 
 	#region Utils
 
-	protected void ChangeTab(string _hierarchyName)
+	public void ChangeTab(string _hierarchyName)
 	{
 		CloseTabAll();
 
 		childUI[_hierarchyName].SetActive(true);
 	}
 
-	protected void CloseTab(string _hierarchyName)
+	public void CloseTab(string _hierarchyName)
 	{
 		childUI[_hierarchyName].SetActive(false);
 	}
 
-	protected void ChangeTab<T>() where T : Component
+	public void ChangeTab<T>() where T : Component
 	{
 		CloseTabAll();
 
@@ -213,7 +215,7 @@ public class UI_Base : MonoBehaviour
 		else Debug.Log($"WARNING: {typeof(T).Name} not found.");
 	}
 
-	protected void CloseTab<T>() where T : Component
+	public void CloseTab<T>() where T : Component
 	{
 		if (childUI.ContainsKey(typeof(T).Name))
 		{
@@ -223,7 +225,7 @@ public class UI_Base : MonoBehaviour
 		else Debug.Log($"WARNING: {typeof(T).Name} not found.");
 	}
 
-	protected void CloseTabAll()
+	public void CloseTabAll()
 	{
 		childUI.Values
 			.Where(uiObject => uiObject.GetComponent<Tab_Base>() != null)
