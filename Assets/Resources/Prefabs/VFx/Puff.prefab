@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1815914089977532132}
   - component: {fileID: 2453549700083992251}
   - component: {fileID: -4910499789380628071}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Puff
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2636168939883104059}
   - component: {fileID: 6360525085893521593}
   - component: {fileID: 3590753012201696393}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4911,7 +4911,7 @@ GameObject:
   - component: {fileID: 8788830300930638943}
   - component: {fileID: 3917575210777412278}
   - component: {fileID: 6599876562097177618}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Electric Spikes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9869,7 +9869,7 @@ GameObject:
   - component: {fileID: 7305556520194927269}
   - component: {fileID: 3699847487909366383}
   - component: {fileID: 8539268544855198664}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground Arcs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14567,7 +14567,7 @@ GameObject:
   - component: {fileID: 1359553501055882940}
   - component: {fileID: 3486947110095835777}
   - component: {fileID: 7331828811219746696}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19467,7 +19467,7 @@ GameObject:
   - component: {fileID: 8075723235588425617}
   - component: {fileID: 6528643887709322433}
   - component: {fileID: 7700292290962132111}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Electric Arcs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24311,7 +24311,7 @@ GameObject:
   - component: {fileID: 7057316481484138923}
   - component: {fileID: 6335678849884539458}
   - component: {fileID: -7612994539721075671}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Thunder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29426,7 +29426,7 @@ GameObject:
   - component: {fileID: 6396316081584217635}
   - component: {fileID: 1224138883381147453}
   - component: {fileID: 6426421342235865641}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CFXR Lightning Impact
   m_TagString: Untagged
   m_Icon: {fileID: 0}
