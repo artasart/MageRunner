@@ -33,8 +33,6 @@ public class RideController : MonoBehaviour
 		{
 			PoolManager.Spawn("Puff", defaultActor.transform.position + Vector3.up * .5f, Quaternion.identity);
 
-			defaultActor.gameObject.SetActive(false);
-
 			RideAndSave();
 		}
 
@@ -93,8 +91,9 @@ public class RideController : MonoBehaviour
 		FindObjectOfType<Scene_Main>().DownCamera();
 	}
 
-	private void RideAndSave(bool isPreview = false)
+	public void RideAndSave(bool isPreview = false)
 	{
+		defaultActor.gameObject.SetActive(false);
 		horseAvatar.SetActive(true);
 
 		actorSpriteList = defaultActor.GetComponentInChildren<SPUM_SpriteList>();

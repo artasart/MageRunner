@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Popup_Base : UI_Base
 {
 	protected Button btn_Dim;
-	protected Button btn_Close;
+	protected Button btn_Back;
 
 	public Action callback_confirm;
 	public Action callback_cancel;
@@ -28,10 +28,10 @@ public class Popup_Base : UI_Base
 		if (!isDefault) return;
 
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
-		btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close);
+		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Close);
 		btn_Dim.onClick.RemoveListener(OpenSound);
-		btn_Close.onClick.RemoveListener(OpenSound);
-		btn_Close.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
+		btn_Back.onClick.RemoveListener(OpenSound);
+		btn_Back.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 		btn_Dim.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 	}
 

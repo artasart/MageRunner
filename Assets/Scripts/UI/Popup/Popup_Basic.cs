@@ -26,7 +26,7 @@ public class Popup_Basic : Popup_Base
 		{
 			case ModalType.Confrim:
 				btn_Confirm.gameObject.SetActive(true);
-				btn_Close.gameObject.SetActive(false);
+				btn_Back.gameObject.SetActive(false);
 				break;
 			case ModalType.ConfirmCancel:
 				btn_Confirm.gameObject.SetActive(true);
@@ -47,7 +47,7 @@ public class Popup_Basic : Popup_Base
 		img_Basic = GetUI_Image(nameof(img_Basic), null);
 
 		btn_Confirm = GetUI_Button(nameof(btn_Confirm), OnClick_Confirm);
-		btn_Close = GetUI_Button(nameof(btn_Close), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
+		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 
 		txtmp_Description = GetUI_TMPText(nameof(txtmp_Description), string.Empty);

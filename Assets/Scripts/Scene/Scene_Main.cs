@@ -6,6 +6,8 @@ using Cinemachine;
 public class Scene_Main : SceneLogic
 {
 	CinemachineVirtualCamera virtualCamera;
+	GameObject renderTextureCamrea;
+
 	EquipmentController equipmentController;
 
 	private void OnDestroy()
@@ -40,6 +42,8 @@ public class Scene_Main : SceneLogic
 		equipmentController = FindObjectOfType<EquipmentController>();
 
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+
+		renderTextureCamrea = GameObject.Find("RenderTextureCamera");
 	}
 
 	private void Start()
@@ -83,11 +87,15 @@ public class Scene_Main : SceneLogic
 	public void UpCamera()
 	{
 		Util.LerpPosition(virtualCamera.transform, new Vector3(0f, .5f, -10f));
+		SetRenderCameraY(.5f);
+		SetRenderCameraSize(1.2f);
 	}
 
 	public void DownCamera()
 	{
 		Util.LerpPosition(virtualCamera.transform, new Vector3(0f, .4f, -10f));
+		SetRenderCameraY(.4f);
+		SetRenderCameraSize(1f);
 	}
 
 	public void ZoomInCamera()
@@ -98,5 +106,17 @@ public class Scene_Main : SceneLogic
 	public void ZoomOutCamera()
 	{
 		Util.Zoom(virtualCamera, 3f, .05f);
+	}
+
+	private void SetRenderCameraY(float y)
+	{
+		var position = renderTextureCamrea.transform.position;
+
+		renderTextureCamrea.transform.position = new Vector3(position.x, y, position.z);
+	}
+
+	private void SetRenderCameraSize(float size)
+	{
+		renderTextureCamrea.GetComponent<Camera>().orthographicSize = size;
 	}
 }

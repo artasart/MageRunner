@@ -44,12 +44,6 @@ public class Panel_Main : Panel_Base
 		HideRewardAd();
 	}
 
-	private void OnClick_Player()
-	{
-		Debug.Log("OnClick_Player");
-	}
-
-
 	private void OnClick_RewardedAd()
 	{
 		Debug.Log("OnClick_RewardedAd");
@@ -73,16 +67,20 @@ public class Panel_Main : Panel_Base
 	private void OnClick_Mail()
 	{
 		Debug.Log("OnClick_Mail");
+
+		GameManager.UI.StackPopup<Popup_Mail>();
 	}
 
 	private void OnClick_Rank()
 	{
 		Debug.Log("OnClick_Rank");
+		GameManager.UI.StackPopup<Popup_Rank>();
 	}
 
 	private void OnClick_DayCheck()
 	{
 		Debug.Log("OnClick_DayCheck");
+		GameManager.UI.StackPopup<Popup_DailyCheck>();
 	}
 
 

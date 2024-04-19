@@ -6,6 +6,11 @@ public class Panel_Inventory : Panel_Base
 	Button btn_Resources;
 	Button btn_Craft;
 
+	private void OnDisable()
+	{
+		CloseTabAll();
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
