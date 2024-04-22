@@ -34,6 +34,12 @@ public class GameData
 }
 
 [Serializable]
+public class InvenData
+{
+
+}
+
+[Serializable]
 public class VersionData
 {
 	public string version;

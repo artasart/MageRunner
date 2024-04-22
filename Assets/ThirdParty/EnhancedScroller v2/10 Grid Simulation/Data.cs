@@ -17,11 +17,10 @@ namespace EnhancedScrollerDemos.GridSimulation
 		public int index;
 
 		public string thumbnail;
-		public string description;
-
+		public string nameIndex;
 		public int quantity;
+
 		public int price;
-        public bool isNew;
 
         public int spaceCount;
 		public bool isRide;

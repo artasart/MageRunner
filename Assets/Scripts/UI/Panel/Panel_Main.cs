@@ -16,9 +16,13 @@ public class Panel_Main : Panel_Base
 
 	GameObject rewardAd;
 
+	Image img_New;
+
 	protected override void Awake()
 	{
 		base.Awake();
+
+		img_New = GetUI_Image(nameof(img_New));
 
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_RewardAd = GetUI_Button(nameof(btn_RewardAd), OnClick_RewardedAd, useAnimation: true);
@@ -60,8 +64,11 @@ public class Panel_Main : Panel_Base
 	}
 
 	private void OnClick_Inventory()
-	{ 
+	{
 		GameManager.UI.SwitchPanel<Panel_Inventory>(true);
+		GameManager.UI.FetchPanel<Panel_Inventory>().ShowNewIcon(img_New.gameObject.activeSelf);
+
+		ShowNewIcon(false);
 	}
 
 	private void OnClick_Mail()
@@ -99,5 +106,10 @@ public class Panel_Main : Panel_Base
 		}
 
 		GameManager.UI.Move(rewardAd, new Vector3(0f, 80f, 0f));
+	}
+
+	public void ShowNewIcon(bool enable)
+	{
+		img_New.gameObject.SetActive(enable);
 	}
 }

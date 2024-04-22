@@ -215,6 +215,11 @@ public class UI_Base : MonoBehaviour
 		else Debug.Log($"WARNING: {typeof(T).Name} not found.");
 	}
 
+	public T FetchTab<T>() where T:Component
+	{
+		return childUI[typeof(T).Name].GetComponent<T>();
+	}
+
 	public void CloseTab<T>() where T : Component
 	{
 		if (childUI.ContainsKey(typeof(T).Name))

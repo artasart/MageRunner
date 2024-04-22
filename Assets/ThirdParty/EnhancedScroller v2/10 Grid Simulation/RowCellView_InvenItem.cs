@@ -7,10 +7,11 @@ using UnityEngine.UI;
 public class RowCellView_InvenItem : RowCellView
 {
 	Button btn_Container;
-	InvenItemData invenItemData;
 
 	Image img_Thumnail;
 	Image img_New;
+
+	public InvenItemData invenItemData;
 
 	private void Awake()
 	{
@@ -22,22 +23,44 @@ public class RowCellView_InvenItem : RowCellView
 	{
 		base.SetData(data);
 
-		//DebugManager.ClearLog(invenItemData.thumbnail);
+		var invenData = data as InvenItemData;
 
-		//var sprite = Resources.Load<Sprite>(invenItemData.thumbnail);
+		if(invenData != null)
+		{
+			Debug.Log(invenData.thumbnail);
 
-		//img_Thumnail.sprite = sprite;
+			if(invenData.thumbnail != null)
+			{
+				var sprite = Resources.Load<Sprite>(invenData.thumbnail);
 
-		invenItemData = data as InvenItemData;
+				img_Thumnail.sprite = sprite;
+
+				Debug.Log("스프라이트 : " + sprite);
+				Debug.Log("이미지 : " + img_Thumnail.sprite);
+			}
+		}
+
+		invenItemData = invenData;
 	}
 
 	private void OnClick_EquipItem()
 	{
-		if(invenItemData.isRide)
+		if (invenItemData.isRide)
 		{
-			FindObjectOfType<RideController>().Init(invenItemData.name, invenItemData.index);
+			FindObjectOfType<RideController>().Init(invenItemData.nameIndex, invenItemData.index);
 		}
+
+		else
+		{
+			var equipment = new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index);
+
+			FindObjectOfType<EquipmentManager>().ChangeEquipment(equipment);
+		}
+
+		GameManager.UI.FetchPanel<Panel_Inventory>().FetchTab<Tab_Equipment>().isChanged = true;
 
 		Debug.Log(invenItemData.name + " is selected..");
 	}
+
+	public bool isChanged = false;
 }

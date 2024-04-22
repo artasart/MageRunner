@@ -183,8 +183,14 @@ public class SPUM_SpriteList : MonoBehaviour
 							}
 						}
 					}
+					if(tSP.Length == 2)
+					{
+						Debug.Log("This is Pants");
 
-				}
+						if (tSP[0].name == "Left") _objList[0].sprite = tSP[0];
+						if (tSP[1].name == "Right") _objList[1].sprite = tSP[1];
+					}
+				}				
 				else if (tSP.Length > 0)
 				{
 					_objList[i].sprite = tSP[0];

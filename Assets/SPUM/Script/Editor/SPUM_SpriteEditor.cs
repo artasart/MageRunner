@@ -38,9 +38,7 @@ public class SPUM_PrefabEditor : Editor
                     SPB._spriteOBj.ResyncData();
                 }
                 base.OnInspectorGUI();
-            }
-            
-        }
-       
+            }            
+        }       
     }
 }
