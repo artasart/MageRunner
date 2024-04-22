@@ -21,12 +21,12 @@ public class CameraShake3D : MonoBehaviour
 
 	public void Shake()
     {
-        if (cameraNoise == null)
-        {
-            cameraNoise = GetComponent<CameraNoise>();
-            noise = new CameraNoise.Properties(90f, .85f, 45f, 1f, .635f, .4f, 1.85f);
-        }
+		if (cameraNoise == null)
+		{
+			cameraNoise = GetComponent<CameraNoise>();
+			noise = new CameraNoise.Properties(90f, .05f, 10f, .5f, .625f, .415f, .35f);
+		}
 
-        cameraNoise.StartShake(noise);
-    }
+		cameraNoise.StartShake(noise);
+	}
 }

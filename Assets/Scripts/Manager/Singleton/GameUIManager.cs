@@ -611,6 +611,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 		while (Mathf.Abs(_current.alpha - _target) >= 0.001f)
 		{
+			if (_current == null) yield break;
+
 			_current.alpha = Mathf.Lerp(_current.alpha, _target, lerpvalue += _lerpspeed * Time.deltaTime);
 
 			yield return Timing.WaitForOneFrame;

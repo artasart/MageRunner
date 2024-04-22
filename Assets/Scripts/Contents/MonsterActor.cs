@@ -3,33 +3,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using static EasingFunction;
+using static Enums;
+using static UnityEditor.Progress;
 
-[RequireComponent(typeof(CapsuleCollider2D))]
-public class MonsterActor : LevelElement
+[RequireComponent(typeof(BoxCollider2D))]
+public class MonsterActor : Actor
 {
 	#region Members
 
-	[SerializeField] int score = 100;
-	[SerializeField] int coint = 10;
-	[SerializeField] int health = 100;
-	[SerializeField] int attack = 100;
+	[Header("Override")]
+	[SerializeField] public int score = 100;
+	[SerializeField] public int gold = 10;
+	[SerializeField] public int exp = 10;
 
 	public float noticeRange = 2;
 	public float attackRange = 1;
 
-	Animator animator;
-	CapsuleCollider2D capsuleCollider2D;
 	Transform hp;
 
 	public event Action<int, int> OnMonsterDie;
-
-	bool isDead = false;
-
-	public int healhtOrigin;
-
-	Rigidbody2D rgbd2d;
 
 	#endregion
 
@@ -39,23 +34,14 @@ public class MonsterActor : LevelElement
 
 	protected override void Awake()
 	{
-		capsuleCollider2D = GetComponent<CapsuleCollider2D>();
-		capsuleCollider2D.isTrigger = true;
-		capsuleCollider2D.offset = new Vector2(0, 0.325f);
-		capsuleCollider2D.size = new Vector2(0.5f, 0.65f);
+		base.Awake();
 
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
-
-		healhtOrigin = health;
-
-		rgbd2d = GetComponent<Rigidbody2D>();
 	}
 
 	void Start()
 	{
-		animator = GetComponentInChildren<Animator>();
-
 		OnMonsterDie += FindObjectOfType<Scene_Game>().GainResource;
 	}
 
@@ -65,36 +51,36 @@ public class MonsterActor : LevelElement
 
 	#region Core methods
 
-	public void WatchTarget(Transform player) => Util.RunCoroutine(Co_WatchTarget(player), nameof(Co_WatchTarget) + this.GetHashCode());
+	//public void WatchTarget(Transform player) => Util.RunCoroutine(Co_WatchTarget(player), nameof(Co_WatchTarget) + this.GetHashCode());
 
-	private IEnumerator<float> Co_WatchTarget(Transform player)
-	{
-		while (true)
-		{
-			attackRange = 1.25f;
+	//private IEnumerator<float> Co_WatchTarget(Transform player)
+	//{
+	//	while (true)
+	//	{
+	//		attackRange = 1.25f;
 
-			if (Vector3.Distance(this.gameObject.transform.position, player.position) < attackRange &&
-				Mathf.Abs(this.gameObject.transform.position.y - player.position.y) <= .5f)
-			{
-				Attack();
+	//		if (Vector3.Distance(this.gameObject.transform.position, player.position) < attackRange &&
+	//			Mathf.Abs(this.gameObject.transform.position.y - player.position.y) <= .5f)
+	//		{
+	//			Attack();
 
-				if (player.GetComponent<PlayerActor>().health <= attack)
-				{
-					yield return Timing.WaitForSeconds(.15f);
+	//			if (player.GetComponent<PlayerActor>().health <= damage)
+	//			{
+	//				yield return Timing.WaitForSeconds(.15f);
 
-					if (isDead) yield break;
+	//				if (isDead) yield break;
 
-					player.GetComponent<PlayerActor>().Damage(attack);
+	//				player.GetComponent<PlayerActor>().Damage(damage);
 
-					yield break;
-				}
-			}
+	//				yield break;
+	//			}
+	//		}
 
-			yield return Timing.WaitForOneFrame;
-		}
-	}
+	//		yield return Timing.WaitForOneFrame;
+	//	}
+	//}
 
-	public void StopTarget() => Util.KillCoroutine(nameof(Co_WatchTarget) + this.GetHashCode());
+	//public void StopTarget() => Util.KillCoroutine(nameof(Co_WatchTarget) + this.GetHashCode());
 
 	#endregion
 
@@ -102,124 +88,59 @@ public class MonsterActor : LevelElement
 
 	#region Entity
 
-	private void Attack()
+	public override void Attack()
 	{
 		animator.SetTrigger("Attack");
 	}
 
-	private void Die()
+	public override void Die()
 	{
+		isDead = true;
+		health = 0;
+
 		animator.SetBool("Die", true);
 
-		OnMonsterDie?.Invoke(score, coint);
+		this.GetComponent<BoxCollider2D>().enabled = false;
+		this.transform.Search("ExecuteTrigger").GetComponent<BoxCollider2D>().enabled = false;
+
+		hp.GetComponent<TMP_Text>().text = 0.ToString();
+
+		GetItem();
+
+		OnMonsterDie?.Invoke(score, gold);
 	}
 
-	public void Damage(int amount = 0, bool execute = false)
+	
+
+	public override void Damage(int amount = 0, bool execute = false)
 	{
+		base.Damage(amount, execute);
+
 		if (execute) amount = health;
 
 		if (health <= amount)
 		{
-			health = 0;
-
-			animator.SetBool("Die", true);
-
-			//flash method goes here...
-
-			this.GetComponent<CapsuleCollider2D>().enabled = false;
-			this.GetComponent<BoxCollider2D>().enabled = false;
-
-			hp.GetComponent<TMP_Text>().text = 0.ToString();
-
-			FindObjectOfType<Scene_Game>().GainResource(score, coint);
-
-			isDead = true;
+			Die();
 		}
 	}
 
-	private void Update()
+	public override void Refresh()
 	{
-		if(Input.GetKeyDown(KeyCode.M))
-		{
-			DieFar();
-		}
-	}
+		base.Refresh();
 
-	public void DieFar()
-	{
-		var player = FindObjectOfType<PlayerActor>().gameObject;
-
-		Vector2 pushDirection = (player.transform.position - transform.position).normalized;
-
-		rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
-	}
-
-	public float pushForce = 10f;
-
-
-	public void Refresh()
-	{
 		animator.Rebind();
-		health = healhtOrigin;
+		health = healthOrigin;
 
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
-		this.GetComponent<CapsuleCollider2D>().enabled = true;
 		this.GetComponent<BoxCollider2D>().enabled = true;
-	}
+		this.transform.Search("ExecuteTrigger").GetComponent<BoxCollider2D>().enabled = true;
 
-	[Header("Damage Flash")]
-	[ColorUsage(true, true)]
-	[SerializeField] Color flashColor;
-	[SerializeField] float flashTime = .25f;
+		//StopTarget();
 
-	[SerializeField] SpriteRenderer[] spriteRenderers;
-	[SerializeField] Material[] materials;
+		isDead = false;
 
-	public void DamageFlash()
-	{
-		Util.RunCoroutine(Co_DamageFlash(), nameof(Co_DamageFlash) + this.GetHashCode());
-	}
-
-	private void SetFlashColor()
-	{
-		for (int i = 0; i < materials.Length; i++)
-		{
-			materials[i].SetColor("_FlashColor", flashColor);
-		}
-	}
-
-	private void SetFlashAmount(float amount)
-	{
-		for (int i = 0; i < materials.Length; i++)
-		{
-			materials[i].SetFloat("_FlashAmount", amount);
-		}
-	}
-
-	private IEnumerator<float> Co_DamageFlash()
-	{
-		Debug.Log("Damage Flash");
-
-		SetFlashColor();
-
-		float currentFlashAmount = 1f;
-		float elapsedTime = 0f;
-
-		var fucntion = Ease.Spring;
-
-		while (currentFlashAmount > 0f)
-		{
-			Function function = GetEasingFunction(fucntion);
-
-			currentFlashAmount = function(1f, 0f, elapsedTime);
-
-			SetFlashAmount(currentFlashAmount);
-
-			elapsedTime += 2f * Time.deltaTime;
-
-			yield return Timing.WaitForOneFrame;
-		}
+		this.GetComponent<RePoolObject>().RePool();
 	}
 
 	#endregion
@@ -232,17 +153,93 @@ public class MonsterActor : LevelElement
 	{
 		if (other.CompareTag(Define.PLAYER))
 		{
-			Damage(other.gameObject.GetComponent<PlayerActor>().health);
+			if (other.gameObject.GetComponent<PlayerActor>().isDead) return;
 
-			other.gameObject.GetComponent<PlayerActor>().Damage(attack);
+			Attack();
+
+			Invoke(nameof(ApplyDamage), .2f);
 		}
 	}
+
+	private void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.CompareTag(Define.PLAYER))
+		{
+			CancelInvoke(nameof(ApplyDamage));
+		}
+	}
+
+
+	private void ApplyDamage()
+	{
+		var player = FindObjectOfType<PlayerActor>();
+
+		player.Damage(damage);		
+	}
+
+
 
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.position, attackRange);
 	}
+
+	#endregion
+
+
+
+	#region Util
+
+	public void GetItem()
+	{
+		SPUM_Prefabs spumPrefabs = GetComponent<SPUM_Prefabs>();
+
+		GainEquipment(EquipmentType.Hair, spumPrefabs._spriteOBj._hairListString);
+		GainEquipment(EquipmentType.Weapons, spumPrefabs._spriteOBj._weaponListString);
+		GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
+		GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
+		GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
+		GainEquipment(EquipmentType.Pant, spumPrefabs._spriteOBj._pantListString);
+	}
+
+	public void GainEquipment(EquipmentType type, List<string> test)
+	{
+		var game = FindObjectOfType<Scene_Game>();
+
+		var itemName = (type == EquipmentType.Cloth || type == EquipmentType.Armor || type == EquipmentType.Pant) ? test[0] : "";
+
+		foreach (var item in test)
+		{
+			if (string.IsNullOrEmpty(item)) continue;
+
+			if (game.gainedItems.ContainsKey(item))
+			{
+				game.gainedItems[item]++;
+			}
+
+			else
+			{
+				game.gainedItems.Add(item, 1);
+			}
+		}
+
+		switch (type)
+		{
+			case EquipmentType.Cloth:
+				game.gainedItems[itemName] /= 3;
+				break;
+			case EquipmentType.Armor:
+				game.gainedItems[itemName] /= 2;
+				break;
+			case EquipmentType.Pant:
+				game.gainedItems[itemName] /= 3;
+				break;
+			default:
+				break;
+		}
+	}
+
 
 	#endregion
 }

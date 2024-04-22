@@ -8,6 +8,8 @@ TagManager:
   - Reward
   - Monster
   - Obstacle
+  - FxTemporaire
+  - Execute
   layers:
   - Default
   - TransparentFX

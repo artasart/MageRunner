@@ -11,6 +11,7 @@ public static class Define
 	public const string PATH_CORE = PATH_PREFAB + "Manager/";
 	public const string PATH_UI = PATH_PREFAB + "UI/";
 	public const string PATH_VFX = PATH_PREFAB + "VFx/";
+	public const string PATH_Actor = PATH_PREFAB + "Actor/";
 	public const string PATH_SPRITE = "Sprites/";
 	public const string PATH_MONSTERS = PATH_CONTENTS + "Monsters/";
 	public const string PATH_CONTENTS = PATH_PREFAB + "Contents/";
@@ -34,6 +35,7 @@ public static class Define
 	public const string COIN = "Coin";
 	public const string BIGCOIN = "BigCoin";
 	public const string MONSTER = "Monster";
+	public const string EXECUTE = "Execute";
 	public const string PORTAL = "Portal";
 	public const string OBSTACLE = "Obstacle";
 
@@ -50,4 +52,7 @@ public static class Define
 	public const string	JSON_MASTERDATA = "MasterData.json";
 	public const string	JSON_LEVELDATA = "LevelData.json";
 	public const string	JSON_GAMEDATA = "GameData.json";
+
+
+	public const string MONSTERACTOR = "MonsterActor";
 }

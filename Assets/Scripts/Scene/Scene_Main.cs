@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
@@ -8,7 +6,7 @@ public class Scene_Main : SceneLogic
 	CinemachineVirtualCamera virtualCamera;
 	GameObject renderTextureCamrea;
 
-	EquipmentController equipmentController;
+	EquipmentManager equipmentController;
 
 	private void OnDestroy()
 	{
@@ -39,11 +37,23 @@ public class Scene_Main : SceneLogic
 
 		PoolManager.InitPool();
 
-		equipmentController = FindObjectOfType<EquipmentController>();
+		equipmentController = FindObjectOfType<EquipmentManager>();
 
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
 		renderTextureCamrea = GameObject.Find("RenderTextureCamera");
+
+		LocalData.gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
+
+		if (LocalData.gameData.gainedItems != null)
+		{
+			LocalData.gameData.gainedItems.Clear();
+			LocalData.gameData.gainedItems = null;
+
+			JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		}
+
+		else { Debug.Log("You have Gained no items."); }
 	}
 
 	private void Start()
@@ -56,32 +66,36 @@ public class Scene_Main : SceneLogic
 
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 
-		PoolManager.SetPoolData("Puff", 10);
+		PoolManager.SetPoolData("Puff", 10, Define.PATH_VFX);
 	}
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Z))
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().ShowRewardAd();
-		}
+		//if(Input.GetKeyDown(KeyCode.Space))
+		//{
+		//	GetFileNames();
+		//}
+		//if (Input.GetKeyDown(KeyCode.Z))
+		//{
+		//	GameManager.UI.FetchPanel<Panel_Main>().ShowRewardAd();
+		//}
 
-		if (Input.GetKeyDown(KeyCode.X))
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().HideRewardAd();
-		}
-
-
-		if (Input.GetKeyDown(KeyCode.Alpha1))
-		{
-			ZoomInCamera();
-		}
+		//if (Input.GetKeyDown(KeyCode.X))
+		//{
+		//	GameManager.UI.FetchPanel<Panel_Main>().HideRewardAd();
+		//}
 
 
-		if (Input.GetKeyDown(KeyCode.Alpha2))
-		{
-			ZoomOutCamera();
-		}
+		//if (Input.GetKeyDown(KeyCode.Alpha1))
+		//{
+		//	ZoomInCamera();
+		//}
+
+
+		//if (Input.GetKeyDown(KeyCode.Alpha2))
+		//{
+		//	ZoomOutCamera();
+		//}
 	}
 
 	public void UpCamera()

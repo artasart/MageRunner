@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using static Enums;
 
-public class EquipmentController : MonoBehaviour
+public class EquipmentManager : MonoBehaviour
 {
 	public SerializableDictionary<EquipmentType, Equipment> equipments;
 

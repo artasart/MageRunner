@@ -3,7 +3,6 @@ using MEC;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public enum GameState
 {
 	Playing,
@@ -29,8 +28,7 @@ public class Scene_Game : SceneLogic
 
 	public GameState gameState = GameState.Playing;
 
-
-
+	public SerializableDictionary<string, int> gainedItems = new SerializableDictionary<string, int>();
 
 	private void OnDestroy()
 	{
@@ -47,6 +45,13 @@ public class Scene_Game : SceneLogic
 		{
 			LocalData.gameData = new GameData();
 		}
+
+		else
+		{
+			LocalData.gameData.gainedItems.Clear();
+		}
+
+
 
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
 
@@ -65,8 +70,9 @@ public class Scene_Game : SceneLogic
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		player = FindObjectOfType<PlayerActor>();
 
-
-		PoolManager.SetPoolData("Thunder", 10);
+		PoolManager.InitPool();
+		PoolManager.SetPoolData("Thunder", 10, Define.PATH_VFX);
+		PoolManager.SetPoolData(Define.MONSTERACTOR, 20, Define.PATH_ACTOR);
 	}
 
 	private void Start()
@@ -85,7 +91,6 @@ public class Scene_Game : SceneLogic
 		GameStart();
 	}
 
-
 	public void SaveGameData()
 	{
 		if (score > LocalData.gameData.highScore)
@@ -94,10 +99,9 @@ public class Scene_Game : SceneLogic
 		}
 
 		LocalData.gameData.coin += coin;
-		LocalData.gameData.exp += (int)exp;
+		LocalData.gameData.gainedItems = gainedItems;
 
 		DebugManager.Log($"Player Gained {coin} coin.");
-		DebugManager.Log($"Player Gained {exp} exp.");
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
@@ -112,26 +116,32 @@ public class Scene_Game : SceneLogic
 
 		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
 
+		GameManager.Sound.PlaySound("Spawn", .25f);
 		PoolManager.Spawn("Thunder", new Vector3(0f, -0.2f, 0f), Quaternion.identity);
 
 		yield return Timing.WaitForSeconds(.1f);
 
 		playerModel.SetActive(true);
 
-		FindObjectOfType<GroundController>().MoveGround();
+		FindObjectOfType<LevelController>().MoveGround();
 
 		float value = 0f;
+		bool isWalk = false;
 
 		while (value < 1f)
 		{
 			player.UpdateAnimator(value += Time.deltaTime);
 
+			if (!isWalk && value > .25f)
+			{
+				player.GetComponent<FootStepController>().StartWalk();
+				isWalk = true;
+			}
+
 			yield return Timing.WaitForOneFrame;
 		}
 
 		player.UpdateAnimator(1f);
-		
-		player.GetComponent<FootStepController>().StartWalk();
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 
@@ -140,17 +150,16 @@ public class Scene_Game : SceneLogic
 		AddDifficulty();
 	}
 
-
 	public void AddDifficulty()
 	{
-		Util.RunCoroutine(Co_AddDifficulty(), nameof(Co_AddDifficulty), CoroutineTag.Content);		
+		Util.RunCoroutine(Co_AddDifficulty(), nameof(Co_AddDifficulty), CoroutineTag.Content);
 	}
 
 	private IEnumerator<float> Co_AddDifficulty()
 	{
 		yield return Timing.WaitForSeconds(5f);
 
-		var groundController = FindObjectOfType<GroundController>();
+		var groundController = FindObjectOfType<LevelController>();
 
 		var currentSpeed = groundController.GetMoveSpeed();
 		var addSpeed = currentSpeed * .1f;
@@ -162,14 +171,15 @@ public class Scene_Game : SceneLogic
 		{
 			yield return Timing.WaitForSeconds(5f);
 
-			currentSpeed += addSpeed;
+			currentSpeed = Mathf.Clamp(currentSpeed += addSpeed, 0f, 10f);
 			probability += addProbability;
 
 			groundController.MoveGround(currentSpeed);
 			groundController.AddProbability(addProbability);
+			groundController.monsterProbability += (groundController.monsterProbability * .1f);
 
-			DebugManager.ClearLog("현재 속도 : " + currentSpeed);
-			DebugManager.Log("현재 확률 : " + probability);
+			//DebugManager.Log("현재 속도 : " + currentSpeed);
+			//DebugManager.Log("현재 확률 : " + probability);
 		}
 	}
 
@@ -203,7 +213,7 @@ public class Scene_Game : SceneLogic
 	{
 		player.UpdateAnimator(1f);
 
-		FindObjectOfType<GroundController>().MoveGround();
+		FindObjectOfType<LevelController>().MoveGround();
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
@@ -298,6 +308,8 @@ public class Scene_Game : SceneLogic
 			item.Refresh();
 		}
 
+		FindObjectOfType<LevelController>().Refresh();
+
 		foreach (var item in FindObjectsOfType<MonsterActor>())
 		{
 			item.Refresh();
@@ -347,5 +359,37 @@ public class Scene_Game : SceneLogic
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
 
 		GameManager.UI.StackPanel<Panel_Tutorial>(true);
+	}
+
+
+
+
+	public void AddExp(int exp)
+	{
+		if (LocalData.gameData.level == LocalData.masterData.levelData[LocalData.masterData.levelData.Count - 1].level)
+		{
+			Debug.Log("Max Level : " + LocalData.gameData.level);
+
+			return;
+		}
+
+		var totalExp = LocalData.masterData.levelData[LocalData.gameData.level].exp;
+
+		if (LocalData.gameData.exp + exp >= totalExp)
+		{
+			exp = (LocalData.gameData.exp + exp) - totalExp;
+
+			LocalData.gameData.level++;
+			LocalData.gameData.exp = 0;
+
+			AddExp(exp);
+		}
+
+		else
+		{
+			Debug.Log("Player Level Up !!! : " + LocalData.gameData.level);
+
+			LocalData.gameData.exp += exp;
+		}
 	}
 }

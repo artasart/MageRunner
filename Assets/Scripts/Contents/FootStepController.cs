@@ -20,7 +20,7 @@ public class FootStepController : MonoBehaviour
 
 	public void StartWalk()
 	{
-		Util.RunCoroutine(Co_PlaySound(), nameof(Co_PlaySound));
+		Util.RunCoroutine(Co_PlaySound(), nameof(Co_PlaySound), CoroutineTag.Content);
 	}
 
 	private IEnumerator<float> Co_PlaySound()

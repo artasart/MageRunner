@@ -777,7 +777,7 @@ GameObject:
   - component: {fileID: 6416487677742837357}
   - component: {fileID: 6728050316217540882}
   m_Layer: 0
-  m_Name: InfiniteGround
+  m_Name: LevelController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

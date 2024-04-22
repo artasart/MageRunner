@@ -14,18 +14,18 @@ public class AttackRange : MonoBehaviour
 		circleCollider2D.radius = this.GetComponentInParent<MonsterActor>().noticeRange;
 	}
 
-	private void OnTriggerEnter2D(Collider2D other)
-	{
-		if (other.gameObject.CompareTag(Define.PLAYER))
-		{
-			this.GetComponentInParent<MonsterActor>()?.WatchTarget(other.transform);
-		}
-	}
-	private void OnTriggerExit2D(Collider2D other)
-	{
-		if (other.gameObject.CompareTag(Define.PLAYER))
-		{
-			this.GetComponentInParent<MonsterActor>()?.StopTarget();
-		}
-	}
+	//private void OnTriggerEnter2D(Collider2D other)
+	//{
+	//	if (other.gameObject.CompareTag(Define.PLAYER))
+	//	{
+	//		this.GetComponentInParent<MonsterActor>()?.WatchTarget(other.transform);
+	//	}
+	//}
+	//private void OnTriggerExit2D(Collider2D other)
+	//{
+	//	if (other.gameObject.CompareTag(Define.PLAYER))
+	//	{
+	//		this.GetComponentInParent<MonsterActor>()?.StopTarget();
+	//	}
+	// }
 }

@@ -175,7 +175,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 		meta.transform.SetAsLastSibling();
 		meta.SetActive(true);
 
-		var handle_Show = Timing.RunCoroutine(Co_Show(meta, isFade, lerpSpeed), meta.GetHashCode());
+		var handle_Show = Timing.RunCoroutine(Co_Show(meta, isFade, lerpSpeed), nameof(Co_Show) + meta.GetHashCode());
 
 		yield return Timing.WaitUntilDone(handle_Show);
 

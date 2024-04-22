@@ -18,15 +18,15 @@ public static class PoolManager
 		poolParent = GameObject.Find(Define.POOL).transform;
 	}
 
-	public static void SetPoolData(string name, int size)
+	public static void SetPoolData(string name, int size, string path)
 	{
 		var poolData = new PoolData();
 		poolData.name = name;
 		poolData.poolSize = size;
 
 		poolDatas.Add(poolData);
-
-		var prefab = UnityEngine.Resources.Load<RePoolObject>(Define.PATH_VFX + name);
+		
+		var prefab = UnityEngine.Resources.Load<RePoolObject>(path+ name);
 		var objectPool = new ObjectPool<RePoolObject>(prefab, poolData, poolParent);
 
 		objectPools.Add(poolData.name, objectPool);
@@ -41,6 +41,9 @@ public static class PoolManager
 
 		return null;
 	}
+
+	public static Dictionary<string, ObjectPool<RePoolObject>> GetObjectPool() => objectPools;
+
 
 
 	public static void RePool(GameObject obj, float delay = 0f) => Timing.RunCoroutine(Co_RePool(obj, delay));

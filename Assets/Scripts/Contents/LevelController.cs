@@ -3,13 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GroundController : MonoBehaviour
+public class LevelController : MonoBehaviour
 {
+	public bool generateMonster = false;
+
+	public float groundProbability = .1f;
+	float groundProbabilityOrigin;
+
+	public float monsterProbability = .1f;
+	float monsterProbabilityOrigin;
+
     List<Ground> grounds = new List<Ground>();
 
     private void Awake()
-    {
-        grounds = FindObjectsOfType<Ground>().ToList();
+	{
+		grounds = FindObjectsOfType<Ground>().ToList();
+
+		monsterProbabilityOrigin = monsterProbability;
+		groundProbabilityOrigin = groundProbability;
 	}
 
 	public float GetMoveSpeed()
@@ -19,7 +30,7 @@ public class GroundController : MonoBehaviour
 
 	public float GetProbability()
 	{
-		return grounds[0].probability;
+		return groundProbability;
 	}
 
 	public void MoveGround(float moveSpeed = 5f)
@@ -46,5 +57,11 @@ public class GroundController : MonoBehaviour
 		{
 			item.SetProbability(amount);
 		}
+	}
+
+	public void Refresh()
+	{ 
+		monsterProbability = monsterProbabilityOrigin;
+		groundProbability = groundProbabilityOrigin;
 	}
 }

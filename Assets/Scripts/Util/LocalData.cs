@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static Enums;
 
@@ -28,6 +29,8 @@ public class GameData
 
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
 	public Ride ride;
+
+	public SerializableDictionary<string, int> gainedItems;
 }
 
 [Serializable]
@@ -77,6 +80,25 @@ public class Equipment
 	protected readonly string[] versions = { "", "Ver121/", "Ver300/", "F_SR/" };
 	protected readonly string path;
 
+	public Equipment(EquipmentType type, string filename)
+	{
+		this.type = type;
+		this.name = ExtractTypeAndNumber(filename).name;
+		this.index = ExtractTypeAndNumber(filename).index;
+
+		string fileName = $"{name}_{index}.png";
+
+		int categoryIndex = IsPackageItem(fileName) ? 1 : 0;
+		int versionIndex = GetVersionIndex(fileName);
+
+		string category = categories[categoryIndex];
+		string version = versions[versionIndex];
+
+		string typeName = $"{(int)type}_{type}/";
+
+		path = $"{basePath}{category}{version}{typeName}{fileName}";
+	}
+
 	public Equipment(EquipmentType type, string name, int index)
 	{
 		this.type = type;
@@ -113,4 +135,19 @@ public class Equipment
 	}
 
 	public string GetPath() => path;
+
+	public (string name, int index) ExtractTypeAndNumber(string itemName)
+	{
+		string[] parts = itemName.Split('_');
+
+		if (parts.Length >= 3 && int.TryParse(parts.Last(), out int number))
+		{
+			string type = string.Join("_", parts.Take(parts.Length - 1));
+			return (type, number);
+		}
+		else
+		{
+			throw new ArgumentException("Invalid item name format.");
+		}
+	}
 }

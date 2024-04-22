@@ -44,6 +44,8 @@ public class Popup_GameOver : Popup_Base
 
 	private void OnClick_Home()
 	{
+		FindObjectOfType<Scene_Game>().SaveGameData();
+
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
 
@@ -53,6 +55,7 @@ public class Popup_GameOver : Popup_Base
 		txtmp_Coin.text = coin.ToString("N0");
 		txtmp_Exp.text = exp.ToString();
 
+		FindObjectOfType<Scene_Game>().AddExp(exp);
 		FindObjectOfType<Scene_Game>().SaveGameData();
 	}
 }

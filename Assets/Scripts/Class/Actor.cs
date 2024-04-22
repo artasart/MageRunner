@@ -4,15 +4,28 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[Header("Virtual")]
+	public int health = 100;
+	public int damage = 100;
+	public bool isDead = false;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	protected int healthOrigin;
+
+	protected Animator animator;
+	protected BoxCollider2D boxCollider2D;
+
+	protected virtual void Awake()
+	{
+		healthOrigin = health;
+
+		animator = GetComponentInChildren<Animator>();
+	}
+
+	public virtual void Attack() { }
+
+	public virtual void Die() { }
+
+	public virtual void Damage(int amount, bool execute) { }
+
+	public virtual void Refresh() { }
 }

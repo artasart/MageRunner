@@ -2,7 +2,6 @@ using MEC;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -19,6 +18,7 @@ public class PlayerActor : Actor
 	[SerializeField] private int maxJumps = 2;
 
 	[Header("Jump and Slide")]
+	[SerializeField] private bool isJumping = false;
 	[SerializeField] float jumpValue = 10f;
 	[SerializeField] public bool isGrounded = true;
 	[SerializeField] bool isSliding = false;
@@ -26,17 +26,12 @@ public class PlayerActor : Actor
 	[SerializeField] int remainingJumps;
 
 	[Header("Entity")]
-	[HideInInspector] public bool isDead = false;
-	[HideInInspector] public int health = 10;
 	[HideInInspector] public int attackPoint = 10;
-
-	[HideInInspector] public int healthOrigin = 10;
 	[HideInInspector] public float moveSpeedOrigin = 5;
 
 	public float dieVelocity = .75f;
 
 	Rigidbody2D rgbd2d;
-	Animator animator;
 	Transform hp;
 
 	Scene_Game game;
@@ -47,21 +42,21 @@ public class PlayerActor : Actor
 
 	#region Initialize
 
-	private void Awake()
+	protected override void Awake()
 	{
-		game = FindObjectOfType<Scene_Game>();
+		base.Awake();
 
 		rgbd2d = GetComponent<Rigidbody2D>();
-		animator = GetComponentInChildren<Animator>();
-		remainingJumps = maxJumps;
 
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
+
+		game = FindObjectOfType<Scene_Game>();
+		remainingJumps = maxJumps;
 	}
 
 	private void Start()
 	{
-		healthOrigin = health;
 		moveSpeedOrigin = moveSpeed;
 	}
 
@@ -141,7 +136,7 @@ public class PlayerActor : Actor
 
 	public void Jump()
 	{
-		if (!CanJump()) return;
+		if (!CanJump() || isDead) return;
 
 		PerformJump();
 		HandleJumpCount();
@@ -156,16 +151,12 @@ public class PlayerActor : Actor
 
 			if (isKillJump)
 			{
-				Debug.Log("Kill Jump");
-
 				GameManager.Sound.PlaySound("Kill_1");
 			}
 
 			else
 			{
-				Debug.Log(remainingJumps);
-
-				if(remainingJumps >= 1)
+				if (remainingJumps >= 1)
 				{
 					GameManager.Sound.PlaySound("Jump_1");
 				}
@@ -205,6 +196,24 @@ public class PlayerActor : Actor
 	{
 		rgbd2d.velocity = new Vector2(rgbd2d.velocity.x, jumpValue);
 		isGrounded = false;
+
+		CheckIsJumping();
+	}
+
+	private void CheckIsJumping()
+	{
+		Util.RunCoroutine(Co_CheckIsJumping(), nameof(Co_CheckIsJumping), CoroutineTag.Content);
+	}
+
+	private IEnumerator<float> Co_CheckIsJumping()
+	{
+		isJumping = true;
+
+		yield return Timing.WaitUntilTrue(() => rgbd2d.velocity.y < 0);
+
+		isJumping = false;
+
+		yield return Timing.WaitUntilTrue(() => isGrounded);
 	}
 
 	#endregion
@@ -222,11 +231,19 @@ public class PlayerActor : Actor
 		Die();
 	}
 
-	public void Damage(int amount)
+	public override void Damage(int amount, bool execute = false)
 	{
+		base.Damage(amount, execute);
+
 		if (health < amount)
 		{
 			hp.GetComponent<TMP_Text>().text = "Busted";
+
+			FindObjectOfType<CameraShake3D>().Shake();
+
+			var multiplier = isGrounded ? 1.5f : 1f;
+
+			rgbd2d.AddForce(Vector3.right * pushForce * multiplier, ForceMode2D.Impulse);
 
 			Die();
 
@@ -245,16 +262,19 @@ public class PlayerActor : Actor
 		animator.SetBool(Define.SLIDE, isSliding);
 	}
 
-	public void Die()
+	public override void Die()
 	{
+		base.Die();
+
 		if (isDead) return;
+
+		isDead = true;
 
 		GameManager.Sound.PlaySound("BodyFall_1");
 
 		this.GetComponent<FootStepController>().StopWalk();
-		FindObjectOfType<GroundController>().StopGround();
+		FindObjectOfType<LevelController>().StopGround();
 
-		isDead = true;
 		animator.SetBool(Define.DIE, true);
 		animator.SetBool(Define.EDITCHK, true);
 
@@ -265,20 +285,22 @@ public class PlayerActor : Actor
 
 		this.transform.localEulerAngles = Vector3.forward * 13f;
 
+		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
+
 		Invoke(nameof(ShowGameOverUI), .75f);
 	}
 
 	private void ShowGameOverUI()
 	{
-		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
-
 		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.coin, game.exp = Mathf.RoundToInt(game.score * .45f));
 
 		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
 
-	public void Refresh()
+	public override void Refresh()
 	{
+		base.Refresh();
+
 		this.transform.position = Vector3.up * -0.2f;
 		this.transform.rotation = Quaternion.identity;
 
@@ -336,12 +358,23 @@ public class PlayerActor : Actor
 			jumpValue = jumpForce;
 		}
 
-		if (collision.gameObject.CompareTag(Define.MONSTER))
+		else if(collision.gameObject.CompareTag(Define.OBSTACLE))
 		{
-			Vector2 contactPoint = collision.GetContact(0).point;
-			Vector2 playerBottom = new Vector2(transform.position.x, transform.position.y - 0.5f);
+			Die();
 
-			if (contactPoint.y > playerBottom.y)
+			FindObjectOfType<CameraShake3D>().Shake();
+
+			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
+
+			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+		}
+	}
+
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		if (collision.gameObject.CompareTag(Define.EXECUTE))
+		{
+			if (!isGrounded && !isJumping && this.transform.position.y > collision.gameObject.transform.position.y - 0.1f)
 			{
 				isGrounded = true;
 				remainingJumps = maxJumps;
@@ -350,19 +383,10 @@ public class PlayerActor : Actor
 				PerformJump();
 				HandleJumpCount(true);
 
-				collision.gameObject.GetComponent<MonsterActor>().Damage(attackPoint, true);
+				collision.gameObject.GetComponentInParent<MonsterActor>().Damage(attackPoint, true);
 
-				DebugManager.ClearLog("Execute Monster", DebugColor.Game);
+				DebugManager.Log("Execute Monster", DebugColor.Game);
 			}
-		}
-
-		if (collision.gameObject.CompareTag(Define.OBSTACLE))
-		{
-			Die();
-
-			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
-
-			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
 		}
 	}
 

@@ -13,11 +13,12 @@ public class Ground : LevelElement
 	private Vector3 startPosition;
 	public int index = 0;
 
-	[Range(0f, 1f)] public float probability = .3f;
-
 	public bool isDefault;
 
 	Scene_Game game;
+	LevelController levelController;
+
+	List<GameObject> generatedMonsters = new List<GameObject>();
 
 	private void OnDestroy()
 	{
@@ -31,7 +32,7 @@ public class Ground : LevelElement
 
 		blocks = new GameObject[this.transform.childCount];
 
-		for(int i =0; i < this.transform.childCount; i++)
+		for (int i = 0; i < this.transform.childCount; i++)
 		{
 			blocks[i] = this.transform.GetChild(i).gameObject;
 		}
@@ -40,6 +41,7 @@ public class Ground : LevelElement
 		startPosition = this.transform.position;
 
 		game = FindObjectOfType<Scene_Game>();
+		levelController = FindObjectOfType<LevelController>();
 	}
 
 	public void Generate()
@@ -57,13 +59,13 @@ public class Ground : LevelElement
 		{
 			var random = UnityEngine.Random.Range(0, 1f);
 
-			blocks[i].gameObject.SetActive(random >= probability);
+			blocks[i].gameObject.SetActive(random >= levelController.groundProbability);
 		}
 	}
 
 	public void Move()
 	{
-		Util.RunCoroutine(Co_Move(), nameof(Co_Move) + this.GetHashCode());
+		Util.RunCoroutine(Co_Move(), nameof(Co_Move) + this.GetHashCode(), CoroutineTag.Content);
 	}
 
 	public void Stop()
@@ -121,6 +123,13 @@ public class Ground : LevelElement
 		{
 			this.transform.parent.GetChild(i).transform.position = new Vector3(i * gap, 0f, 0f);
 		}
+
+		foreach (var item in generatedMonsters)
+		{
+			item.GetComponent<MonsterActor>().Refresh();
+		}
+
+		generatedMonsters.Clear();
 	}
 
 	private void RandomizeGround()
@@ -129,13 +138,23 @@ public class Ground : LevelElement
 		{
 			var random = UnityEngine.Random.Range(0, 1f);
 
-			blocks[i].SetActive(random >= probability);
+			blocks[i].SetActive(levelController.groundProbability <= random);
+
+			if (!levelController.generateMonster) continue;
+
+			if (blocks[i].activeSelf)
+			{
+				if (UnityEngine.Random.Range(0f, 1f) <= levelController.monsterProbability)
+				{
+					generatedMonsters.Add(PoolManager.Spawn(Define.MONSTERACTOR, Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 2.48f, Quaternion.identity, blocks[i].transform));
+				}
+			}
 		}
 	}
 
 	public void SetProbability(float amount)
 	{
-		probability = Mathf.Clamp(probability += amount, 0f, .85f);
+		levelController.groundProbability = Mathf.Clamp(levelController.groundProbability += amount, 0f, .85f);
 	}
 
 
@@ -151,5 +170,12 @@ public class Ground : LevelElement
 		this.transform.position = startPosition;
 
 		moveSpeed = 0f;
+
+		foreach (var item in generatedMonsters)
+		{
+			item.GetComponent<MonsterActor>().Refresh();
+		}
+
+		generatedMonsters.Clear();
 	}
 }
