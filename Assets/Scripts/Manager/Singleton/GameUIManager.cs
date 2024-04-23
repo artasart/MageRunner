@@ -346,6 +346,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 				popups[popupName].GetComponent<CanvasGroup>().alpha = 1f;
 				popups[popupName].GetComponent<CanvasGroup>().blocksRaycasts = true;
 				popups[popupName].GetComponent<Popup_Base>().isInstant = true;
+				popups[popupName].transform.Search("group_Modal").localScale = Vector3.one;
 			}
 
 			else ShowPopup(popups[popupName], true);

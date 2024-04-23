@@ -10,8 +10,8 @@ public class EquipmentManager : MonoBehaviour
 	public List<Equipment> preview = new List<Equipment>();
 	public Dictionary<int, Sprite[]> previewSprite = new Dictionary<int, Sprite[]>();
 
-	private GameObject actor;
-	private SPUM_Prefabs spumPrefabs;
+	public GameObject actor;
+	public SPUM_Prefabs spumPrefabs;
 
 	#endregion
 
@@ -21,14 +21,12 @@ public class EquipmentManager : MonoBehaviour
 
 	private void Awake()
 	{
-		actor = GameObject.Find("DefaultActor");
+		actor = GameObject.Find("PlayerActor");
 		spumPrefabs = actor.GetComponent<SPUM_Prefabs>();
 	}
 
 	private void Start()
 	{
-		LocalData.gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
-
 		if (LocalData.gameData == null)
 		{
 			LocalData.gameData = new GameData();
@@ -350,6 +348,16 @@ public class EquipmentManager : MonoBehaviour
 	}
 
 	public void ResyncData() => spumPrefabs._spriteOBj.ResyncData();
+
+	public void EquipAll(Dictionary<EquipmentType, Equipment> equipments)
+	{
+		foreach (var item in equipments)
+		{
+			ChangeEquipment(item.Value, false);
+		}
+
+		ResyncData();
+	}
 
 	#endregion
 

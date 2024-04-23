@@ -1,21 +1,18 @@
-using EnhancedScrollerDemos.GridSimulation;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
 
-public class Tab_Equipment : Tab_Base
+public class Panel_Equipment : Panel_Base
 {
 	InfiniteInvenGridScroller infiniteGridScroller;
-	Button btn_Save;
-	Button btn_Reset;
 	EquipmentManager eqipmentManager;
 
 	TMP_Text txtmp_Menu;
+
+	Button btn_Save;
+	Button btn_Reset;
 
 	Button btn_Weapon;
 	Button btn_Armor;
@@ -30,7 +27,6 @@ public class Tab_Equipment : Tab_Base
 	{
 		base.Awake();
 
-		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Back, useAnimation:true);
 		btn_Save = GetUI_Button(nameof(btn_Save), OnClick_Save, useAnimation: true);
 		btn_Reset = GetUI_Button(nameof(btn_Reset), OnClick_Reset, useAnimation: true);
 
@@ -78,31 +74,32 @@ public class Tab_Equipment : Tab_Base
 		isChanged = false;
 	}
 
-	private void OnClick_Back()
+	protected override void OnClick_Back()
 	{
-		if(isChanged)
+		if (isChanged)
 		{
-			GameManager.UI.StackPopup<Popup_Basic>();
+			GameManager.UI.StackPopup<Popup_Basic>(true);
+
 			GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, "Do you want to exit without saving the changes?");
-			
+
 			GameManager.UI.FetchPopup<Popup_Basic>().callback_confirm = () =>
 			{
 				FindObjectOfType<EquipmentManager>().ResetPreview();
 
-				GameManager.UI.FetchPanel<Panel_Inventory>().CloseTab<Tab_Equipment>();
+				GameManager.UI.PopPanel();
 
 				isChanged = false;
 			};
 
 			GameManager.UI.FetchPopup<Popup_Basic>().callback_cancel = () =>
 			{
-				GameManager.UI.PopPopup();
+				GameManager.UI.PopPopup(false);
 			};
 
 			return;
 		}
 
-		GameManager.UI.FetchPanel<Panel_Inventory>().CloseTab<Tab_Equipment>();
+		base.OnClick_Back();
 	}
 
 	private void OnClick_Reset()
@@ -114,21 +111,6 @@ public class Tab_Equipment : Tab_Base
 		FindObjectOfType<EquipmentManager>().ResetPreview();
 
 		isChanged = false;
-	}
-
-	public void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.P))
-		{
-			Debug.Log("아바타 저장 완료!");
-
-			isChanged = false;
-		}
-
-		if(Input.GetKeyDown(KeyCode.O))
-		{
-			FindObjectOfType<EquipmentManager>().ClearEquipmentAll(true);
-		}
 	}
 
 	private void OnClick_Weapons()

@@ -36,6 +36,8 @@ public class EquipmentController : MonoBehaviour
 		GetRandomEquipmentType(EquipmentType.Armor);
 		GetRandomEquipmentType(EquipmentType.Weapons);
 		GetRandomEquipmentType(EquipmentType.Back);
+
+		ResyncData();
 	}
 
 	public void GetRandomEquipmentType(EquipmentType type)
@@ -58,7 +60,7 @@ public class EquipmentController : MonoBehaviour
 		ChangeEquipment(new Equipment(type, randomItem.filename));
 	}
 
-	public void ChangeEquipment(Equipment equipment)
+	public void ChangeEquipment(Equipment equipment, bool resyncData = false)
 	{
 		var path = equipment.GetPath();
 
@@ -97,7 +99,7 @@ public class EquipmentController : MonoBehaviour
 				break;
 		}
 
-		spumPrefabs._spriteOBj.ResyncData();
+		if(resyncData) spumPrefabs._spriteOBj.ResyncData();
 	}
 
 	public void ClearEquipmentAll()
@@ -113,6 +115,9 @@ public class EquipmentController : MonoBehaviour
 
 		spumPrefabs._spriteOBj.ResyncData();
 	}
+
+	public void ResyncData() => spumPrefabs._spriteOBj.ResyncData();
+
 
 	#region Util
 

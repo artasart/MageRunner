@@ -18,8 +18,8 @@ public class RideController : MonoBehaviour
 
 	private void Awake()
 	{
-		defaultActor = GameObject.Find("DefaultActor");
-		horseAvatar = GameObject.Find("DefaultHorseActor");
+		defaultActor = GameObject.Find("PlayerActor");
+		horseAvatar = GameObject.Find("PlayerHorseActor");
 		controller = Resources.Load<AnimatorController>("SPUM/SPUM_Sprites/RideSource/Horse1/Animation/Horse1_Animation");
 		
 		spumPrefabs = horseAvatar.GetComponent<SPUM_Prefabs>();

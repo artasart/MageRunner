@@ -53,7 +53,7 @@ public class RowCellView_InvenItem : RowCellView
 			FindObjectOfType<EquipmentManager>().PreviewEquipment(equipment, invenItemData.thumbnail);
 		}
 
-		GameManager.UI.FetchPanel<Panel_Inventory>().FetchTab<Tab_Equipment>().isChanged = true;
+		GameManager.UI.FetchPanel<Panel_Equipment>().isChanged = true;
 
 		Debug.Log($"{invenItemData.nameIndex}_{invenItemData.index} is selected..");
 	}

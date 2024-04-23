@@ -50,9 +50,7 @@ public class Scene_Game : SceneLogic
 		{
 			LocalData.gameData.gainedItems.Clear();
 		}
-
-
-
+		
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
 
 		if (LocalData.masterData == null)
@@ -77,8 +75,6 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		// LoadLevel();
-
 		GameManager.Scene.Fade(false, .1f);
 
 		GameManager.UI.Restart();

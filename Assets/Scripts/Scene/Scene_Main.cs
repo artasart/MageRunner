@@ -29,6 +29,7 @@ public class Scene_Main : SceneLogic
 	{
 		base.Awake();
 
+		LocalData.gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
 		LocalData.invenData = JsonManager<InvenData>.LoadData(Define.JSON_INVENDATA);
 

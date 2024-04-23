@@ -8,11 +8,6 @@ public class Panel_Inventory : Panel_Base
 	Button btn_Resources;
 	Button btn_Craft;
 
-	private void OnDisable()
-	{
-		CloseTabAll();
-	}
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -30,9 +25,9 @@ public class Panel_Inventory : Panel_Base
 
 		ShowNewIcon(false);
 
-		ChangeTab<Tab_Equipment>();
+		GameManager.UI.StackPanel<Panel_Equipment>(true);
 
-		FetchTab<Tab_Equipment>().GenerateItem();
+		GameManager.UI.FetchPanel<Panel_Equipment>().GenerateItem();
 	}
 
 	private void OnClick_Resources()

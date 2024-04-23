@@ -16,13 +16,11 @@ public class Popup_Basic : Popup_Base
 	TMP_Text txtmp_Confirm;
 	TMP_Text txtmp_Close;
 
-	Image img_Basic;
-
 	public ModalType modalType = ModalType.ConfirmCancel;
 
 	private void OnEnable()
 	{
-		switch(modalType)
+		switch (modalType)
 		{
 			case ModalType.Confrim:
 				btn_Confirm.gameObject.SetActive(true);
@@ -44,8 +42,6 @@ public class Popup_Basic : Popup_Base
 	{
 		base.Awake();
 
-		img_Basic = GetUI_Image(nameof(img_Basic), null);
-
 		btn_Confirm = GetUI_Button(nameof(btn_Confirm), OnClick_Confirm);
 		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
@@ -55,15 +51,10 @@ public class Popup_Basic : Popup_Base
 		txtmp_Close = GetUI_TMPText(nameof(txtmp_Close), "CANCEL");
 	}
 
-	public void SetPopupInfo(ModalType _modalType, string _description, string _image = null)
+	public void SetPopupInfo(ModalType _modalType, string _description)
 	{
 		modalType = _modalType;
 		txtmp_Description.text = _description;
-
-		if(!string.IsNullOrEmpty(_image))
-		{
-			img_Basic.sprite = UnityEngine.Resources.Load<Sprite>($"Icon/{_image}");
-		}
 	}
 
 	public void Clear()
