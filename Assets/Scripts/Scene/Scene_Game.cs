@@ -120,7 +120,7 @@ public class Scene_Game : SceneLogic
 		playerModel.SetActive(true);
 
 		FindObjectOfType<LevelController>().MoveGround();
-
+		FindObjectOfType<ParallexScrolling>().StartScroll();
 		float value = 0f;
 		bool isWalk = false;
 
@@ -210,6 +210,7 @@ public class Scene_Game : SceneLogic
 		player.UpdateAnimator(1f);
 
 		FindObjectOfType<LevelController>().MoveGround();
+		FindObjectOfType<ParallexScrolling>().StartScroll();
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
@@ -225,7 +226,10 @@ public class Scene_Game : SceneLogic
 	}
 
 
-
+	public void ZoomCamera(float zoomValue)
+	{
+		Util.Zoom(virtualCamera, zoomValue, .05f);
+	}
 
 
 

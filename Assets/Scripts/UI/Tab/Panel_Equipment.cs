@@ -67,6 +67,9 @@ public class Panel_Equipment : Panel_Base
 
 		eqipmentManager.ResyncData();
 
+		eqipmentManager.preview.Clear();
+		eqipmentManager.previewSprite.Clear();
+
 		LocalData.gameData.equipment = eqipmentManager.equipments;
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);

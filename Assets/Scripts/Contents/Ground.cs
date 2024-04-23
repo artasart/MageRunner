@@ -114,15 +114,18 @@ public class Ground : LevelElement
 
 	private void CorrectPosition()
 	{
-		float gap = 10f;
+		int childCount = this.transform.parent.childCount;
 
-		this.gameObject.transform.SetAsLastSibling();
-		this.gameObject.transform.position = new Vector3(30f, 0f, 0f);
+		int randomX = 0;
+		int randomY = UnityEngine.Random.Range(-2, 2);
 
-		for (int i = 0; i < 3; i++)
-		{
-			this.transform.parent.GetChild(i).transform.position = new Vector3(i * gap, 0f, 0f);
-		}
+		if (randomY != 0) randomX += 2;
+
+		Vector3 lastPosition = this.transform.parent.GetChild(childCount - 1).position + Vector3.right * 10f + new Vector3(randomX, 0, 0);
+		lastPosition = new Vector3(lastPosition.x, randomY, lastPosition.z);
+
+		this.transform.position = lastPosition;
+		this.transform.SetAsLastSibling();
 
 		foreach (var item in generatedMonsters)
 		{

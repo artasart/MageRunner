@@ -164,10 +164,16 @@ public class PlayerActor : Actor
 				else
 				{
 					GameManager.Sound.PlaySound("Jump_2");
+
+					game.ZoomCamera(4f);
+
+					isDoubleJump = true;
 				}
 			}
 		}
 	}
+
+	bool isDoubleJump = false;
 
 	private void SetFacingDirection(float direction)
 	{
@@ -210,6 +216,8 @@ public class PlayerActor : Actor
 		isJumping = true;
 
 		yield return Timing.WaitUntilTrue(() => rgbd2d.velocity.y < 0);
+
+		if(isDoubleJump) game.ZoomCamera(3f);
 
 		isJumping = false;
 
@@ -274,6 +282,7 @@ public class PlayerActor : Actor
 
 		this.GetComponent<FootStepController>().StopWalk();
 		FindObjectOfType<LevelController>().StopGround();
+		FindObjectOfType<ParallexScrolling>().StopScroll();
 
 		animator.SetBool(Define.DIE, true);
 		animator.SetBool(Define.EDITCHK, true);
@@ -356,9 +365,15 @@ public class PlayerActor : Actor
 			isGrounded = true;
 			remainingJumps = maxJumps;
 			jumpValue = jumpForce;
+
+			if (isDoubleJump)
+			{
+				isDoubleJump = false;
+				game.ZoomCamera(3f);
+			}
 		}
 
-		else if(collision.gameObject.CompareTag(Define.OBSTACLE))
+		else if (collision.gameObject.CompareTag(Define.OBSTACLE))
 		{
 			Die();
 
@@ -379,6 +394,11 @@ public class PlayerActor : Actor
 				isGrounded = true;
 				remainingJumps = maxJumps;
 				jumpValue = jumpForce;
+
+				if (isDoubleJump)
+				{
+					isDoubleJump = false;					
+				}
 
 				PerformJump();
 				HandleJumpCount(true);
