@@ -1,3 +1,4 @@
+using EnhancedScrollerDemos.GridSimulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ public static class LocalData
 {
 	public static GameData gameData;
 	public static MasterData masterData;
+	public static InvenData invenData;
 }
 
 [Serializable]
@@ -36,7 +38,7 @@ public class GameData
 [Serializable]
 public class InvenData
 {
-
+	public List<InvenItemData> invenItemData;
 }
 
 [Serializable]

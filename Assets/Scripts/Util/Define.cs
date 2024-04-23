@@ -52,6 +52,7 @@ public static class Define
 	public const string	JSON_MASTERDATA = "MasterData.json";
 	public const string	JSON_LEVELDATA = "LevelData.json";
 	public const string	JSON_GAMEDATA = "GameData.json";
+	public const string	JSON_INVENDATA = "InvenData.json";
 
 
 	public const string MONSTERACTOR = "MonsterActor";

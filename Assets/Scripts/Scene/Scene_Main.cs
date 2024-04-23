@@ -12,16 +12,17 @@ public class Scene_Main : SceneLogic
 	CinemachineVirtualCamera virtualCamera;
 	GameObject renderTextureCamrea;
 
-	EquipmentManager equipmentController;
+	EquipmentManager equipmentManager;
 
 	private void OnDestroy()
 	{
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
 	}
 
 	private void OnDisable()
 	{
-		LocalData.gameData.equipment = equipmentController.equipments;
+		LocalData.gameData.equipment = equipmentManager.equipments;
 	}
 
 	protected override void Awake()
@@ -29,6 +30,13 @@ public class Scene_Main : SceneLogic
 		base.Awake();
 
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
+		LocalData.invenData = JsonManager<InvenData>.LoadData(Define.JSON_INVENDATA);
+
+		if(LocalData.invenData == null)
+		{
+			LocalData.invenData = new InvenData();
+			LocalData.invenData.invenItemData = new List<InvenItemData>();
+		}
 
 		if (LocalData.masterData == null)
 		{
@@ -43,7 +51,7 @@ public class Scene_Main : SceneLogic
 
 		PoolManager.InitPool();
 
-		equipmentController = FindObjectOfType<EquipmentManager>();
+		equipmentManager = FindObjectOfType<EquipmentManager>();
 
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
@@ -73,7 +81,7 @@ public class Scene_Main : SceneLogic
 
 		if (LocalData.gameData != null)
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(true);
+			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(LocalData.gameData.gainedItems.Count > 0);
 
 			foreach (var element in LocalData.gameData.gainedItems)
 			{
@@ -81,9 +89,9 @@ public class Scene_Main : SceneLogic
 				string filename = GetFileNameFromPath(element.Key).Replace(".png", "");
 				int quantity = element.Value;
 
-				Item invenItem = LocalData.masterData.itemData.FirstOrDefault(item => item.filename == filename);
+				var invenItem = LocalData.masterData.itemData.FirstOrDefault(item => item.filename == filename);
 
-				InvenItemData itemData = new InvenItemData();
+				var itemData = new InvenItemData();
 				itemData.type = Util.String2Enum<EquipmentType>(invenItem.type);
 				itemData.name = invenItem.name;
 				itemData.nameIndex = ExtractSubstring(invenItem.filename);
@@ -95,11 +103,15 @@ public class Scene_Main : SceneLogic
 				equipmentData.Add(itemData);
 			}
 
-			DebugManager.ClearLog(equipmentData.Count + " 개의 새로운 아이템이 있습니다!");
-			// 인벤토리에 저장해야함
+			foreach (var item in equipmentData)
+			{
+				LocalData.invenData.invenItemData.Add(item);
+			}
 
-			//LocalData.gameData.gainedItems.Clear();
-			//LocalData.gameData.gainedItems = null;
+			JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
+
+			LocalData.gameData.gainedItems.Clear();
+			LocalData.gameData.gainedItems = null;
 
 			JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 		}
@@ -155,26 +167,9 @@ public class Scene_Main : SceneLogic
 
 	private void Update()
 	{
-		//if (Input.GetKeyDown(KeyCode.Z))
+		//if (Input.GetKeyDown(KeyCode.Space))
 		//{
 		//	GameManager.UI.FetchPanel<Panel_Main>().ShowRewardAd();
-		//}
-
-		//if (Input.GetKeyDown(KeyCode.X))
-		//{
-		//	GameManager.UI.FetchPanel<Panel_Main>().HideRewardAd();
-		//}
-
-
-		//if (Input.GetKeyDown(KeyCode.Alpha1))
-		//{
-		//	ZoomInCamera();
-		//}
-
-
-		//if (Input.GetKeyDown(KeyCode.Alpha2))
-		//{
-		//	ZoomOutCamera();
 		//}
 	}
 

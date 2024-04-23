@@ -9,7 +9,6 @@ public class RowCellView_InvenItem : RowCellView
 	Button btn_Container;
 
 	Image img_Thumnail;
-	Image img_New;
 
 	public InvenItemData invenItemData;
 
@@ -27,16 +26,11 @@ public class RowCellView_InvenItem : RowCellView
 
 		if(invenData != null)
 		{
-			Debug.Log(invenData.thumbnail);
-
 			if(invenData.thumbnail != null)
 			{
 				var sprite = Resources.Load<Sprite>(invenData.thumbnail);
 
 				img_Thumnail.sprite = sprite;
-
-				Debug.Log("스프라이트 : " + sprite);
-				Debug.Log("이미지 : " + img_Thumnail.sprite);
 			}
 		}
 
@@ -54,12 +48,14 @@ public class RowCellView_InvenItem : RowCellView
 		{
 			var equipment = new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index);
 
-			FindObjectOfType<EquipmentManager>().ChangeEquipment(equipment);
+			Debug.Log(equipment.type);
+
+			FindObjectOfType<EquipmentManager>().PreviewEquipment(equipment, invenItemData.thumbnail);
 		}
 
 		GameManager.UI.FetchPanel<Panel_Inventory>().FetchTab<Tab_Equipment>().isChanged = true;
 
-		Debug.Log(invenItemData.name + " is selected..");
+		Debug.Log($"{invenItemData.nameIndex}_{invenItemData.index} is selected..");
 	}
 
 	public bool isChanged = false;
