@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
+using static UnityEditor.Progress;
 
 public class Panel_Equipment : Panel_Base
 {
@@ -20,6 +22,8 @@ public class Panel_Equipment : Panel_Base
 	Button btn_Pants;
 	Button btn_Backs;
 	Button btn_All;
+
+	Dictionary<EquipmentType, Image> menuThumbnail = new Dictionary<EquipmentType, Image>();
 
 	public bool isChanged = false;
 
@@ -41,15 +45,46 @@ public class Panel_Equipment : Panel_Base
 
 		infiniteGridScroller = FindObjectOfType<InfiniteInvenGridScroller>();
 		eqipmentManager = FindObjectOfType<EquipmentManager>();
+				
+		menuThumbnail.Add(EquipmentType.Weapons, this.transform.Search("img_Weapons").GetChild(0).GetComponent<Image>());
+		menuThumbnail.Add(EquipmentType.Armor, this.transform.Search("img_Armor").GetChild(0).GetComponent<Image>());
+		menuThumbnail.Add(EquipmentType.Back, this.transform.Search("img_Back").GetChild(0).GetComponent<Image>());
+		menuThumbnail.Add(EquipmentType.Pant, this.transform.Search("img_Pants").GetChild(0).GetComponent<Image>());
+		menuThumbnail.Add(EquipmentType.Helmet, this.transform.Search("img_Helmet").GetChild(0).GetComponent<Image>());
 	}
 
 	public void GenerateItem()
 	{
+		if (LocalData.gameData.equipment != null)
+		{
+			var equippedList = LocalData.gameData.equipment.Where(item => item.Key != EquipmentType.Cloth &&
+																 item.Key != EquipmentType.Hair &&
+																 item.Key != EquipmentType.FaceHair).ToList();
+
+			foreach (var item in equippedList)
+			{
+				if (!string.IsNullOrEmpty(item.Value.name))
+				{
+					menuThumbnail[item.Key].sprite = Resources.Load<Sprite>(item.Value.path.Replace("Assets/Resources/", "").Replace(".png", ""));
+					menuThumbnail[item.Key].color = Color.white;
+				}
+
+				else menuThumbnail[item.Key].color = new Color(1f, 1f, 1f, 0f);
+			}
+		}
+
+		else LocalData.gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
+
+
 		var data = LocalData.invenData.invenItemData
 			.Where(item => item.type != EquipmentType.Cloth &&
-						   item.type != EquipmentType.Hair &&
-						   item.type != EquipmentType.FaceHair)
+				   item.type != EquipmentType.Hair &&
+				   item.type != EquipmentType.FaceHair &&
+				   !LocalData.gameData.equipment.Any(equipmentItem =>
+						equipmentItem.Value.name != string.Empty &&
+						equipmentItem.Value.name == item.nameIndex))
 			.ToList();
+
 
 		infiniteGridScroller.Refresh(data);
 	}
@@ -57,8 +92,6 @@ public class Panel_Equipment : Panel_Base
 	private void OnClick_Save()
 	{
 		if (!isChanged) return;
-
-		Debug.Log("OnClick_Save");
 
 		foreach (var item in eqipmentManager.preview)
 		{
@@ -92,11 +125,6 @@ public class Panel_Equipment : Panel_Base
 				GameManager.UI.PopPanel();
 
 				isChanged = false;
-			};
-
-			GameManager.UI.FetchPopup<Popup_Basic>().callback_cancel = () =>
-			{
-				GameManager.UI.PopPopup(false);
 			};
 
 			return;
@@ -182,5 +210,11 @@ public class Panel_Equipment : Panel_Base
 			.ToList();
 
 		infiniteGridScroller.Refresh(data);
+	}
+
+	public void SetEquippedThumbnail(EquipmentType type, string path)
+	{
+		menuThumbnail[type].sprite = Resources.Load<Sprite>(path);
+		menuThumbnail[type].color = Color.white;
 	}
 }

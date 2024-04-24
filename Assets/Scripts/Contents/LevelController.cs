@@ -33,6 +33,14 @@ public class LevelController : MonoBehaviour
 		return groundProbability;
 	}
 
+	public void SetMoveMultiplier(float multiplier)
+	{
+		foreach (var item in grounds)
+		{
+			item.moveSpeedMultiplier = multiplier;
+		}
+	}
+
 	public void MoveGround(float moveSpeed = 5f)
     {
 		foreach (var item in grounds)

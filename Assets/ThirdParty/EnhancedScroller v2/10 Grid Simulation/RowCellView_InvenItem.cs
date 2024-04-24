@@ -1,16 +1,15 @@
 using EnhancedScrollerDemos.GridSimulation;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class RowCellView_InvenItem : RowCellView
 {
-	Button btn_Container;
+	InvenItemData invenItemData;
 
+	Button btn_Container;
 	Image img_Thumnail;
 
-	public InvenItemData invenItemData;
+	public bool isChanged = false;
 
 	private void Awake()
 	{
@@ -48,15 +47,36 @@ public class RowCellView_InvenItem : RowCellView
 		{
 			var equipment = new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index);
 
-			Debug.Log(equipment.type);
-
 			FindObjectOfType<EquipmentManager>().PreviewEquipment(equipment, invenItemData.thumbnail);
+
+			GameManager.UI.FetchPanel<Panel_Equipment>().SetEquippedThumbnail(invenItemData.type, invenItemData.thumbnail);
+			GameManager.UI.FetchPanel<Panel_Equipment>().isChanged = true;
+
+			if (LocalData.gameData.equipment.ContainsKey(invenItemData.type))
+			{
+				var type = LocalData.gameData.equipment[invenItemData.type].type;
+				var nameIndex = LocalData.gameData.equipment[invenItemData.type].name;
+				var index = LocalData.gameData.equipment[invenItemData.type].index;
+				var thumbnail = LocalData.gameData.equipment[invenItemData.type].path.Replace("Assets/Resources/", "").Replace(".png", "");
+
+				LocalData.gameData.equipment[invenItemData.type].type = invenItemData.type;
+				LocalData.gameData.equipment[invenItemData.type].name = invenItemData.nameIndex;
+				LocalData.gameData.equipment[invenItemData.type].index = invenItemData.index;
+				LocalData.gameData.equipment[invenItemData.type].path = invenItemData.thumbnail;
+
+				invenItemData.type = type;
+				invenItemData.nameIndex = nameIndex;
+				invenItemData.index = index;
+				invenItemData.thumbnail = thumbnail;
+
+				img_Thumnail.sprite = Resources.Load<Sprite>(invenItemData.thumbnail);
+
+				FindObjectOfType<EquipmentManager>().previewSprite.Remove((int)invenItemData.type);
+			}
+			else
+			{
+
+			}
 		}
-
-		GameManager.UI.FetchPanel<Panel_Equipment>().isChanged = true;
-
-		Debug.Log($"{invenItemData.nameIndex}_{invenItemData.index} is selected..");
 	}
-
-	public bool isChanged = false;
 }

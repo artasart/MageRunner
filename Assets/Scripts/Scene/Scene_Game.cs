@@ -11,7 +11,7 @@ public enum GameState
 
 public class Scene_Game : SceneLogic
 {
-	public int coin;
+	public int gold;
 	public int score;
 	public int exp;
 	public int monsterKilled;
@@ -71,6 +71,7 @@ public class Scene_Game : SceneLogic
 		PoolManager.InitPool();
 		PoolManager.SetPoolData("Thunder", 10, Define.PATH_VFX);
 		PoolManager.SetPoolData(Define.MONSTERACTOR, 20, Define.PATH_ACTOR);
+		PoolManager.SetPoolData("Thunder_ExplosionSmall", 5, Define.PATH_VFX);
 	}
 
 	private void Start()
@@ -94,10 +95,10 @@ public class Scene_Game : SceneLogic
 			LocalData.gameData.highScore = score;
 		}
 
-		LocalData.gameData.coin += coin;
+		LocalData.gameData.gold += gold;
 		LocalData.gameData.gainedItems = gainedItems;
 
-		DebugManager.Log($"Player Gained {coin} coin.");
+		DebugManager.Log($"Player Gained {gold} coin.");
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
@@ -120,7 +121,12 @@ public class Scene_Game : SceneLogic
 		playerModel.SetActive(true);
 
 		FindObjectOfType<LevelController>().MoveGround();
-		FindObjectOfType<ParallexScrolling>().StartScroll();
+		var scroll = FindObjectsOfType<ParallexScrolling>();
+		foreach (var item in scroll)
+		{
+			item.StartScroll();
+		}
+
 		float value = 0f;
 		bool isWalk = false;
 
@@ -210,7 +216,11 @@ public class Scene_Game : SceneLogic
 		player.UpdateAnimator(1f);
 
 		FindObjectOfType<LevelController>().MoveGround();
-		FindObjectOfType<ParallexScrolling>().StartScroll();
+		var scroll = FindObjectsOfType<ParallexScrolling>();
+		foreach (var item in scroll)
+		{
+			item.StartScroll();
+		}
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
@@ -238,24 +248,24 @@ public class Scene_Game : SceneLogic
 		monsterKilled++;
 
 		score += scoreAmount;
-		coin += coinAmount;
+		gold += coinAmount;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
-		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(coin);
+		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold);
 	}
 
 	public void AddCoin(int amount)
 	{
-		coin += amount;
+		gold += amount;
 
-		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(coin);
+		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold);
 	}
 
 	public void SaveScore()
 	{
 		DebugManager.Log("Score is saved.");
 
-		coin = 0;
+		gold = 0;
 	}
 
 	public void SetCameraTarget(Transform target)
@@ -272,10 +282,11 @@ public class Scene_Game : SceneLogic
 	public void Refresh()
 	{
 		score = 0;
-		coin = 0;
+		gold = 0;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
-		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(coin);
+		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold);
+		GameManager.UI.FetchPanel<Panel_HUD>().RefreshUI();
 	}
 
 	public void Retry()
@@ -391,5 +402,27 @@ public class Scene_Game : SceneLogic
 
 			LocalData.gameData.exp += exp;
 		}
+	}
+
+	public void SetVirtualCamBody(Vector3 bodyPosition)
+	{
+		Util.RunCoroutine(Co_SetVirtualCamBody(bodyPosition), nameof(Co_SetVirtualCamBody), CoroutineTag.Content);
+	}
+
+	IEnumerator<float> Co_SetVirtualCamBody(Vector3 bodyPosition)
+	{
+		var lerpvalue = 0f;
+		var transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+
+		while (Vector3.Distance(transposer.m_FollowOffset, bodyPosition) > 0.01f)
+		{
+			transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset, bodyPosition, 1.5f * lerpvalue * Time.deltaTime);
+
+			lerpvalue += Time.deltaTime;
+
+			yield return Timing.WaitForOneFrame;
+		}
+
+		transposer.m_FollowOffset = bodyPosition;
 	}
 }

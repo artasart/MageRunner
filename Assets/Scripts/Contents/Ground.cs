@@ -20,6 +20,9 @@ public class Ground : LevelElement
 
 	List<GameObject> generatedMonsters = new List<GameObject>();
 
+
+	public float moveSpeedMultiplier = 1f;
+
 	private void OnDestroy()
 	{
 		Util.KillCoroutine(nameof(Co_Move) + this.GetHashCode());
@@ -100,7 +103,7 @@ public class Ground : LevelElement
 		{
 			yield return Timing.WaitUntilTrue(() => game.gameState == GameState.Playing);
 
-			transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
+			transform.Translate(Vector3.left * moveSpeed * moveSpeedMultiplier * Time.deltaTime);
 
 			yield return Timing.WaitForOneFrame;
 		}
@@ -112,14 +115,22 @@ public class Ground : LevelElement
 		Util.RunCoroutine(Co_Move(), nameof(Co_Move) + this.GetHashCode());
 	}
 
+	public float heightProbability = .1f;
+
 	private void CorrectPosition()
 	{
 		int childCount = this.transform.parent.childCount;
 
 		int randomX = 0;
-		int randomY = UnityEngine.Random.Range(-2, 2);
+		int randomY = 0;
+		
+		if(heightProbability > UnityEngine.Random.Range(0, 1))
+		{
+			randomY = UnityEngine.Random.Range(-1, 1);
+		}
 
 		if (randomY != 0) randomX += 2;
+		else if (this.transform.parent.GetChild(childCount - 1).position.y != 0) randomX += 2;
 
 		Vector3 lastPosition = this.transform.parent.GetChild(childCount - 1).position + Vector3.right * 10f + new Vector3(randomX, 0, 0);
 		lastPosition = new Vector3(lastPosition.x, randomY, lastPosition.z);

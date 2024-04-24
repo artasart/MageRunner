@@ -26,7 +26,7 @@ public class GameData
 	public int level = 1;
 	public int exp;
 
-	public int coin;
+	public int gold;
 	public int highScore;
 
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
@@ -79,14 +79,14 @@ public class Item
 [Serializable]
 public class Equipment
 {
-	public string name;
 	public EquipmentType type;
+	public string name;
 	public int index;
+	public string path;
 
 	protected readonly string basePath = "Assets/Resources/SPUM/SPUM_Sprites/";
 	protected readonly string[] categories = { "Items/", "Packages/" };
 	protected readonly string[] versions = { "", "Ver121/", "Ver300/", "F_SR/" };
-	protected readonly string path;
 
 	public Equipment(EquipmentType type, string filename)
 	{
@@ -121,7 +121,7 @@ public class Equipment
 		string category = categories[categoryIndex];
 		string version = versions[versionIndex];
 
-		string typeName = $"{(int)type}_{type}/";
+		var typeName = $"{(int)type}_{type}/";
 
 		path = $"{basePath}{category}{version}{typeName}{fileName}";
 	}

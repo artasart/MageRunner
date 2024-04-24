@@ -13,6 +13,7 @@ public class Popup_Base : UI_Base
 	protected bool isDefault = true;
 	protected bool isInitialized = false;
 
+
 	public Button DIM { get => btn_Dim; }
 
 	protected override void Awake()
@@ -37,16 +38,16 @@ public class Popup_Base : UI_Base
 
 	protected virtual void OnClick_Confirm()
 	{
-		GameManager.UI.PopPopup();
-
 		callback_confirm?.Invoke();
+
+		GameManager.UI.PopPopup(isInstant);
 	}
 
 	protected virtual void OnClick_Close()
 	{
-		GameManager.UI.PopPopup();
-
 		callback_cancel?.Invoke();
+
+		GameManager.UI.PopPopup(isInstant);
 	}
 
 	protected virtual void UseDimClose()

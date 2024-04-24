@@ -16,6 +16,10 @@ public class Panel_HUD : Panel_Base
 	TMP_Text txtmp_Coin;
 	TMP_Text txtmp_Score;
 
+	Transform group_Skills;
+	List<Item_Skill> items_Skill = new List<Item_Skill>();
+
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -28,17 +32,21 @@ public class Panel_HUD : Panel_Base
 		btn_Down = GetUI_Button(nameof(btn_Down), OnClick_Down, useAnimation: true);
 		btn_Up = GetUI_Button(nameof(btn_Up), OnClick_Up, useAnimation: true);
 		btn_Pause = GetUI_Button(nameof(btn_Pause), OnClick_Pause, useAnimation: true);
+
+		group_Skills = this.transform.Search(nameof(group_Skills));
+
+		for (int i = 0; i < group_Skills.childCount; i++)
+		{
+			items_Skill.Add(group_Skills.GetChild(i).GetComponent<Item_Skill>());
+		}
 	}
 
-	public SPUM_SpriteList target;
-
-	private void OnClick_Wear()
+	private void Start()
 	{
-		string name = "Helmet_1";
-
-		SPUM_SpriteList testSPriteData = new SPUM_SpriteList();
-
-		target.LoadSprite(testSPriteData);
+		foreach (var item in items_Skill)
+		{
+			item.Refresh();
+		}
 	}
 
 	private void OnClick_Left()
@@ -66,17 +74,12 @@ public class Panel_HUD : Panel_Base
 	}
 
 	private void OnClick_Pause()
-	{		
+	{
 		Hide();
 
 		FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
 
 		GameManager.UI.StackPopup<Popup_Pause>();
-	}
-
-	public void SaveScore()
-	{
-		RefreshUI();
 	}
 
 	public void RefreshUI()
@@ -85,6 +88,11 @@ public class Panel_HUD : Panel_Base
 
 		txtmp_Score.text = 0.ToString("N0");
 		txtmp_Coin.text = 0.ToString("N0");
+
+		foreach (var item in items_Skill)
+		{
+			item.Refresh();
+		}
 	}
 
 	public void SetScoreUI(int amount)
@@ -96,4 +104,19 @@ public class Panel_HUD : Panel_Base
 	{
 		txtmp_Coin.text = amount.ToString("N0");
 	}
+
+	public void UseSkill(Skill skillType, int coolTime, float delay = 0f)
+	{
+		Debug.Log("Skill is used : " + skillType.ToString());
+
+		items_Skill[(int)skillType].UseSkill(coolTime, () => UseSkill(skillType, coolTime, .5f));
+	}
+}
+
+
+public enum Skill
+{
+	Passive_1 = 0,
+	Passive_2,
+	Passive_3,
 }

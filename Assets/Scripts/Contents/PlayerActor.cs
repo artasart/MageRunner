@@ -1,3 +1,4 @@
+using DG.Tweening;
 using MEC;
 using System.Collections.Generic;
 using TMPro;
@@ -36,6 +37,8 @@ public class PlayerActor : Actor
 
 	Scene_Game game;
 
+	ParticleSystem particle_ElectricMode;
+
 	#endregion
 
 
@@ -58,6 +61,9 @@ public class PlayerActor : Actor
 	private void Start()
 	{
 		moveSpeedOrigin = moveSpeed;
+
+		particle_ElectricMode = this.transform.Search(nameof(particle_ElectricMode)).GetComponent<ParticleSystem>();
+		particle_ElectricMode.Stop();
 	}
 
 	#endregion
@@ -72,13 +78,57 @@ public class PlayerActor : Actor
 
 		if (isDead) return;
 
-		//float moveInput = Input.GetAxis("Horizontal");
+		if (Input.GetKeyDown(KeyCode.B))
+		{
+			PowerOverWelmingMode();
+		}
 
-		//HandleFacingDirection(1f);
-		HandleSlideInput();
-		//HandleMovement(moveInput);
+		HandleSlideInput();		
 		HandleJumpInput();
 	}
+
+
+	public void PowerOverWelmingMode()
+	{
+		FindObjectOfType<LevelController>().SetMoveMultiplier(3f);
+
+		this.gameObject.transform.DOMove(new Vector3(this.transform.position.x, 2.3f, this.transform.position.z), .5f).OnComplete(() =>
+		{
+			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
+
+			this.transform.Search("Root").gameObject.SetActive(false);
+			particle_ElectricMode.Play();
+		});
+
+		rgbd2d.gravityScale = 0;
+		rgbd2d.velocity = Vector3.zero;
+
+		game.SetVirtualCamBody(new Vector3(4.5f, -1.25f, -10f));
+		game.ZoomCamera(4f);
+
+		Invoke(nameof(EndPower), 5f);
+	}
+
+	public void EndPower()
+	{
+		PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
+
+		FindObjectOfType<LevelController>().SetMoveMultiplier(1f);
+
+		this.transform.Search("Root").gameObject.SetActive(true);
+		particle_ElectricMode.Stop();
+
+		rgbd2d.gravityScale = 1.5f;
+
+		game.SetVirtualCamBody(new Vector3(4f, 1.25f, -10f));
+		game.ZoomCamera(3f);
+	}
+
+	public bool isFlying = false;
+	public float fallMultiplier = 2.5f;
+	public float lowJumpMultiplier = 2f;
+
+
 
 
 	private void HandleFacingDirection(float moveInput)
@@ -282,7 +332,11 @@ public class PlayerActor : Actor
 
 		this.GetComponent<FootStepController>().StopWalk();
 		FindObjectOfType<LevelController>().StopGround();
-		FindObjectOfType<ParallexScrolling>().StopScroll();
+		var scroll = FindObjectsOfType<ParallexScrolling>();
+		foreach (var item in scroll)
+		{
+			item.StopScroll();
+		}
 
 		animator.SetBool(Define.DIE, true);
 		animator.SetBool(Define.EDITCHK, true);
@@ -301,7 +355,7 @@ public class PlayerActor : Actor
 
 	private void ShowGameOverUI()
 	{
-		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.coin, game.exp = Mathf.RoundToInt(game.score * .45f));
+		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.gold, game.exp = Mathf.RoundToInt(game.score * .45f));
 
 		GameManager.UI.StartPopup<Popup_GameOver>();
 	}

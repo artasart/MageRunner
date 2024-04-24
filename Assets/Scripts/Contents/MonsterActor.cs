@@ -98,6 +98,9 @@ public class MonsterActor : Actor
 		isDead = true;
 		health = 0;
 
+		FindObjectOfType<CoinSpawner>().gameObject.transform.position = this.transform.position;
+		FindObjectOfType<CoinSpawner>().Spawn();
+
 		animator.SetBool("Die", true);
 
 		this.GetComponent<BoxCollider2D>().enabled = false;
@@ -106,6 +109,8 @@ public class MonsterActor : Actor
 		hp.GetComponent<TMP_Text>().text = 0.ToString();
 
 		GetItem();
+
+		CancelInvoke(nameof(ApplyDamage));
 
 		OnMonsterDie?.Invoke(score, gold);
 	}
@@ -172,17 +177,11 @@ public class MonsterActor : Actor
 
 	private void ApplyDamage()
 	{
+		if (isDead) return;
+
 		var player = FindObjectOfType<PlayerActor>();
 
 		player.Damage(damage);		
-	}
-
-
-
-	private void OnDrawGizmosSelected()
-	{
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(transform.position, attackRange);
 	}
 
 	#endregion

@@ -10,8 +10,6 @@ public class Popup_GameOver : Popup_Base
 	Button btn_Home;
 
 	TMP_Text txtmp_Score;
-	TMP_Text txtmp_Coin;
-	TMP_Text txtmp_Exp;
 
 	protected override void Awake()
 	{
@@ -20,8 +18,6 @@ public class Popup_GameOver : Popup_Base
 		base.Awake();
 
 		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), string.Empty);
-		txtmp_Coin = GetUI_TMPText(nameof(txtmp_Coin), string.Empty);
-		txtmp_Exp = GetUI_TMPText(nameof(txtmp_Exp), string.Empty);
 
 		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
 		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
@@ -32,7 +28,7 @@ public class Popup_GameOver : Popup_Base
 	{
 		btn_Reward.interactable = false;
 
-		FindObjectOfType<Scene_Game>().coin *= 2;
+		FindObjectOfType<Scene_Game>().gold *= 2;
 	}
 
 	private void OnClick_Retry()
@@ -49,11 +45,10 @@ public class Popup_GameOver : Popup_Base
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
 
-	public void SetResult(int score, int coin, int exp)
+	public void SetResult(int score, int gold, int exp)
 	{
-		txtmp_Score.text = score.ToString("N0");
-		txtmp_Coin.text = coin.ToString("N0");
-		txtmp_Exp.text = exp.ToString();
+		// You ran 1024m, gaiend 1000 Golds & 10 exp!
+		txtmp_Score.text = $"You ran {score}m, gaiend {gold} Golds & {exp} exp!";
 
 		FindObjectOfType<Scene_Game>().AddExp(exp);
 		FindObjectOfType<Scene_Game>().SaveGameData();

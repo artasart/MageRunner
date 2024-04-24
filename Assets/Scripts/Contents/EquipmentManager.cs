@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static Enums;
 
@@ -67,6 +68,14 @@ public class EquipmentManager : MonoBehaviour
 
 	#region Core methods
 
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Space))
+		{
+			ClearEquipmentAll();
+		}
+	}
+
 	public void ChangeEquipment(Equipment equipment, bool resyncData = false)
 	{
 		if (!equipments.ContainsKey(equipment.type))
@@ -79,6 +88,7 @@ public class EquipmentManager : MonoBehaviour
 			equipments[equipment.type].type = equipment.type;
 			equipments[equipment.type].name = equipment.name;
 			equipments[equipment.type].index = equipment.index;
+			equipments[equipment.type].path = equipment.path;
 		}
 
 		var path = equipment.GetPath();
@@ -106,7 +116,7 @@ public class EquipmentManager : MonoBehaviour
 				SetHair(path, 1);
 				break;
 			case EquipmentType.Weapons:
-				SetWeapon(path, true);
+				SetWeapon(path, !equipment.name.Contains("Shield"));
 				break;
 			case EquipmentType.Armor:
 				SetArmor(path);
@@ -228,21 +238,30 @@ public class EquipmentManager : MonoBehaviour
 
 		if (targetIndex == (int)EquipmentType.Hair)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite });
+			if (!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite });
+			}
 
 			spriteList[0].sprite = targetSprites[0];
 		}
 
 		else if (targetIndex == (int)EquipmentType.FaceHair)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[3].sprite });
+			if (!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[3].sprite });
+			}
 
 			spriteList[3].sprite = targetSprites[0];
 		}
 
 		else if (targetIndex == (int)EquipmentType.Helmet)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[1].sprite });
+			if (!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[1].sprite });
+			}
 
 			spriteList[1].sprite = targetSprites[0];
 		}
@@ -258,7 +277,10 @@ public class EquipmentManager : MonoBehaviour
 
 		else if (targetIndex == (int)EquipmentType.Pant)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite, spriteList[1].sprite });
+			if(!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite, spriteList[1].sprite });
+			}
 
 			spriteList[0].sprite = targetSprites[0];
 			spriteList[1].sprite = targetSprites[1];
@@ -266,29 +288,48 @@ public class EquipmentManager : MonoBehaviour
 
 		else if (targetIndex == (int)EquipmentType.Weapons)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite });
+			if (!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite });
+			}
 
+			if (targetSprites[0].name.Contains("Shield"))
+			{
+				spriteList[3].sprite = targetSprites[0];
+			}
+
+			else
+			{
+				spriteList[0].sprite = targetSprites[0];
+			}
 			// Weapons
-			spriteList[0].sprite = targetSprites[0]; // right
-													 //spriteList[2].sprite = targetSprites[2]; // left
+			//spriteList[0].sprite = targetSprites[0]; // right
+			//spriteList[2].sprite = targetSprites[0]; // left
 
 			// Shields
 			// spriteList[1].sprite = targetSprites[0]; // right
-			//spriteList[3].sprite = targetSprites[2]; // left
+			//spriteList[3].sprite = targetSprites[0]; // left
 		}
 
 		else if (targetIndex == (int)EquipmentType.Armor)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite, spriteList[1].sprite, spriteList[2].sprite });
+			if (!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite, spriteList[1].sprite, spriteList[2].sprite });
+			}
 
-			spriteList[0].sprite = targetSprites[0];
-			spriteList[1].sprite = targetSprites[1];
-			spriteList[2].sprite = targetSprites[2];
+			for(int i = 0; i < targetSprites.Length;i++)
+			{
+				spriteList[i].sprite = targetSprites[i];
+			}
 		}
 
 		else if (targetIndex == (int)EquipmentType.Back)
 		{
-			previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite });
+			if (!previewSprite.ContainsKey(targetIndex))
+			{
+				previewSprite.Add(targetIndex, new Sprite[] { spriteList[0].sprite });
+			}
 
 			spriteList[0].sprite = targetSprites[0];
 		}
