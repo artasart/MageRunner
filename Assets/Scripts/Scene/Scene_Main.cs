@@ -6,6 +6,7 @@ using System.Linq;
 using static Enums;
 using System.Text.RegularExpressions;
 using System;
+using TMPro;
 
 public class Scene_Main : SceneLogic
 {
@@ -57,6 +58,9 @@ public class Scene_Main : SceneLogic
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
 		renderTextureCamrea = GameObject.Find("RenderTextureCamera");
+
+		GameObject.Find("PlayerActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+		GameObject.Find("PlayerHorseActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 	}
 
 	public List<InvenItemData> equipmentData = new List<InvenItemData>();
@@ -72,6 +76,8 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 
 		PoolManager.SetPoolData("Puff", 10, Define.PATH_VFX);
+
+		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
 		GetFarmedItem();
 	}

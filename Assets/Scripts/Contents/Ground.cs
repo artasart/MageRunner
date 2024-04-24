@@ -2,6 +2,7 @@ using MEC;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Windows;
 using static Unity.Collections.AllocatorManager;
@@ -20,13 +21,12 @@ public class Ground : LevelElement
 
 	List<GameObject> generatedMonsters = new List<GameObject>();
 
-
+	public float moveSpeed { get; set; }
 	public float moveSpeedMultiplier = 1f;
 
 	private void OnDestroy()
 	{
 		Util.KillCoroutine(nameof(Co_Move) + this.GetHashCode());
-		Util.KillCoroutine(nameof(Co_SetMoveSpeed) + this.GetHashCode());
 	}
 
 	protected override void Awake()
@@ -71,32 +71,6 @@ public class Ground : LevelElement
 		Util.RunCoroutine(Co_Move(), nameof(Co_Move) + this.GetHashCode(), CoroutineTag.Content);
 	}
 
-	public void Stop()
-	{
-		Util.KillCoroutine(nameof(Co_Move) + this.GetHashCode());
-	}
-
-	public float moveSpeed = 0f;
-
-	public void SetMoveSpeed(float target)
-	{
-		Util.RunCoroutine(Co_SetMoveSpeed(target), nameof(Co_SetMoveSpeed) + this.GetHashCode());
-	}
-
-	IEnumerator<float> Co_SetMoveSpeed(float target)
-	{
-		float value = 0f;
-
-		while (Mathf.Abs(moveSpeed - target) > 0.01f)
-		{
-			moveSpeed = Mathf.Lerp(moveSpeed, target, value += Time.deltaTime * .15f);
-
-			yield return Timing.WaitForOneFrame;
-		}
-
-		moveSpeed = target;
-	}
-
 	IEnumerator<float> Co_Move()
 	{
 		while (this.transform.position.x >= -10f)
@@ -115,6 +89,11 @@ public class Ground : LevelElement
 		Util.RunCoroutine(Co_Move(), nameof(Co_Move) + this.GetHashCode());
 	}
 
+	public void Stop()
+	{
+		Util.KillCoroutine(nameof(Co_Move) + this.GetHashCode());
+	}
+
 	public float heightProbability = .1f;
 
 	private void CorrectPosition()
@@ -126,7 +105,7 @@ public class Ground : LevelElement
 		
 		if(heightProbability > UnityEngine.Random.Range(0, 1))
 		{
-			randomY = UnityEngine.Random.Range(-1, 1);
+			randomY = UnityEngine.Random.Range(-1, 2);
 		}
 
 		if (randomY != 0) randomX += 2;
@@ -144,6 +123,7 @@ public class Ground : LevelElement
 		}
 
 		generatedMonsters.Clear();
+		generatedCoins.Clear();
 	}
 
 	private void RandomizeGround()
@@ -160,11 +140,32 @@ public class Ground : LevelElement
 			{
 				if (UnityEngine.Random.Range(0f, 1f) <= levelController.monsterProbability)
 				{
-					generatedMonsters.Add(PoolManager.Spawn(Define.MONSTERACTOR, Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 2.48f, Quaternion.identity, blocks[i].transform));
+					var monster = PoolManager.Spawn(Define.MONSTER_ACTOR, Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 2.48f, Quaternion.identity, blocks[i].transform);
+					monster.GetComponent<MonsterActor>().health = Random.Range(1, 3) * 10;
+
+					generatedMonsters.Add(monster);
+				}
+
+				else
+				{
+					if(UnityEngine.Random.Range(0f,1f) <= levelController.coinProbability)
+					{
+						for (int amount = -1; amount < 2; amount++)
+						{
+							generatedCoins.Add(PoolManager.Spawn("Coin", Vector3.right * (amount * 0.675f) + Vector3.up * 2.9f, Quaternion.identity, blocks[i].transform));
+						}
+					}
 				}
 			}
 		}
+
+		for (int amount = -1; amount < 2; amount++)
+		{
+			generatedCoins.Add(PoolManager.Spawn("Coin", Vector3.right * (amount * 0.675f) + Vector3.up * 2.9f, Quaternion.identity, blocks[blocks.Length - 1].transform));
+		}
 	}
+
+	public List<GameObject> generatedCoins = new List<GameObject>();
 
 	public void SetProbability(float amount)
 	{
@@ -183,13 +184,17 @@ public class Ground : LevelElement
 
 		this.transform.position = startPosition;
 
-		moveSpeed = 0f;
-
 		foreach (var item in generatedMonsters)
 		{
 			item.GetComponent<MonsterActor>().Refresh();
 		}
 
+		foreach(var item in generatedCoins)
+		{
+			item.GetComponent<RePoolObject>().RePool();
+		}
+
 		generatedMonsters.Clear();
+		generatedCoins.Clear();
 	}
 }

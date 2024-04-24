@@ -31,6 +31,7 @@ public class PlayerActor : Actor
 	[HideInInspector] public float moveSpeedOrigin = 5;
 
 	public float dieVelocity = .75f;
+	public float pushForce = -2f;
 
 	Rigidbody2D rgbd2d;
 	Transform hp;
@@ -78,26 +79,104 @@ public class PlayerActor : Actor
 
 		if (isDead) return;
 
-		if (Input.GetKeyDown(KeyCode.B))
+		if (Input.GetKeyDown(KeyCode.Q))
 		{
 			PowerOverWelmingMode();
 		}
 
-		HandleSlideInput();		
+		if (Input.GetKeyDown(KeyCode.W))
+		{
+			Thunder();
+		}
+
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			Explosion();
+		}
+
+		HandleSlideInput();
 		HandleJumpInput();
+
+		if (rgbd2d.velocity.y < 0) isGrounded = false;
 	}
 
+	public void Thunder()
+	{
+		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
+		MonsterActor closestMonster = null;
 
+		float closestDistance = Mathf.Infinity;
+
+		// 각 MonsterActor 오브젝트와 플레이어 간의 거리를 비교합니다.
+		foreach (MonsterActor monster in monsters)
+		{
+			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
+
+			// 현재까지 찾은 가장 가까운 MonsterActor를 업데이트합니다.
+			if (distance < closestDistance && !monster.isDead)
+			{
+				closestDistance = distance;
+				closestMonster = monster;
+			}
+		}
+
+		// 가장 가까운 MonsterActor를 찾았습니다.
+		if (closestMonster != null)
+		{
+			closestMonster.Die();
+
+			PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
+
+			GameManager.Sound.PlaySound("Spawn", .5f);
+		}
+	}
+
+	public float killRadius = 10f;
+
+	public void Explosion()
+	{
+		PoolManager.Spawn("Thunder_Explosion", Vector3.zero, Quaternion.identity, this.transform);
+
+		GameManager.Sound.PlaySound("ElectricExplosion");
+
+		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
+
+		foreach (MonsterActor monster in monsters)
+		{
+			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
+
+			if (distance <= killRadius)
+			{
+				monster.Die();
+			}
+		}
+	}
+
+	// 기즈모를 그리는 함수
+	void OnDrawGizmosSelected()
+	{
+		// 기즈모 색상 설정
+		Gizmos.color = Color.red;
+
+		// 기즈모를 플레이어 주변에 그리기
+		Gizmos.DrawWireSphere(this.transform.position, killRadius);
+	}
+
+	public bool isPowerMode = false;
 	public void PowerOverWelmingMode()
 	{
-		FindObjectOfType<LevelController>().SetMoveMultiplier(3f);
+		isPowerMode = true;
 
 		this.gameObject.transform.DOMove(new Vector3(this.transform.position.x, 2.3f, this.transform.position.z), .5f).OnComplete(() =>
 		{
+			GameManager.Sound.PlaySound("ElectricFlow");
+
 			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
 
 			this.transform.Search("Root").gameObject.SetActive(false);
 			particle_ElectricMode.Play();
+
+			FindObjectOfType<LevelController>().SetMoveMultiplier(game.moveMultiplier);
 		});
 
 		rgbd2d.gravityScale = 0;
@@ -106,14 +185,16 @@ public class PlayerActor : Actor
 		game.SetVirtualCamBody(new Vector3(4.5f, -1.25f, -10f));
 		game.ZoomCamera(4f);
 
-		Invoke(nameof(EndPower), 5f);
+		Invoke(nameof(EndPower), 4.5f);
 	}
 
 	public void EndPower()
 	{
+		GameManager.Sound.PlaySound("Zap");
+
 		PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
 
-		FindObjectOfType<LevelController>().SetMoveMultiplier(1f);
+		FindObjectOfType<LevelController>().SetMoveMultiplier(1);
 
 		this.transform.Search("Root").gameObject.SetActive(true);
 		particle_ElectricMode.Stop();
@@ -122,14 +203,9 @@ public class PlayerActor : Actor
 
 		game.SetVirtualCamBody(new Vector3(4f, 1.25f, -10f));
 		game.ZoomCamera(3f);
+
+		isPowerMode = false;
 	}
-
-	public bool isFlying = false;
-	public float fallMultiplier = 2.5f;
-	public float lowJumpMultiplier = 2f;
-
-
-
 
 	private void HandleFacingDirection(float moveInput)
 	{
@@ -245,7 +321,7 @@ public class PlayerActor : Actor
 
 	public bool CanJump()
 	{
-		return isGrounded || remainingJumps > 0;
+		return (isGrounded || remainingJumps > 0) && !isPowerMode;
 	}
 
 	private void PerformJump()
@@ -267,11 +343,15 @@ public class PlayerActor : Actor
 
 		yield return Timing.WaitUntilTrue(() => rgbd2d.velocity.y < 0);
 
-		if(isDoubleJump) game.ZoomCamera(3f);
+		if (isDoubleJump) game.ZoomCamera(3f);
 
 		isJumping = false;
+		isGrounded = false;
+		Debug.Log(isGrounded);
 
 		yield return Timing.WaitUntilTrue(() => isGrounded);
+
+		isGrounded = true;
 	}
 
 	#endregion
@@ -436,6 +516,8 @@ public class PlayerActor : Actor
 			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
 
 			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+
+			Debug.Log("Monster");
 		}
 	}
 
@@ -451,7 +533,7 @@ public class PlayerActor : Actor
 
 				if (isDoubleJump)
 				{
-					isDoubleJump = false;					
+					isDoubleJump = false;
 				}
 
 				PerformJump();
@@ -463,8 +545,6 @@ public class PlayerActor : Actor
 			}
 		}
 	}
-
-	public float pushForce = -2f;
 
 	#endregion
 

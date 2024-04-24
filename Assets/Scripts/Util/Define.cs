@@ -55,5 +55,5 @@ public static class Define
 	public const string	JSON_INVENDATA = "InvenData.json";
 
 
-	public const string MONSTERACTOR = "MonsterActor";
+	public const string MONSTER_ACTOR = "MonsterActor";
 }

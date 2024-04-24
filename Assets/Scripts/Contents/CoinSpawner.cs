@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using MEC;
 using DG.Tweening;
 
@@ -16,16 +15,18 @@ public class CoinSpawner : MonoBehaviour
 	private int numParticlesAlive;
 	private float step;
 
-	public void Spawn()
+	public void Spawn(int gold)
 	{
-		SetBurstCount(Random.Range(5, 15));
+		if (targetUI == null) targetUI = GameObject.Find("img_Coin").GetComponent<RectTransform>();
+
+		SetBurstCount(gold);
 
 		ps.Play();
 
-		Util.RunCoroutine(Co_BurstParticles().Delay(delay), nameof(Co_BurstParticles));
+		Util.RunCoroutine(Co_BurstParticles(gold).Delay(delay), nameof(Co_BurstParticles) + this.GetHashCode());
 	}
 
-	private IEnumerator<float> Co_BurstParticles()
+	private IEnumerator<float> Co_BurstParticles(int gold)
 	{
 		var forceOverLifetime = ps.forceOverLifetime;
 		forceOverLifetime.enabled = false;
@@ -61,9 +62,11 @@ public class CoinSpawner : MonoBehaviour
 					targetUI.DOScale(1.2f, duration).SetEase(Ease.OutQuad).OnComplete(() =>
 					{
 						targetUI.DOScale(1f, duration).SetEase(Ease.OutQuad);
+
+						FindObjectOfType<Scene_Game>().AddGold(1);
 					});
 
-					GameManager.Sound.PlaySound("Popup");
+					GameManager.Sound.PlaySound("Pick", .125f);
 				}
 
 				else
@@ -80,6 +83,8 @@ public class CoinSpawner : MonoBehaviour
 		ps.Stop();
 
 		forceOverLifetime.enabled = true;
+
+		this.GetComponent<RePoolObject>().RePool();
 	}
 
 	public float duration = 1f;

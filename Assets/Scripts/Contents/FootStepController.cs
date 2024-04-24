@@ -27,11 +27,11 @@ public class FootStepController : MonoBehaviour
 	{
 		while (true)
 		{
-			yield return Timing.WaitUntilTrue(() => this.transform.position.y <= -0.195f && actor.isGrounded && game.gameState != GameState.Paused);
+			yield return Timing.WaitUntilTrue(() => actor.isGrounded && !actor.isPowerMode && game.gameState != GameState.Paused);
 
 			string sound = "FootstepGrassRunning_" + Random.Range(1, 6);
 
-			GameManager.Sound.PlaySound(sound, .5f);
+			GameManager.Sound.PlaySound(sound);
 
 			yield return Timing.WaitForSeconds(.25f);
 		}

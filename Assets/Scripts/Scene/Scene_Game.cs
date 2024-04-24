@@ -1,6 +1,7 @@
 using Cinemachine;
 using MEC;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum GameState
@@ -70,16 +71,21 @@ public class Scene_Game : SceneLogic
 
 		PoolManager.InitPool();
 		PoolManager.SetPoolData("Thunder", 10, Define.PATH_VFX);
-		PoolManager.SetPoolData(Define.MONSTERACTOR, 20, Define.PATH_ACTOR);
+		PoolManager.SetPoolData(Define.MONSTER_ACTOR, 20, Define.PATH_ACTOR);
 		PoolManager.SetPoolData("Thunder_ExplosionSmall", 5, Define.PATH_VFX);
+		PoolManager.SetPoolData("CoinSpawner", 5, Define.PATH_CONTENTS);
+		PoolManager.SetPoolData("Coin", 40, Define.PATH_CONTENTS);
+		PoolManager.SetPoolData("Thunder_Explosion", 1, Define.PATH_VFX);
 	}
 
 	private void Start()
 	{
+		GameManager.Sound.PlayBGM("Dawn", .5f);
+		GameManager.Sound.bgmVolume = 1f;
+		GameManager.Sound.sfxVolume = .75f;
+
 		GameManager.Scene.Fade(false, .1f);
-
 		GameManager.UI.Restart();
-
 		GameManager.UI.StackLastPopup<Popup_Pause>();
 
 		playerModel = player.transform.GetChild(0).gameObject;
@@ -111,15 +117,6 @@ public class Scene_Game : SceneLogic
 
 		Util.Zoom(virtualCamera, 3f, .05f);
 
-		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
-
-		GameManager.Sound.PlaySound("Spawn", .25f);
-		PoolManager.Spawn("Thunder", new Vector3(0f, -0.2f, 0f), Quaternion.identity);
-
-		yield return Timing.WaitForSeconds(.1f);
-
-		playerModel.SetActive(true);
-
 		FindObjectOfType<LevelController>().MoveGround();
 		var scroll = FindObjectsOfType<ParallexScrolling>();
 		foreach (var item in scroll)
@@ -127,12 +124,22 @@ public class Scene_Game : SceneLogic
 			item.StartScroll();
 		}
 
+		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
+
+		FindObjectOfType<CameraShake3D>().Shake();
+		GameManager.Sound.PlaySound("Spawn", .5f);
+		PoolManager.Spawn("Thunder", new Vector3(0f, -0.2f, 0f), Quaternion.identity);
+
+		yield return Timing.WaitForSeconds(.1f);
+
+		playerModel.SetActive(true);
+
 		float value = 0f;
 		bool isWalk = false;
 
 		while (value < 1f)
 		{
-			player.UpdateAnimator(value += Time.deltaTime);
+			player.UpdateAnimator(value += 1.5f * Time.deltaTime);
 
 			if (!isWalk && value > .25f)
 			{
@@ -159,29 +166,24 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_AddDifficulty()
 	{
-		yield return Timing.WaitForSeconds(5f);
+		var levelController = FindObjectOfType<LevelController>();
 
-		var groundController = FindObjectOfType<LevelController>();
-
-		var currentSpeed = groundController.GetMoveSpeed();
-		var addSpeed = currentSpeed * .1f;
-
-		var probability = groundController.GetProbability();
-		var addProbability = probability * .1f;
-
+		int index = 0;
 		while (true)
 		{
-			yield return Timing.WaitForSeconds(5f);
+			yield return Timing.WaitForSeconds(10f);
 
-			currentSpeed = Mathf.Clamp(currentSpeed += addSpeed, 0f, 10f);
-			probability += addProbability;
+			levelController.AddSpeed();
 
-			groundController.MoveGround(currentSpeed);
-			groundController.AddProbability(addProbability);
-			groundController.monsterProbability += (groundController.monsterProbability * .1f);
+			index++;
 
-			//DebugManager.Log("현재 속도 : " + currentSpeed);
-			//DebugManager.Log("현재 확률 : " + probability);
+			if(index % 3 == 0)
+			{
+				levelController.groundProbability += .1f;
+				levelController.monsterProbability += .1f;
+			}
+
+			Debug.Log("현재 속도 : " + levelController.moveSpeed);
 		}
 	}
 
@@ -194,10 +196,13 @@ public class Scene_Game : SceneLogic
 
 	IEnumerator<float> Co_AddScorePerFrame()
 	{
+		var levelController = FindObjectOfType<LevelController>();
+
 		while (!player.isDead)
 		{
 			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
-			score += 1 * scoreMultiplier;
+
+			score += (int)levelController.moveSpeed * levelController.currentMoveMultiplier;
 
 			GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
 
@@ -206,6 +211,7 @@ public class Scene_Game : SceneLogic
 	}
 
 	public int scoreMultiplier = 1;
+	public int moveMultiplier = 3;
 
 
 
@@ -254,7 +260,7 @@ public class Scene_Game : SceneLogic
 		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold);
 	}
 
-	public void AddCoin(int amount)
+	public void AddGold(int amount)
 	{
 		gold += amount;
 

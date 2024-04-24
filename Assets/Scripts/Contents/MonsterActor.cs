@@ -1,13 +1,8 @@
-using MEC;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
-using static EasingFunction;
 using static Enums;
-using static UnityEditor.Progress;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class MonsterActor : Actor
@@ -24,25 +19,22 @@ public class MonsterActor : Actor
 
 	Transform hp;
 
-	public event Action<int, int> OnMonsterDie;
-
 	#endregion
 
 
 
 	#region Initialize
 
+	private void OnEnable()
+	{
+		hp.GetComponent<TMP_Text>().text = health.ToString();
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
 
 		hp = this.transform.Search(nameof(hp));
-		hp.GetComponent<TMP_Text>().text = health.ToString();
-	}
-
-	void Start()
-	{
-		OnMonsterDie += FindObjectOfType<Scene_Game>().GainResource;
 	}
 
 	#endregion
@@ -50,37 +42,6 @@ public class MonsterActor : Actor
 
 
 	#region Core methods
-
-	//public void WatchTarget(Transform player) => Util.RunCoroutine(Co_WatchTarget(player), nameof(Co_WatchTarget) + this.GetHashCode());
-
-	//private IEnumerator<float> Co_WatchTarget(Transform player)
-	//{
-	//	while (true)
-	//	{
-	//		attackRange = 1.25f;
-
-	//		if (Vector3.Distance(this.gameObject.transform.position, player.position) < attackRange &&
-	//			Mathf.Abs(this.gameObject.transform.position.y - player.position.y) <= .5f)
-	//		{
-	//			Attack();
-
-	//			if (player.GetComponent<PlayerActor>().health <= damage)
-	//			{
-	//				yield return Timing.WaitForSeconds(.15f);
-
-	//				if (isDead) yield break;
-
-	//				player.GetComponent<PlayerActor>().Damage(damage);
-
-	//				yield break;
-	//			}
-	//		}
-
-	//		yield return Timing.WaitForOneFrame;
-	//	}
-	//}
-
-	//public void StopTarget() => Util.KillCoroutine(nameof(Co_WatchTarget) + this.GetHashCode());
 
 	#endregion
 
@@ -98,8 +59,9 @@ public class MonsterActor : Actor
 		isDead = true;
 		health = 0;
 
-		FindObjectOfType<CoinSpawner>().gameObject.transform.position = this.transform.position;
-		FindObjectOfType<CoinSpawner>().Spawn();
+		var coin = PoolManager.Spawn("CoinSpawner", this.transform.position + Vector3.up *.5f, Quaternion.identity);
+		coin.transform.SetParent(this.transform.parent);
+		FindObjectOfType<CoinSpawner>().Spawn(gold);
 
 		animator.SetBool("Die", true);
 
@@ -111,8 +73,6 @@ public class MonsterActor : Actor
 		GetItem();
 
 		CancelInvoke(nameof(ApplyDamage));
-
-		OnMonsterDie?.Invoke(score, gold);
 	}
 
 	

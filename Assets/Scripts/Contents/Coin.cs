@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Coin : LevelElement
 {
-	public int amount = 100;
+	public int amount = 1;
 
 	protected override void Awake()
 	{
@@ -20,11 +20,11 @@ public class Coin : LevelElement
 		{
 			Scene_Game game = FindObjectOfType<Scene_Game>();
 
-			game.AddCoin(amount);
+			game.AddGold(amount);
 
-			Destroy(gameObject);
+			this.GetComponent<RePoolObject>().RePool();
 
-			// playsound
+			// GameManager.Sound.PlaySound("Pick", .125f);
 		}
 	}
 }

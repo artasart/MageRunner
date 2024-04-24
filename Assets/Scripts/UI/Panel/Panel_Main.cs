@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,11 +19,15 @@ public class Panel_Main : Panel_Base
 
 	Image img_New;
 
+	TMP_Text txtmp_Gold;
+
 	protected override void Awake()
 	{
 		base.Awake();
 
 		img_New = GetUI_Image(nameof(img_New));
+
+		txtmp_Gold = GetUI_TMPText(nameof(txtmp_Gold), string.Empty);
 
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_RewardAd = GetUI_Button(nameof(btn_RewardAd), OnClick_RewardedAd, useAnimation: true);
@@ -111,5 +116,10 @@ public class Panel_Main : Panel_Base
 	public void ShowNewIcon(bool enable)
 	{
 		img_New.gameObject.SetActive(enable);
+	}
+
+	public void SetGold(int gold)
+	{
+		txtmp_Gold.text = Util.FormatNumber(gold);
 	}
 }

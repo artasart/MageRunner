@@ -24,6 +24,10 @@ public class RideController : MonoBehaviour
 		
 		spumPrefabs = horseAvatar.GetComponent<SPUM_Prefabs>();
 		horseAvatar.transform.position = Vector3.zero;
+	}
+
+	private void Start()
+	{
 		horseAvatar.SetActive(false);
 	}
 

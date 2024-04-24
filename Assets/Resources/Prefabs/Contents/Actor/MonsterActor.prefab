@@ -1429,8 +1429,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2b465433fd3e41468240b889c922471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
-  damage: 100
+  health: 10
+  damage: 1000
   isDead: 0
   score: 100
   gold: 10

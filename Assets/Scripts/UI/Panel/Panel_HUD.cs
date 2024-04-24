@@ -39,6 +39,9 @@ public class Panel_HUD : Panel_Base
 		{
 			items_Skill.Add(group_Skills.GetChild(i).GetComponent<Item_Skill>());
 		}
+
+		btn_Up.onClick.RemoveListener(OpenSound);
+		btn_Down.onClick.RemoveListener(OpenSound);
 	}
 
 	private void Start()

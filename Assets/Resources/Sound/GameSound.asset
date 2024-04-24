@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aec301e263655304f96e0034bb978ae8, type: 3}
   m_Name: GameSound
   m_EditorClassIdentifier: 
-  bgm: []
+  bgm:
+  - {fileID: 8300000, guid: 1f7df1ba9f1fe974c88dfb65643b1b65, type: 3}
   soundEffects:
   - {fileID: 8300000, guid: 1aff8da7c9bd5a04194426e287c94018, type: 3}
   - {fileID: 8300000, guid: 3473484a7c7713a4cb10824ab502236f, type: 3}
@@ -36,3 +37,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: eddb7387eb7988c4d8349aa6288d4c0e, type: 3}
   - {fileID: 8300000, guid: 64a48191e3506f344aa49e226f691c61, type: 3}
   - {fileID: 8300000, guid: 87199153365b34943985de314aaa4eab, type: 3}
+  - {fileID: 8300000, guid: a6c4f5ad29754c74e8ff9b5160960371, type: 3}
+  - {fileID: 8300000, guid: c12cbc50a3d9d584787b6798a2d95854, type: 3}
+  - {fileID: 8300000, guid: 2668a94de90034849bf7558bba0aa3fe, type: 3}
+  - {fileID: 8300000, guid: 2dfae893ab0c38848852011f9e760d04, type: 3}
+  - {fileID: 8300000, guid: c394f3b08c57cab4b8b3127cc1689b6f, type: 3}
+  - {fileID: 8300000, guid: 03d51743f260e894495eb6e8a02c9071, type: 3}
+  - {fileID: 8300000, guid: 8fcee510e54d5d54da50281dcf8b28b1, type: 3}

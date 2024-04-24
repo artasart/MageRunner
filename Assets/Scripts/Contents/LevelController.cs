@@ -13,6 +13,12 @@ public class LevelController : MonoBehaviour
 	public float monsterProbability = .1f;
 	float monsterProbabilityOrigin;
 
+	public float coinProbability = .75f;
+	float coinProbabilityOrigin;
+
+	public float moveSpeed = 5f;
+	public int currentMoveMultiplier = 1;
+
     List<Ground> grounds = new List<Ground>();
 
     private void Awake()
@@ -21,32 +27,42 @@ public class LevelController : MonoBehaviour
 
 		monsterProbabilityOrigin = monsterProbability;
 		groundProbabilityOrigin = groundProbability;
+		coinProbabilityOrigin = coinProbability;
 	}
 
 	public float GetMoveSpeed()
 	{
-		return grounds[0].moveSpeed;
+		return moveSpeed;
 	}
 
-	public float GetProbability()
+	public void SetMoveMultiplier(int multiplier)
 	{
-		return groundProbability;
-	}
+		currentMoveMultiplier = multiplier;
 
-	public void SetMoveMultiplier(float multiplier)
-	{
 		foreach (var item in grounds)
 		{
 			item.moveSpeedMultiplier = multiplier;
 		}
 	}
 
-	public void MoveGround(float moveSpeed = 5f)
+	public void MoveGround(float moveSpeed = 4f)
     {
+		this.moveSpeed = moveSpeed;
+
 		foreach (var item in grounds)
 		{
-			item.SetMoveSpeed(moveSpeed);
+			item.moveSpeed = moveSpeed;
 			item.Move();
+		}
+	}
+
+	public void AddSpeed()
+	{
+		moveSpeed = Mathf.Clamp(moveSpeed += .1f, 0f, 10);
+
+		foreach (var item in grounds)
+		{
+			item.moveSpeed = moveSpeed;
 		}
 	}
 
@@ -54,7 +70,6 @@ public class LevelController : MonoBehaviour
 	{
 		foreach (var item in grounds)
 		{
-			item.SetMoveSpeed(0f);
 			item.Stop();
 		}
 	}
@@ -71,5 +86,6 @@ public class LevelController : MonoBehaviour
 	{ 
 		monsterProbability = monsterProbabilityOrigin;
 		groundProbability = groundProbabilityOrigin;
+		coinProbability = coinProbabilityOrigin;
 	}
 }
