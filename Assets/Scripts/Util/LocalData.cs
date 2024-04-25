@@ -18,6 +18,8 @@ public class MasterData
 	public VersionData version;
 	public List<Level> levelData;
 	public List<Item> itemData;
+	public List<Skill> skillData;
+	public List<SkillUpgrade> skillUpgradeData;
 }
 
 [Serializable]
@@ -33,6 +35,9 @@ public class GameData
 	public Ride ride;
 
 	public SerializableDictionary<string, int> gainedItems;
+
+	public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
+	public List<PlayerActiveSkill> activeSkills;
 }
 
 [Serializable]
@@ -40,6 +45,29 @@ public class InvenData
 {
 	public List<InvenItemData> invenItemData;
 }
+
+
+[Serializable]
+public class Skill
+{
+	public string name;
+	public string description;
+	public string thumbnailPath;
+}
+
+[Serializable]
+public class SkillUpgrade
+{
+	public int level;
+	public int upgradeGold;
+}
+
+
+
+
+
+
+
 
 [Serializable]
 public class VersionData

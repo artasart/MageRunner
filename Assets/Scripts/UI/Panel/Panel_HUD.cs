@@ -108,7 +108,7 @@ public class Panel_HUD : Panel_Base
 		txtmp_Coin.text = amount.ToString("N0");
 	}
 
-	public void UseSkill(Skill skillType, int coolTime, float delay = 0f)
+	public void UseSkill(SkillType skillType, int coolTime, float delay = 0f)
 	{
 		Debug.Log("Skill is used : " + skillType.ToString());
 
@@ -117,7 +117,7 @@ public class Panel_HUD : Panel_Base
 }
 
 
-public enum Skill
+public enum SkillType
 {
 	Passive_1 = 0,
 	Passive_2,

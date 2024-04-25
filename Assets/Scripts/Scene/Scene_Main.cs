@@ -34,6 +34,17 @@ public class Scene_Main : SceneLogic
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
 		LocalData.invenData = JsonManager<InvenData>.LoadData(Define.JSON_INVENDATA);
 
+		if(LocalData.gameData == null)
+		{
+			LocalData.gameData = new GameData();
+			LocalData.gameData.ride = new Ride();
+			LocalData.gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
+			LocalData.gameData.gainedItems = new SerializableDictionary<string, int>();
+			LocalData.gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
+			LocalData.gameData.activeSkills = new List<PlayerActiveSkill>();
+			LocalData.gameData.gold += 1000000;
+		}
+
 		if(LocalData.invenData == null)
 		{
 			LocalData.invenData = new InvenData();
@@ -58,9 +69,6 @@ public class Scene_Main : SceneLogic
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
 		renderTextureCamrea = GameObject.Find("RenderTextureCamera");
-
-		GameObject.Find("PlayerActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
-		GameObject.Find("PlayerHorseActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 	}
 
 	public List<InvenItemData> equipmentData = new List<InvenItemData>();
@@ -77,15 +85,16 @@ public class Scene_Main : SceneLogic
 
 		PoolManager.SetPoolData("Puff", 10, Define.PATH_VFX);
 
+		GetFarmedItem();
+
 		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
-		GetFarmedItem();
+		GameObject.Find("PlayerActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+		GameObject.Find("PlayerHorseActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 	}
 
 	public void GetFarmedItem()
 	{
-		LocalData.gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
-
 		if (LocalData.gameData != null)
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(LocalData.gameData.gainedItems.Count > 0);
@@ -127,6 +136,31 @@ public class Scene_Main : SceneLogic
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(false);
 		}
+
+		if (LocalData.gameData.passiveSkills.Count == 0)
+		{
+			DebugManager.ClearLog("No Data");
+
+			int index = 0;
+
+			foreach (var item in LocalData.masterData.skillData)
+			{
+				var passiveSkills = new PlayerPassiveSkill(item.name, item.description, item.thumbnailPath, 1);
+
+				LocalData.gameData.passiveSkills.Add(Util.ConvertIntToEnum<Skills>(index), passiveSkills);
+
+				index++;
+			}
+		}
+
+		if (LocalData.gameData.activeSkills.Count == 0)
+		{
+			LocalData.gameData.activeSkills.Add(new PlayerActiveSkill("Thunder", "This is Thunder Skill.", ""));
+			LocalData.gameData.activeSkills.Add(new PlayerActiveSkill("Explosion", "This is Explosion Skill.", ""));
+			LocalData.gameData.activeSkills.Add(new PlayerActiveSkill("PowerOverWhelming", "This is PowerOverWhelming Skill.", ""));
+		}
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	public static string ExtractSubstring(string originalString)
@@ -174,10 +208,12 @@ public class Scene_Main : SceneLogic
 
 	private void Update()
 	{
-		//if (Input.GetKeyDown(KeyCode.Space))
-		//{
-		//	GameManager.UI.FetchPanel<Panel_Main>().ShowRewardAd();
-		//}
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			GameManager.UI.StackPopup<Popup_SkillUpgrade>(true);
+
+			GameManager.UI.FetchPopup<Popup_SkillUpgrade>().Test();
+		}
 	}
 
 	public void UpCamera()

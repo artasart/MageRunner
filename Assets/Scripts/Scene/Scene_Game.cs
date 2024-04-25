@@ -94,6 +94,18 @@ public class Scene_Game : SceneLogic
 		GameStart();
 	}
 
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Alpha1))
+		{
+			GameManager.UI.FetchPanel<Panel_HUD>().Hide();
+
+			FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
+
+			GameManager.UI.StartPopup<Popup_Skill>(true);
+		}
+	}
+
 	public void SaveGameData()
 	{
 		if (score > LocalData.gameData.highScore)

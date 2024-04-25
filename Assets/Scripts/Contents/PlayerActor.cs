@@ -22,7 +22,7 @@ public class PlayerActor : Actor
 	[SerializeField] private bool isJumping = false;
 	[SerializeField] float jumpValue = 10f;
 	[SerializeField] public bool isGrounded = true;
-	[SerializeField] bool isSliding = false;
+	[SerializeField] public bool isSliding = false;
 	[SerializeField] float slideTimer = 0f;
 	[SerializeField] int remainingJumps;
 
@@ -311,12 +311,16 @@ public class PlayerActor : Actor
 		isSliding = true;
 		slideTimer = slideDuration;
 		moveSpeed *= slideSpeedMultiplier;
+
+		animator.SetBool("Slide", true);
 	}
 
 	private void EndSlide()
 	{
 		isSliding = false;
 		moveSpeed /= slideSpeedMultiplier;
+
+		animator.SetBool("Slide", false);
 	}
 
 	public bool CanJump()
@@ -326,6 +330,8 @@ public class PlayerActor : Actor
 
 	private void PerformJump()
 	{
+		animator.SetBool("Jump", true);
+
 		rgbd2d.velocity = new Vector2(rgbd2d.velocity.x, jumpValue);
 		isGrounded = false;
 
@@ -437,7 +443,7 @@ public class PlayerActor : Actor
 	{
 		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.gold, game.exp = Mathf.RoundToInt(game.score * .45f));
 
-		GameManager.UI.StartPopup<Popup_GameOver>();
+		GameManager.UI.StartPopup<Popup_GameOver>(true);
 	}
 
 	public override void Refresh()
@@ -499,6 +505,7 @@ public class PlayerActor : Actor
 			isGrounded = true;
 			remainingJumps = maxJumps;
 			jumpValue = jumpForce;
+			animator.SetBool("Jump", false);
 
 			if (isDoubleJump)
 			{
@@ -535,6 +542,8 @@ public class PlayerActor : Actor
 				{
 					isDoubleJump = false;
 				}
+
+				animator.SetBool("Jump", false);
 
 				PerformJump();
 				HandleJumpCount(true);

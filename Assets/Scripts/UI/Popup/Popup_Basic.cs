@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public enum ModalType
 {
@@ -51,17 +52,20 @@ public class Popup_Basic : Popup_Base
 		txtmp_Close = GetUI_TMPText(nameof(txtmp_Close), "CANCEL");
 	}
 
-	public void SetPopupInfo(ModalType _modalType, string _description)
+	public void SetPopupInfo(ModalType _modalType, string _description, Action confirm = null, Action cancel = null)
 	{
 		modalType = _modalType;
 		txtmp_Description.text = _description;
+
+		callback_confirm = confirm;
+		callback_cancel = cancel;
 	}
 
 	public void Clear()
 	{
-		txtmp_Description.text = string.Empty;
-		callback_confirm = null;
-		callback_cancel = null;
+		txtmp_Description.text = "Do you really want to exit?";
+		callback_confirm = () => Application.Quit();
+		callback_cancel = () => GameManager.UI.PopPopup();
 
 		modalType = ModalType.ConfirmCancel;
 	}

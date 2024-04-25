@@ -107,8 +107,6 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		{
 			if (ignorePanels.Contains(openPanels.Peek()))
 			{
-				DebugManager.ClearLog("Current Open Popups : " + openPopups.Count);
-
 				if (openPopups.Count <= 0)
 				{
 					var popupName = popup_LastStack.name;
@@ -396,13 +394,13 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		}
 	}
 
-	public void StartPopup<T>() where T : Popup_Base
+	public void StartPopup<T>(bool isInstant = false) where T : Popup_Base
 	{
 		string popupName = typeof(T).ToString();
 
 		ignorePopups.Add(popupName);
 
-		StackPopup<T>();
+		StackPopup<T>(isInstant);
 	}
 
 	public bool IsPopupOpen()

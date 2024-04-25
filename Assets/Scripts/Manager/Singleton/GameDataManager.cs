@@ -59,6 +59,8 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 		GoogleSheets.AddJob("Get Level Data", () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
 		GoogleSheets.AddJob("Get Equipment Data", () => GoogleSheets.GetData(Url.EQUIPMENT_SHEETID, SaveData<Item>));
+		GoogleSheets.AddJob("Get Skill Data", () => GoogleSheets.GetData(Url.SKILL_SHEETID, SaveData<Skill>));
+		GoogleSheets.AddJob("Get SkillUpgrade Data", () => GoogleSheets.GetData(Url.SKILL_UPGRADE_SHEETID, SaveData<SkillUpgrade>));
 
 		GoogleSheets.GetDataAll(callback);
 	}
@@ -92,6 +94,14 @@ public class GameDataManager : SingletonManager<GameDataManager>
 		else if (typeof(T) == typeof(Item))
 		{
 			LocalData.masterData.itemData = dataList.Cast<Item>().ToList();
+		}
+		else if (typeof(T) == typeof(Skill))
+		{
+			LocalData.masterData.skillData = dataList.Cast<Skill>().ToList();
+		}
+		else if (typeof(T) == typeof(SkillUpgrade))
+		{
+			LocalData.masterData.skillUpgradeData = dataList.Cast<SkillUpgrade>().ToList();
 		}
 	}
 
