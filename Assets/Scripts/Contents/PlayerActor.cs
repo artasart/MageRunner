@@ -81,16 +81,35 @@ public class PlayerActor : Actor
 
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
+			if (!game.skills.ContainsKey(Skills.PowerOverWhelming))
+			{
+				Debug.Log("No Skill");
+
+				return;
+			}
 			PowerOverWelmingMode();
 		}
 
 		if (Input.GetKeyDown(KeyCode.W))
 		{
+			if (!game.skills.ContainsKey(Skills.Execution))
+			{
+				Debug.Log("No Skill");
+
+				return;
+			}
 			Thunder();
 		}
 
 		if (Input.GetKeyDown(KeyCode.E))
 		{
+			if (!game.skills.ContainsKey(Skills.ShockWave))
+			{
+				Debug.Log("No Skill");
+
+				return;
+			}
+
 			Explosion();
 		}
 
@@ -443,7 +462,7 @@ public class PlayerActor : Actor
 	{
 		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.gold, game.exp = Mathf.RoundToInt(game.score * .45f));
 
-		GameManager.UI.StartPopup<Popup_GameOver>(true);
+		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
 
 	public override void Refresh()

@@ -37,7 +37,7 @@ public class GameData
 	public SerializableDictionary<string, int> gainedItems;
 
 	public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
-	public List<PlayerActiveSkill> activeSkills;
+	public List<ActiveSkill> activeSkills;
 }
 
 [Serializable]

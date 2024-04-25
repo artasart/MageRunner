@@ -102,8 +102,8 @@ public class Ground : LevelElement
 
 		int randomX = 0;
 		int randomY = 0;
-		
-		if(heightProbability > UnityEngine.Random.Range(0, 1))
+
+		if (heightProbability > UnityEngine.Random.Range(0, 1))
 		{
 			randomY = UnityEngine.Random.Range(-1, 2);
 		}
@@ -124,6 +124,7 @@ public class Ground : LevelElement
 
 		generatedMonsters.Clear();
 		generatedCoins.Clear();
+		generatedSkillCards.Clear();
 	}
 
 	private void RandomizeGround()
@@ -148,7 +149,13 @@ public class Ground : LevelElement
 
 				else
 				{
-					if(UnityEngine.Random.Range(0f,1f) <= levelController.coinProbability)
+					if (UnityEngine.Random.Range(0f, 1f) <= levelController.skillCardProbability)
+					{
+						generatedSkillCards.Add(PoolManager.Spawn("SkillCard", Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 3.48f, Quaternion.identity, blocks[i].transform));
+
+					}
+
+					if (UnityEngine.Random.Range(0f, 1f) <= levelController.coinProbability)
 					{
 						for (int amount = -1; amount < 2; amount++)
 						{
@@ -166,6 +173,7 @@ public class Ground : LevelElement
 	}
 
 	public List<GameObject> generatedCoins = new List<GameObject>();
+	public List<GameObject> generatedSkillCards = new List<GameObject>();
 
 	public void SetProbability(float amount)
 	{
@@ -189,12 +197,13 @@ public class Ground : LevelElement
 			item.GetComponent<MonsterActor>().Refresh();
 		}
 
-		foreach(var item in generatedCoins)
+		foreach (var item in generatedCoins)
 		{
 			item.GetComponent<RePoolObject>().RePool();
 		}
 
 		generatedMonsters.Clear();
 		generatedCoins.Clear();
+		generatedSkillCards.Clear();
 	}
 }

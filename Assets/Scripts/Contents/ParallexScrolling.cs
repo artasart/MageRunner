@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MEC;
 using UnityEngine.UIElements;
+using System;
 
 public class ParallexScrolling : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class ParallexScrolling : MonoBehaviour
 	{
 		while (true)
 		{
+			yield return Timing.WaitUntilTrue(() => FindObjectOfType<Scene_Game>().gameState == GameState.Playing);
 			foreach(var item in layers)
 			{
 				Vector3 newPos = item.position;

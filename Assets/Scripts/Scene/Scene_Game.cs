@@ -36,6 +36,14 @@ public class Scene_Game : SceneLogic
 		Util.KillCoroutine(nameof(Co_AddScorePerFrame));
 	}
 
+	private void OnDisable()
+	{
+		for(int i = 0; i < LocalData.gameData.activeSkills.Count; i++)
+		{
+			LocalData.gameData.activeSkills[i].level = 0;
+		}
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -76,6 +84,7 @@ public class Scene_Game : SceneLogic
 		PoolManager.SetPoolData("CoinSpawner", 5, Define.PATH_CONTENTS);
 		PoolManager.SetPoolData("Coin", 40, Define.PATH_CONTENTS);
 		PoolManager.SetPoolData("Thunder_Explosion", 1, Define.PATH_VFX);
+		PoolManager.SetPoolData("SkillCard", 5, Define.PATH_CONTENTS);
 	}
 
 	private void Start()
@@ -92,18 +101,6 @@ public class Scene_Game : SceneLogic
 		playerModel.SetActive(false);
 
 		GameStart();
-	}
-
-	private void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.Alpha1))
-		{
-			GameManager.UI.FetchPanel<Panel_HUD>().Hide();
-
-			FindObjectOfType<Scene_Game>().gameState = GameState.Paused;
-
-			GameManager.UI.StartPopup<Popup_Skill>(true);
-		}
 	}
 
 	public void SaveGameData()
@@ -302,6 +299,15 @@ public class Scene_Game : SceneLogic
 		score = 0;
 		gold = 0;
 
+		skills.Clear();
+		skills = null;
+		skills = new SerializableDictionary<Skills, ActiveSkill>();
+
+		for (int i = 0; i < LocalData.gameData.activeSkills.Count; i++)
+		{
+			LocalData.gameData.activeSkills[i].level = 0;
+		}
+
 		GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score);
 		GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold);
 		GameManager.UI.FetchPanel<Panel_HUD>().RefreshUI();
@@ -443,4 +449,37 @@ public class Scene_Game : SceneLogic
 
 		transposer.m_FollowOffset = bodyPosition;
 	}
+
+
+
+
+	#region Skill
+
+	public SerializableDictionary<Skills, ActiveSkill> skills = new SerializableDictionary<Skills, ActiveSkill>();
+
+	public void AddSkill(ActiveSkill skill)
+	{
+		var activeSKill = new ActiveSkill(skill.name, skill.description, skill.thumbnailPath, skill.type);
+
+		if (!skills.ContainsKey(activeSKill.type))
+		{
+			skills.Add(activeSKill.type, activeSKill);
+			skills[activeSKill.type].level = 1;
+
+			for(int i = 0; i < LocalData.gameData.activeSkills.Count;i++)
+			{
+				if (LocalData.gameData.activeSkills[i].type == activeSKill.type)
+				{
+					LocalData.gameData.activeSkills[i] = skills[activeSKill.type];
+				}
+			}
+		}
+
+		else
+		{
+			skills[activeSKill.type].level++;
+		}
+	}
+
+	#endregion
 }

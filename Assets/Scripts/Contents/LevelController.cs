@@ -16,6 +16,9 @@ public class LevelController : MonoBehaviour
 	public float coinProbability = .75f;
 	float coinProbabilityOrigin;
 
+	public float skillCardProbability = .2f;
+	float skillCardProbabilityOrigin;
+
 	public float moveSpeed = 5f;
 	public int currentMoveMultiplier = 1;
 
@@ -28,6 +31,7 @@ public class LevelController : MonoBehaviour
 		monsterProbabilityOrigin = monsterProbability;
 		groundProbabilityOrigin = groundProbability;
 		coinProbabilityOrigin = coinProbability;
+		skillCardProbabilityOrigin = skillCardProbability;
 	}
 
 	public float GetMoveSpeed()
@@ -87,5 +91,6 @@ public class LevelController : MonoBehaviour
 		monsterProbability = monsterProbabilityOrigin;
 		groundProbability = groundProbabilityOrigin;
 		coinProbability = coinProbabilityOrigin;
+		skillCardProbability = skillCardProbabilityOrigin;
 	}
 }

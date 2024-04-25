@@ -41,7 +41,7 @@ public class Scene_Main : SceneLogic
 			LocalData.gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
 			LocalData.gameData.gainedItems = new SerializableDictionary<string, int>();
 			LocalData.gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
-			LocalData.gameData.activeSkills = new List<PlayerActiveSkill>();
+			LocalData.gameData.activeSkills = new List<ActiveSkill>();
 			LocalData.gameData.gold += 1000000;
 		}
 
@@ -155,9 +155,9 @@ public class Scene_Main : SceneLogic
 
 		if (LocalData.gameData.activeSkills.Count == 0)
 		{
-			LocalData.gameData.activeSkills.Add(new PlayerActiveSkill("Thunder", "This is Thunder Skill.", ""));
-			LocalData.gameData.activeSkills.Add(new PlayerActiveSkill("Explosion", "This is Explosion Skill.", ""));
-			LocalData.gameData.activeSkills.Add(new PlayerActiveSkill("PowerOverWhelming", "This is PowerOverWhelming Skill.", ""));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Thunder", "This is Thunder Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Skull", Skills.Execution));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Explosion", "This is Explosion Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sword_A", Skills.Electricute));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("PowerOverWhelming", "This is PowerOverWhelming Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Shield_A", Skills.PowerOverWhelming));
 		}
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);

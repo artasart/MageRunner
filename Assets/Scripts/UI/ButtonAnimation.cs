@@ -12,11 +12,9 @@ public class ButtonAnimation : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private Button button;
 
-    CoroutineHandle handle_Button;
-
 	private void OnDestroy()
 	{
-		Timing.KillCoroutines(handle_Button);
+		Util.KillCoroutine(nameof(Co_SizeTransform) + this.GetHashCode());
 	}
 
 	void Awake()
@@ -26,16 +24,12 @@ public class ButtonAnimation : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
-        Timing.KillCoroutines(handle_Button);
-
-		handle_Button = Timing.RunCoroutine(Co_SizeTransform(targetScaleY));
+		Util.RunCoroutine(Co_SizeTransform(targetScaleY), nameof(Co_SizeTransform) + this.GetHashCode());
 	}
 
 	public void OnPointerUp(PointerEventData eventData)
 	{
-        Timing.KillCoroutines(handle_Button);
-
-        handle_Button = Timing.RunCoroutine(Co_SizeTransform(1f));
+        Util.RunCoroutine(Co_SizeTransform(1f), nameof(Co_SizeTransform) + this.GetHashCode());
 	}
 
 	private IEnumerator<float> Co_SizeTransform(float _size)
@@ -46,6 +40,8 @@ public class ButtonAnimation : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
         while (lerpvalue <= 1f)
         {
+            if (button == null || button.GetComponent<RectTransform>() == null) yield break;
+
             Function function = GetEasingFunction(easeFunction);
 
             float x = function(current.x, _size, lerpvalue);
