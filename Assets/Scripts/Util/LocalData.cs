@@ -87,6 +87,7 @@ public class MasterData
 	public List<Skill> skillData;
 
 	public List<SkillUpgrade> skillUpgradeData;
+	public List<InGameLevel> inGameLevel;
 }
 
 [Serializable]
@@ -111,6 +112,9 @@ public class GameData
 public class InvenData
 {
 	public List<InvenItemData> invenItemData;
+	public int amount = 0;
+	public int totalAmount = 0;
+	public int stashLevel;
 }
 
 
@@ -259,4 +263,16 @@ public class Equipment
 			throw new ArgumentException("Invalid item name format.");
 		}
 	}
+}
+
+[Serializable]
+public class InGameLevel
+{
+	public int level;
+	public int exp;
+	public float coinProbability;
+	public float skillCardProbability;
+	public float monsterProbability;
+	public int monsterExp;
+	public int monsterDamage;
 }

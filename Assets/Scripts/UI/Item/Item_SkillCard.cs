@@ -99,6 +99,8 @@ public class Item_SkillCard : Item_Base
 		particle.GetComponent<ParticleSystem>().Play();
 
 		GameManager.UI.FetchPopup<Popup_Skill>().SetOtherSmall(selectedIndex);
+
+		btn_ItemCard.interactable = false;
 	}
 
 	public void SetSize()

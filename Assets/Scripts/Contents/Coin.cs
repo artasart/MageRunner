@@ -16,15 +16,20 @@ public class Coin : LevelElement
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.CompareTag("Player"))
+		if (other.CompareTag(Define.PLAYER))
 		{
 			Scene_Game game = FindObjectOfType<Scene_Game>();
 
 			game.AddGold(amount);
 
 			this.GetComponent<RePoolObject>().RePool();
+		}
 
-			// GameManager.Sound.PlaySound("Pick", .125f);
+		else if (other.CompareTag(Define.COLLECTOR))
+		{
+			Debug.Log("Coin Repool");
+
+			this.GetComponent<RePoolObject>().RePool();
 		}
 	}
 }

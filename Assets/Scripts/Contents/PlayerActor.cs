@@ -565,14 +565,16 @@ public class PlayerActor : Actor
 	}
 
 
-	public void IncreaseHealth(int health)
-	{
-		hp.GetComponent<TMP_Text>().text = health.ToString();
-	}
-
 	public void Distortion()
 	{
 		particle_Distortion.Play();
+	}
+
+	public void AddDamage(int amount)
+	{
+		health += amount;
+
+		hp.GetComponent<TMP_Text>().text = health.ToString();
 	}
 
 	#endregion

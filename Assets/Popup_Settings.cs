@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Popup_Settings : Popup_Base
 {
@@ -57,6 +58,9 @@ public class Popup_Settings : Popup_Base
 	{
 		slider_BGM.value = GameManager.Sound.bgmVolume;
 		slider_SFX.value = GameManager.Sound.sfxVolume;
+
+		txtmp_BGMVolume.text = (GameManager.Sound.bgmVolume * 100).ToString("N0");
+		txtmp_SFXVolume.text = (GameManager.Sound.sfxVolume * 100).ToString("N0");
 	}
 
 
@@ -113,8 +117,6 @@ public class Popup_Settings : Popup_Base
 		GameManager.Sound.bgmVolume = value;
 
 		GameManager.Sound.bgm.volume = value;
-
-		txtmp_BGMVolume.text = (value * 100).ToString("N0");
 	}
 
 	private void OnValueChanged_SFX(float value)

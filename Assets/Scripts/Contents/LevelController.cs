@@ -7,18 +7,14 @@ public class LevelController : MonoBehaviour
 {
 	[Header("Ground Speed")]
 	public float moveSpeed = 5f;
+	public float moveSpeedOrigin = 5f;
 	public int moveSpeedMultiplier = 1;
+	public float heightProbability = .75f;
 
 	[Header("Element Probability")]
 	public float groundProbability = .1f;
-	public float monsterProbability = .1f;
-	public float coinProbability = .75f;
-	public float skillCardProbability = .2f;
 
 	float groundProbabilityOrigin;
-	float monsterProbabilityOrigin;
-	float coinProbabilityOrigin;
-	float skillCardProbabilityOrigin;
 
     List<Ground> grounds = new List<Ground>();
 
@@ -29,10 +25,9 @@ public class LevelController : MonoBehaviour
 			grounds.Add(this.transform.GetChild(i).GetComponent<Ground>());
 		}
 
-		monsterProbabilityOrigin = monsterProbability;
 		groundProbabilityOrigin = groundProbability;
-		coinProbabilityOrigin = coinProbability;
-		skillCardProbabilityOrigin = skillCardProbability;
+
+		moveSpeedOrigin = moveSpeed;
 	}
 
 	public void MoveGround()
@@ -53,14 +48,13 @@ public class LevelController : MonoBehaviour
 
 	public void Refresh()
 	{ 
-		monsterProbability = monsterProbabilityOrigin;
 		groundProbability = groundProbabilityOrigin;
-		coinProbability = coinProbabilityOrigin;
-		skillCardProbability = skillCardProbabilityOrigin;
 
 		foreach (var item in grounds)
 		{
 			item.Refresh();
 		}
+
+		moveSpeed = moveSpeedOrigin;
 	}
 }

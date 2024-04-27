@@ -15,7 +15,7 @@ public class Scene_Game : SceneLogic
 	[Header("Game Score")]
 	public int gold;
 	public int score;
-	public int level;
+	public int level = 1;
 	public int exp;
 
 	public int playerExp;
@@ -138,6 +138,7 @@ public class Scene_Game : SceneLogic
 		LocalData.InitSkill();
 
 		score = gold = 0;
+		level = 1;
 		goldMultiplier = 1;
 		skills = new SerializableDictionary<Skills, ActiveSkill>();
 
@@ -247,7 +248,7 @@ public class Scene_Game : SceneLogic
 			if (index % 3 == 0)
 			{
 				levelController.groundProbability += .1f;
-				levelController.monsterProbability += .1f;
+				//levelController.monsterProbability += .1f;
 			}
 		}
 	}
@@ -365,7 +366,7 @@ public class Scene_Game : SceneLogic
 
 		if(activeSKill.type == Skills.Speed)
 		{
-			var increaseValue = levelController.moveSpeed * ((float)skills[activeSKill.type].level * .05f);
+			var increaseValue = levelController.moveSpeed * ((float)skills[activeSKill.type].level * .015f);
 
 			Debug.Log($"Speed Upagreded : {levelController.moveSpeed} -> {levelController.moveSpeed + increaseValue}");
 
@@ -374,13 +375,11 @@ public class Scene_Game : SceneLogic
 
 		if (activeSKill.type == Skills.Damage)
 		{
-			var increaseValue = skills[activeSKill.type].level * 10;
+			var increaseValue = 5;
 
 			Debug.Log($"Daamge Upagreded : {playerActor.health} -> {playerActor.health + increaseValue}");
 
-			playerActor.health += (int)increaseValue;
-
-			playerActor.IncreaseHealth(playerActor.health);
+			playerActor.AddDamage((int)increaseValue);
 		}
 
 		if (activeSKill.type == Skills.Gold)
@@ -407,11 +406,13 @@ public class Scene_Game : SceneLogic
 		}
 	}
 
-	public void AddGameExp(int amount)
+	public void AddGameExp()
 	{
-		exp += amount;
+		if (Scene.game.level == 30) return;
+		Debug.Log("AddGameExp");
+		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp;
 
-		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(exp);
+		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(amount);
 	}
 
 	#endregion

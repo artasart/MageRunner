@@ -10,4 +10,5 @@ public static class Url
 	public const long EQUIPMENT_SHEETID = 934847903;
 	public const long SKILL_SHEETID = 997962919;
 	public const long SKILL_UPGRADE_SHEETID = 899639797;
+	public const long INGAME_SHEETID = 1321708079;
 }

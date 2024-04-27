@@ -97,7 +97,9 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 			else
 			{
-				PopPopup();
+				var isInstant = popups[openPopups.Peek()].GetComponent<Popup_Base>().isInstant;
+
+				PopPopup(isInstant);
 
 				GameManager.Sound.PlaySound(Define.SOUND_CLOSE);
 			}
@@ -116,8 +118,13 @@ public class GameUIManager : SingletonManager<GameUIManager>
 						openPopups.Push(popup_LastStack.name);
 
 						popup_LastStack.transform.SetAsLastSibling();
-						
-						ShowPopup(popups[popupName], true);
+
+						popups[popupName].SetActive(true);
+						popups[popupName].GetComponent<CanvasGroup>().alpha = 1f;
+						popups[popupName].GetComponent<CanvasGroup>().blocksRaycasts = true;
+						popups[popupName].GetComponent<Popup_Base>().isInstant = true;
+
+						popups[popupName].transform.Search("group_Modal").localScale = Vector3.one;
 
 						GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 

@@ -36,6 +36,13 @@ public class SkillCard : MonoBehaviour
 
 			this.GetComponent<RePoolObject>().RePool();
 		}
+
+		else if (other.CompareTag(Define.COLLECTOR))
+		{
+			Debug.Log("Coin Repool");
+
+			this.GetComponent<RePoolObject>().RePool();
+		}
 	}
 
 	private void ShowPopup()

@@ -53,6 +53,8 @@ public class Popup_Base : UI_Base
 		callback_cancel?.Invoke();
 
 		GameManager.UI.PopPopup(isInstant);
+
+		Debug.Log("Close");
 	}
 
 	protected virtual void UseDimClose()

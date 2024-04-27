@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using static Enums;
@@ -30,7 +31,7 @@ public class MonsterActor : Actor
 
 	private void OnEnable()
 	{
-		hp.GetComponent<TMP_Text>().text = health.ToString();
+		hp.GetComponent<TMP_Text>().text = damage.ToString();
 	}
 
 	protected override void Awake()
@@ -42,6 +43,8 @@ public class MonsterActor : Actor
 		particle_SwordTrail = this.transform.Search(nameof(particle_SwordTrail)).GetComponent<ParticleSystem>();
 
 		boxCollider2D = GetComponent<BoxCollider2D>();
+
+		healthOrigin = damage;
 	}
 
 	#endregion
@@ -68,7 +71,7 @@ public class MonsterActor : Actor
 		if (isDead) return;
 
 		isDead = true;
-		health = 0;
+		damage = 0;
 
 		PoolManager.Spawn("Skull", Vector3.zero + Vector3.up * .5f, Quaternion.identity, this.transform);
 
@@ -83,7 +86,7 @@ public class MonsterActor : Actor
 
 		hp.GetComponent<TMP_Text>().text = 0.ToString();
 
-		Scene.game.AddGameExp(exp);
+		Scene.game.AddGameExp();
 
 		// GetItem();
 
@@ -100,7 +103,7 @@ public class MonsterActor : Actor
 
 		if (execute) amount = damage;
 
-		if (health <= amount)
+		if (damage <= amount)
 		{
 			Die();
 		}
@@ -110,10 +113,8 @@ public class MonsterActor : Actor
 	{
 		base.Refresh();
 
-		CancelInvoke(nameof(Refresh));
-
 		animator.Rebind();
-		health = healthOrigin;
+		damage = healthOrigin;
 
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 		boxCollider2D.enabled = true;
@@ -138,7 +139,7 @@ public class MonsterActor : Actor
 		{
 			if (other.gameObject.GetComponent<PlayerActor>().isDead) return;
 
-			if (other.GetComponent<PlayerActor>().health < health)
+			if (other.GetComponent<PlayerActor>().health < damage)
 			{
 				Attack();
 
@@ -153,6 +154,13 @@ public class MonsterActor : Actor
 
 				Scene.game.cameraShake.Shake(new CameraNoise.Properties(90f, .05f, 10f, .5f, .125f, .089f, .028f));
 			}
+		}
+
+		else if (other.CompareTag(Define.COLLECTOR))
+		{
+			Debug.Log("Coin Repool");
+
+			this.GetComponent<RePoolObject>().RePool();
 		}
 	}
 
@@ -169,7 +177,7 @@ public class MonsterActor : Actor
 	{
 		if (isDead) return;
 
-		Scene.game.playerActor.Damage(health);
+		Scene.game.playerActor.Damage(damage);
 	}
 
 	#endregion
@@ -182,8 +190,8 @@ public class MonsterActor : Actor
 	{
 		SPUM_Prefabs spumPrefabs = GetComponent<SPUM_Prefabs>();
 
-		GainEquipment(EquipmentType.Hair, spumPrefabs._spriteOBj._hairListString);
-		GainEquipment(EquipmentType.Weapons, spumPrefabs._spriteOBj._weaponListString);
+		//GainEquipment(EquipmentType.Hair, spumPrefabs._spriteOBj._hairListString);
+		//GainEquipment(EquipmentType.Weapons, spumPrefabs._spriteOBj._weaponListString);
 		GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
 		GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
 		GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
@@ -227,6 +235,12 @@ public class MonsterActor : Actor
 		}
 	}
 
+	public void SetDamageUI()
+	{
+		damage = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterDamage;
+
+		hp.GetComponent<TMP_Text>().text = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterDamage.ToString();
+	}
 
 	#endregion
 }

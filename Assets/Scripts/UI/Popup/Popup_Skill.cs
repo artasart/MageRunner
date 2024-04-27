@@ -128,6 +128,7 @@ public class Popup_Skill : Popup_Base
 			if (item_SkillCards[i].selectedIndex == index) continue;
 
 			item_SkillCards[i].SetSize();
+			item_SkillCards[i].GetComponent<Button>().interactable = false;
 		}
 	}
 }

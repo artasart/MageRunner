@@ -49,6 +49,9 @@ public class Scene_Main : SceneLogic
 		{
 			LocalData.invenData = new InvenData();
 			LocalData.invenData.invenItemData = new List<InvenItemData>();
+			LocalData.invenData.amount = 0;
+			LocalData.invenData.totalAmount = 10;
+			LocalData.invenData.stashLevel = 1;
 		}
 
 		if (LocalData.masterData == null)

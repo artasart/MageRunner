@@ -11,6 +11,9 @@ public class Popup_Pause : Popup_Base
 
 	Scene_Game game;
 
+	bool isBgm = true;
+	bool isSfx = true;
+
 	private void OnDisable()
 	{
 		if (!isInitialized) { isInitialized = true; return; }
@@ -41,11 +44,14 @@ public class Popup_Pause : Popup_Base
 
 		UseDimClose();
 
-		btn_Home = GetUI_Button(nameof(btn_Home), OnClick_Home);
-		btn_BGM = GetUI_Button(nameof(btn_BGM), OnClick_BGM);
-		btn_SFX = GetUI_Button(nameof(btn_SFX), OnClick_SFX);
-		btn_NoAds = GetUI_Button(nameof(btn_NoAds), OnClick_NoAds);
-		btn_Language = GetUI_Button(nameof(btn_Language), OnClick_Language);
+		btn_Home = GetUI_Button(nameof(btn_Home), OnClick_Home, useAnimation: true);
+		btn_BGM = GetUI_Button(nameof(btn_BGM), OnClick_BGM, useAnimation: true);
+		btn_SFX = GetUI_Button(nameof(btn_SFX), OnClick_SFX, useAnimation: true);
+		btn_NoAds = GetUI_Button(nameof(btn_NoAds), OnClick_NoAds, useAnimation: true);
+		btn_Language = GetUI_Button(nameof(btn_Language), OnClick_Language, useAnimation: true);
+
+		btn_BGM.transform.Search("img_Icon_Block").gameObject.SetActive(false);
+		btn_SFX.transform.Search("img_Icon_Block").gameObject.SetActive(false);
 
 		game = FindObjectOfType<Scene_Game>();
 	}
@@ -55,14 +61,43 @@ public class Popup_Pause : Popup_Base
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
 
+	public float bgmValue;
+	public float sfxValue;
+
 	private void OnClick_BGM()
 	{
+		isBgm = !isBgm;
 
+		if(!isBgm)
+		{
+			bgmValue = GameManager.Sound.bgmVolume;
+
+			GameManager.Sound.bgm.volume = 0f;
+		}
+		else
+		{
+			GameManager.Sound.bgm.volume = bgmValue;
+		}
+
+		btn_BGM.transform.Search("img_Icon_Block").gameObject.SetActive(!isBgm);
 	}
 
 	private void OnClick_SFX()
 	{
+		isSfx = !isSfx;
 
+		if (!isSfx)
+		{
+			sfxValue = GameManager.Sound.sfxVolume;
+
+			GameManager.Sound.soundEffect.volume = 0f;
+		}
+		else
+		{
+			GameManager.Sound.soundEffect.volume = sfxValue;
+		}
+
+		btn_SFX.transform.Search("img_Icon_Block").gameObject.SetActive(!isSfx);
 	}
 
 	private void OnClick_NoAds()

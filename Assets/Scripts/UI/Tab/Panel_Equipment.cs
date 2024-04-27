@@ -15,9 +15,11 @@ public class Panel_Equipment : Panel_Base
 	EquipmentManager eqipmentManager;
 
 	TMP_Text txtmp_Menu;
+	TMP_Text txtmp_SpaceAmount;
 
 	Button btn_Save;
 	Button btn_Reset;
+	Button btn_BuyStash;
 
 	Button btn_Weapon;
 	Button btn_Armor;
@@ -38,6 +40,7 @@ public class Panel_Equipment : Panel_Base
 		btn_Reset = GetUI_Button(nameof(btn_Reset), OnClick_Reset, useAnimation: true);
 
 		txtmp_Menu = GetUI_TMPText(nameof(txtmp_Menu), "All");
+		txtmp_SpaceAmount = GetUI_TMPText(nameof(txtmp_SpaceAmount), $"{0}/{100}");
 
 		btn_Weapon = GetUI_Button(nameof(btn_Weapon), OnClick_Weapons, useAnimation: true);
 		btn_Armor = GetUI_Button(nameof(btn_Armor), OnClick_Armor, useAnimation: true);
@@ -45,6 +48,8 @@ public class Panel_Equipment : Panel_Base
 		btn_Pants = GetUI_Button(nameof(btn_Pants), OnClick_Pants, useAnimation: true);
 		btn_Backs = GetUI_Button(nameof(btn_Backs), OnClick_Backs, useAnimation: true);
 		btn_All = GetUI_Button(nameof(btn_All), OnClick_All, useAnimation: true);
+
+		btn_BuyStash = GetUI_Button(nameof(btn_BuyStash), OnClick_BuyStash, useAnimation: true);
 
 		infiniteGridScroller = FindObjectOfType<InfiniteInvenGridScroller>();
 		eqipmentManager = FindObjectOfType<EquipmentManager>();
@@ -54,6 +59,44 @@ public class Panel_Equipment : Panel_Base
 		menuThumbnail.Add(EquipmentType.Back, this.transform.Search("img_Back").GetChild(0).GetComponent<Image>());
 		menuThumbnail.Add(EquipmentType.Pant, this.transform.Search("img_Pants").GetChild(0).GetComponent<Image>());
 		menuThumbnail.Add(EquipmentType.Helmet, this.transform.Search("img_Helmet").GetChild(0).GetComponent<Image>());
+	}
+
+	private void Start()
+	{
+		txtmp_SpaceAmount.text = $"{LocalData.invenData.amount}/{LocalData.invenData.totalAmount}";
+	}
+
+	public int payAmount = 10000;
+
+	public void OnClick_BuyStash()
+	{
+		GameManager.UI.StackPopup<Popup_Basic>(true);
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to buy stash?\n\ncost : <color=orange>{payAmount}</color>", "Purchase",
+			() =>
+			{
+				if (LocalData.invenData.stashLevel > 10) return;
+
+				if(LocalData.gameData.gold > payAmount)
+				{
+					LocalData.gameData.gold -= payAmount;
+					GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
+
+					JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+
+					LocalData.invenData.totalAmount += 10;
+					LocalData.invenData.stashLevel++;
+					JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
+
+					txtmp_SpaceAmount.text = $"{LocalData.invenData.amount}/{LocalData.invenData.totalAmount}";
+				}
+
+				else
+				{
+					Debug.Log("Not Enough Money..!");
+				}
+			},
+			() => { Debug.Log("Canceled.."); }
+		);
 	}
 
 	public void GenerateItem()
