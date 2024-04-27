@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static Enums;
 
@@ -7,12 +6,12 @@ public class EquipmentManager : MonoBehaviour
 {
 	#region Members
 
-	public SerializableDictionary<EquipmentType, Equipment> equipments;
+	public SerializableDictionary<EquipmentType, Equipment> equipments { get; private set; }
 	public List<Equipment> preview = new List<Equipment>();
 	public Dictionary<int, Sprite[]> previewSprite = new Dictionary<int, Sprite[]>();
 
-	public GameObject actor;
-	public SPUM_Prefabs spumPrefabs;
+	GameObject actor;
+	SPUM_Prefabs spumPrefabs;
 
 	#endregion
 

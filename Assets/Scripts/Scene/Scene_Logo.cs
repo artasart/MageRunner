@@ -45,6 +45,8 @@ public class Scene_Logo : SceneLogic
 
 	private void EnterGame()
 	{
+		JsonManager<MasterData>.SaveData(LocalData.masterData, Define.JSON_MASTERDATA);
+
 		if (isFirst)
 		{
 			GameManager.Scene.LoadScene(SceneName.Game);

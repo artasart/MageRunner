@@ -11,6 +11,7 @@ public static class GoogleSheets
 	public static Queue<string> messages = new Queue<string>();
 
 	public static bool IsLoading { get; private set; } = true;
+	public static bool IsSaved { get; private set; } = true;
 
 	public static void AddJob(string message, Action action)
 	{
@@ -34,17 +35,19 @@ public static class GoogleSheets
 	{
 		while (actionQueue.Count > 0)
 		{
-			DebugManager.Log(messages.Dequeue(), DebugColor.Data);
+			var message = messages.Dequeue();
+			DebugManager.Log(message, DebugColor.Data);
+
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(message);
 
 			actionQueue.Dequeue()?.Invoke();
 
 			yield return Timing.WaitUntilFalse(() => IsLoading);
+
+			yield return Timing.WaitUntilTrue(() => GameManager.Data.isSaved);
 		}
 
-		Debug.Log("Save master Data");
-		JsonManager<MasterData>.SaveData(LocalData.masterData, Define.JSON_MASTERDATA);
-
-		callback?.Invoke();
+		callback?.Invoke();			
 	}
 
 	public static void GetData(long sheetID, Action<string> callback = null)

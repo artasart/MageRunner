@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using static Enums;
 
 public static class LocalData
@@ -10,15 +11,81 @@ public static class LocalData
 	public static GameData gameData;
 	public static MasterData masterData;
 	public static InvenData invenData;
+
+	public static void InitGameData()
+	{
+		gameData = new GameData();
+		gameData.ride = new Ride();
+		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
+		gameData.bags = new SerializableDictionary<string, int>();
+		gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
+		gameData.activeSkills = new List<ActiveSkill>();
+		gameData.gold = 10000;
+	}
+
+	public static void LoadMasterData()
+	{
+		masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
+
+		if (masterData == null)
+		{
+			DebugManager.Log("WARNING!! NO MASTER DATA.", DebugColor.Data);
+
+			PlayerPrefs.SetString("Version", string.Empty);
+
+			GameManager.Scene.LoadScene(SceneName.Logo);
+		}
+	}
+
+	public static void LoadGameData()
+	{
+		gameData = JsonManager<GameData>.LoadData(Define.JSON_GAMEDATA);
+
+		if (gameData == null)
+		{
+			InitGameData();
+		}
+
+		else
+		{
+			gameData.bags.Clear();
+		}
+	}
+
+	public static void SaveGameData(int score, int gold, SerializableDictionary<string, int> bags)
+	{
+		if (score > gameData.highScore)
+		{
+			gameData.highScore = score;
+		}
+
+		gameData.gold += gold;
+		gameData.bags = bags;
+
+		JsonManager<GameData>.SaveData(gameData, Define.JSON_GAMEDATA);
+	}
+
+	public static void InitSkill()
+	{
+		gameData.activeSkills.ToList().ForEach(item => item.level = 0);
+	}
+}
+
+public static class Scene
+{
+	public static Scene_Game game;
+	public static Scene_Main main;
 }
 
 [Serializable]
 public class MasterData
 {
 	public VersionData version;
+
 	public List<Level> levelData;
 	public List<Item> itemData;
 	public List<Skill> skillData;
+
 	public List<SkillUpgrade> skillUpgradeData;
 }
 
@@ -34,7 +101,7 @@ public class GameData
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
 	public Ride ride;
 
-	public SerializableDictionary<string, int> gainedItems;
+	public SerializableDictionary<string, int> bags;
 
 	public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
 	public List<ActiveSkill> activeSkills;
@@ -51,15 +118,21 @@ public class InvenData
 public class Skill
 {
 	public string name;
-	public string description;
+	public string type;
 	public string thumbnailPath;
+
+	public string level1;
+	public string level2;
+	public string level3;
+	public string level4;
+	public string level5;
 }
 
 [Serializable]
 public class SkillUpgrade
 {
-	public int level;
-	public int upgradeGold;
+	public string level;
+	public string upgradeGold;
 }
 
 

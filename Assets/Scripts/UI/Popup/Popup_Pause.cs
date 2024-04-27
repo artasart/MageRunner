@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
+using static Enums;
 
 public class Popup_Pause : Popup_Base
 {
@@ -19,7 +17,7 @@ public class Popup_Pause : Popup_Base
 
 		game.gameState = GameState.Playing;
 
-		game.player.ToggleSimulation(true);
+		game.playerActor.ToggleSimulation(true);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
@@ -30,7 +28,7 @@ public class Popup_Pause : Popup_Base
 
 		game.gameState = GameState.Paused;
 
-		game.player.ToggleSimulation(false);
+		game.playerActor.ToggleSimulation(false);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();		
 	}

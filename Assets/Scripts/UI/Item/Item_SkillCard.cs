@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
-using static Cinemachine.DocumentationSortingAttribute;
-using UnityEditor.Experimental.GraphView;
+using static UnityEngine.ParticleSystem;
 
 public class Item_SkillCard : Item_Base
 {
@@ -25,11 +24,12 @@ public class Item_SkillCard : Item_Base
 	Vector2 originSizeDelta;
 	public int selectedIndex = -1;
 
-	Scene_Game game;
+	GameObject particle;
 
 	private void OnDisable()
 	{
 		this.GetComponent<RectTransform>().sizeDelta = originSizeDelta;
+		this.GetComponent<RectTransform>().localScale = Vector3.one;
 	}
 
 	protected override void Awake()
@@ -48,17 +48,15 @@ public class Item_SkillCard : Item_Base
 		group_Upgrade = this.transform.Search(nameof(group_Upgrade));
 
 		originSizeDelta = this.GetComponent<RectTransform>().sizeDelta;
-
-		game = FindObjectOfType<Scene_Game>();
 	}
 
 	public void SetCardInfo(ActiveSkill skill, int index)
 	{
 		selectedIndex = index;
 
-		if (game.skills.ContainsKey(skill.type))
+		if (Scene.game.skills.ContainsKey(skill.type))
 		{
-			btn_ItemCard.interactable = game.skills[skill.type].level < 5 ? true : false;
+			btn_ItemCard.interactable = Scene.game.skills[skill.type].level < 5 ? true : false;
 		}
 
 		else btn_ItemCard.interactable = true;
@@ -72,9 +70,9 @@ public class Item_SkillCard : Item_Base
 			group_Upgrade.GetChild(i).GetComponent<Image>().color = new Color(0f, 0f, 0f, .43f);
 		}
 
-		if (game.skills.ContainsKey(skill.type))
+		if (Scene.game.skills.ContainsKey(skill.type))
 		{
-			for (int i = 0; i < game.skills[skill.type].level; i++)
+			for (int i = 0; i < Scene.game.skills[skill.type].level; i++)
 			{
 				group_Upgrade.GetChild(i).GetComponent<Image>().color = Color.white;
 			}
@@ -85,14 +83,20 @@ public class Item_SkillCard : Item_Base
 
 	private void Onclick_Select()
 	{
-		game.AddSkill(selectedSkill);
+		GameManager.Sound.PlaySound("Zap");
 
-		for (int i = 0; i < game.skills[selectedSkill.type].level; i++)
+		Scene.game.AddSkill(selectedSkill);
+
+		for (int i = 0; i < Scene.game.skills[selectedSkill.type].level; i++)
 		{
 			group_Upgrade.GetChild(i).GetComponent<Image>().color = Color.white;
 		}
 
-		Invoke(nameof(PopPopup), .5f);
+		Invoke(nameof(PopPopup), .75f);
+
+		particle = PoolManager.Spawn(Define.VFX_UI_ELECTRIC_MESH, new Vector3(0f, 0f, -1f), Quaternion.identity, this.transform);
+		particle.transform.localScale = Vector3.one * 180f;
+		particle.GetComponent<ParticleSystem>().Play();
 
 		GameManager.UI.FetchPopup<Popup_Skill>().SetOtherSmall(selectedIndex);
 	}
@@ -101,13 +105,16 @@ public class Item_SkillCard : Item_Base
 	{
 		var size = this.transform.GetComponent<RectTransform>().sizeDelta;
 
-		this.transform.GetComponent<RectTransform>().DOSizeDelta(size - Vector2.one * 50f, .25f);
+		this.transform.GetComponent<RectTransform>().DOScale(Vector3.one * .85f, .25f);
 
 		btn_ItemCard.interactable = false;
 	}
 
 	private void PopPopup()
 	{
+		particle.GetComponent<ParticleSystem>().Stop();
+		particle.GetComponent<RePoolObject>().RePool();
+
 		GameManager.UI.PopPopup();
 	}
 }

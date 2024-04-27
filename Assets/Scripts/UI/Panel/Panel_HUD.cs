@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static Enums;
 
 public class Panel_HUD : Panel_Base
 {
@@ -18,6 +19,10 @@ public class Panel_HUD : Panel_Base
 
 	Transform group_Skills;
 	List<Item_Skill> items_Skill = new List<Item_Skill>();
+
+	Slider slider_Level;
+	TMP_Text txtmp_Level;
+
 
 
 	protected override void Awake()
@@ -42,6 +47,11 @@ public class Panel_HUD : Panel_Base
 
 		btn_Up.onClick.RemoveListener(OpenSound);
 		btn_Down.onClick.RemoveListener(OpenSound);
+
+		slider_Level = GetUI_Slider(nameof(slider_Level));
+		slider_Level.value = 0f;
+		slider_Level.maxValue = 1000;
+		txtmp_Level = GetUI_TMPText(nameof(txtmp_Level), "Lv.1");
 	}
 
 	private void Start()
@@ -66,7 +76,7 @@ public class Panel_HUD : Panel_Base
 	{
 		Debug.Log("OnClick_Down");
 
-		FindObjectOfType<PlayerActor>().Slide();
+		FindObjectOfType<PlayerActor>().StartFly();
 	}
 
 	private void OnClick_Up()
@@ -85,10 +95,8 @@ public class Panel_HUD : Panel_Base
 		GameManager.UI.StackPopup<Popup_Pause>();
 	}
 
-	public void RefreshUI()
+	public void Refresh()
 	{
-		DebugManager.Log("UI initialized.");
-
 		txtmp_Score.text = 0.ToString("N0");
 		txtmp_Coin.text = 0.ToString("N0");
 
@@ -96,6 +104,8 @@ public class Panel_HUD : Panel_Base
 		{
 			item.Refresh();
 		}
+
+		slider_Level.value = 0f;
 	}
 
 	public void SetScoreUI(int amount)
@@ -106,6 +116,18 @@ public class Panel_HUD : Panel_Base
 	public void SetCoinUI(int amount)
 	{
 		txtmp_Coin.text = amount.ToString("N0");
+	}
+
+	public void SetExpUI(int amount)
+	{
+		slider_Level.value += amount;
+
+		if (slider_Level.value == slider_Level.maxValue)
+		{
+			Scene.game.level++;
+
+			txtmp_Level.text = "Lv." + Scene.game.level.ToString();
+		}
 	}
 
 	public void UseSkill(SkillType skillType, int coolTime, float delay = 0f)

@@ -5,7 +5,7 @@ public class SceneLogic : MonoBehaviour
 {
 	const string GAMEMANAGER = "GameManager";
 
-	private void OnDisable()
+	private void OnDestroy()
 	{
 		Timing.KillCoroutines((int)CoroutineTag.UI);
 		Timing.KillCoroutines((int)CoroutineTag.Content);
@@ -16,5 +16,7 @@ public class SceneLogic : MonoBehaviour
 		var gameManager = GameObject.Find(GAMEMANAGER) ?? Util.Instantiate(Define.PATH_CORE + GAMEMANAGER, Vector3.zero, Quaternion.identity);
 
 		gameManager.name = GAMEMANAGER;
+
+		Screen.SetResolution(1792, 828, false);
 	}
 }

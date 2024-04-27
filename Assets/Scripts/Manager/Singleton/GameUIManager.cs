@@ -471,7 +471,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	public void ShowPanel(GameObject _gameObject, bool _isShow, Action _callback = null)
 	{
-		Util.RunCoroutine(Co_Show(_gameObject, _isShow, 1f, _callback), nameof(Co_Show) + _gameObject.GetHashCode(), CoroutineTag.UI);
+		Util.RunCoroutine(Co_Show(_gameObject, _isShow, .75f, _callback), nameof(Co_Show) + _gameObject.GetHashCode(), CoroutineTag.UI);
 	}
 
 	public void ShowPopup(GameObject gameObject, bool isShow)
@@ -602,6 +602,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	private IEnumerator<float> Co_FadeCanvasGroup(CanvasGroup _current, float _target, float _lerpspeed = 1f, Action _start = null, Action _end = null)
 	{
+		if (_current == null) yield break;
+
 		float lerpvalue = 0f;
 
 		_start?.Invoke();

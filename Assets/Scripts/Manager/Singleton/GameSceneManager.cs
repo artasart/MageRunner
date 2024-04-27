@@ -125,7 +125,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public string GetSceneNameByBuildIndex(int _buildIndex)
 	{
-		Scene scene = SceneManager.GetSceneByBuildIndex(_buildIndex);
+		UnityEngine.SceneManagement.Scene scene = SceneManager.GetSceneByBuildIndex(_buildIndex);
 
 		return scene.name;
 	}

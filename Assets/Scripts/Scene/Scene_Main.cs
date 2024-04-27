@@ -10,7 +10,7 @@ using TMPro;
 
 public class Scene_Main : SceneLogic
 {
-	CinemachineVirtualCamera virtualCamera;
+	public CinemachineVirtualCamera virtualCamera { get; private set; }
 	GameObject renderTextureCamrea;
 
 	EquipmentManager equipmentManager;
@@ -39,7 +39,7 @@ public class Scene_Main : SceneLogic
 			LocalData.gameData = new GameData();
 			LocalData.gameData.ride = new Ride();
 			LocalData.gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
-			LocalData.gameData.gainedItems = new SerializableDictionary<string, int>();
+			LocalData.gameData.bags = new SerializableDictionary<string, int>();
 			LocalData.gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
 			LocalData.gameData.activeSkills = new List<ActiveSkill>();
 			LocalData.gameData.gold += 1000000;
@@ -69,6 +69,8 @@ public class Scene_Main : SceneLogic
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
 		renderTextureCamrea = GameObject.Find("RenderTextureCamera");
+
+		Scene.main = this;
 	}
 
 	public List<InvenItemData> equipmentData = new List<InvenItemData>();
@@ -91,15 +93,17 @@ public class Scene_Main : SceneLogic
 
 		GameObject.Find("PlayerActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 		GameObject.Find("PlayerHorseActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+
+		GameManager.Sound.PlayBGM("Dawn");
 	}
 
 	public void GetFarmedItem()
 	{
 		if (LocalData.gameData != null)
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(LocalData.gameData.gainedItems.Count > 0);
+			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(LocalData.gameData.bags.Count > 0);
 
-			foreach (var element in LocalData.gameData.gainedItems)
+			foreach (var element in LocalData.gameData.bags)
 			{
 				string thumnailPath = RemoveAssetPath(element.Key).Replace(".png", "");
 				string filename = GetFileNameFromPath(element.Key).Replace(".png", "");
@@ -126,8 +130,8 @@ public class Scene_Main : SceneLogic
 
 			JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
 
-			LocalData.gameData.gainedItems.Clear();
-			LocalData.gameData.gainedItems = null;
+			LocalData.gameData.bags.Clear();
+			LocalData.gameData.bags = null;
 
 			JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 		}
@@ -139,13 +143,15 @@ public class Scene_Main : SceneLogic
 
 		if (LocalData.gameData.passiveSkills.Count == 0)
 		{
-			DebugManager.ClearLog("No Data");
+			DebugManager.Log("No Game Data", DebugColor.Data);
 
 			int index = 0;
 
+			Debug.Log("Count : " + LocalData.masterData.skillData.Count);
+
 			foreach (var item in LocalData.masterData.skillData)
 			{
-				var passiveSkills = new PlayerPassiveSkill(item.name, item.description, item.thumbnailPath, 1);
+				var passiveSkills = new PlayerPassiveSkill(item.name, item.level1, item.thumbnailPath, 1);
 
 				LocalData.gameData.passiveSkills.Add(Util.ConvertIntToEnum<Skills>(index), passiveSkills);
 
@@ -156,8 +162,16 @@ public class Scene_Main : SceneLogic
 		if (LocalData.gameData.activeSkills.Count == 0)
 		{
 			LocalData.gameData.activeSkills.Add(new ActiveSkill("Thunder", "This is Thunder Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Skull", Skills.Execution));
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Explosion", "This is Explosion Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sword_A", Skills.Electricute));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Explosion", "This is Explosion Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Horner", Skills.Electricute));
 			LocalData.gameData.activeSkills.Add(new ActiveSkill("PowerOverWhelming", "This is PowerOverWhelming Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Shield_A", Skills.PowerOverWhelming));
+
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Gold", "This is Gold Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Gold", Skills.Gold));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Exp", "This is Exp Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Soulgem", Skills.Exp));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Damage", "This is Damage Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sword_A", Skills.Damage));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Mana", "This is Mana Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Potion_Blue", Skills.Mana));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("CoolTime", "This is CoolTime Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sandglass", Skills.CoolTime));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Critical", "This is Critical Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Target", Skills.Critical));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Speed", "This is Speed Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Talaria", Skills.Speed));
 		}
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);

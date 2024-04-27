@@ -768,6 +768,11 @@ public static class Util
 		string suffix = "kMBT"[index].ToString();
 		return (number / Math.Pow(10, exp * 3)).ToString("0.####") + suffix;
 	}
+
+	public static ParticleSystem GetParticle(GameObject gameObject, string name)
+	{
+		return gameObject.transform.Search(name).GetComponent<ParticleSystem>(); ;
+	}
 }
 
 

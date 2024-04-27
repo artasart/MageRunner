@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,17 +7,41 @@ using UnityEngine;
 
 public class SkillCard : MonoBehaviour
 {
+	Transform graphic;
+
+	Vector3 targetScale = new Vector3(.75f, .75f, .75f);
+	float duration = .75f;
+
+	private void Awake()
+	{
+		graphic = this.transform.Search(nameof(graphic));
+	}
+
+	private void Start()
+	{
+		graphic.DOScale(targetScale, duration)
+			.SetEase(Ease.OutQuad) // 애니메이션 이징 설정
+			.SetLoops(-1, LoopType.Yoyo);
+	}
+
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.CompareTag("Player"))
+		if (other.CompareTag(Define.PLAYER))
 		{
-			GameManager.UI.StartPopup<Popup_Skill>();
+			GameManager.Sound.PlaySound("Pick", .125f);
 
-			GameManager.UI.FetchPopup<Popup_Skill>().SetCard();
+			PoolManager.Spawn("Firework", this.transform.localPosition, Quaternion.identity, this.transform.parent);
+
+			Invoke(nameof(ShowPopup), .25f);
 
 			this.GetComponent<RePoolObject>().RePool();
-
-			GameManager.Sound.PlaySound("Pick", .125f);
 		}
+	}
+
+	private void ShowPopup()
+	{
+		GameManager.UI.StartPopup<Popup_Skill>();
+
+		GameManager.UI.FetchPopup<Popup_Skill>().SetCard();
 	}
 }

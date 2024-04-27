@@ -19,8 +19,9 @@ public static class Define
 	public const string PATH_ACTOR = PATH_CONTENTS + "Actor/";
 	public const string PATH_ICON = "Icons/";
 	public const string PATH_HAND_SKILLS = PATH_ICON + "Hand/Skills/";
+	public const string PATH_ITEMS = PATH_ICON + "Hand/Skills/";
 
-	public const string PATH_ITEM = PATH_SPRITE + "Icon/Item/";
+	public const string PATH_ITEM = PATH_PREFAB + "Item/";
 
 	public const string KEY_FIRST = "First";
 	public const string KEY_BGM = "BGMVolume";
@@ -56,6 +57,19 @@ public static class Define
 	public const string	JSON_GAMEDATA = "GameData.json";
 	public const string	JSON_INVENDATA = "InvenData.json";
 
-
+	[Header("Pool")]
 	public const string MONSTER_ACTOR = "MonsterActor";
+	public const string VFX_THUNDER = "Thunder";
+	public const string VFX_BIG_THUNDER_EXPLOSION = "Thunder_Explosion";
+	public const string VFX_SMALL_THUNDER_EXPLOSION = "Thunder_ExplosionSmall";
+	public const string VFX_UI_ELECTRIC_MESH = "ElectricMesh";
+
+	public const string ITEM_COIN_SPAWNER = "CoinSpawner";
+	public const string ITEM_COIN = "Coin";
+	public const string ITEM_SKILL_CARD = "SkillCard";
+	public const string VFX_SKULL = "Skull";
+
+	public const string SOUND_THUNDER = "Spawn";
+	public const string SOUND_DAWN = "Dawn";
+	public const string SOUND_DIE = "BodyFall_1";
 }

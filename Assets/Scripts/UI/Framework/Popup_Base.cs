@@ -16,6 +16,11 @@ public class Popup_Base : UI_Base
 
 	public Button DIM { get => btn_Dim; }
 
+	private void OnEnable()
+	{
+		isInstant = true;
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -29,7 +34,7 @@ public class Popup_Base : UI_Base
 		if (!isDefault) return;
 
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
-		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Close);
+		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Close, useAnimation: true);
 		btn_Dim.onClick.RemoveListener(OpenSound);
 		btn_Back.onClick.RemoveListener(OpenSound);
 		btn_Back.onClick.AddListener(() => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));

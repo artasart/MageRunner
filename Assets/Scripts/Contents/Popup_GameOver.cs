@@ -28,29 +28,28 @@ public class Popup_GameOver : Popup_Base
 	{
 		btn_Reward.interactable = false;
 
-		FindObjectOfType<Scene_Game>().gold *= 2;
+		Scene.game.gold *= 2;
 	}
 
 	private void OnClick_Retry()
 	{
 		btn_Reward.interactable = true;
 
-		FindObjectOfType<Scene_Game>().Retry();
+		Scene.game.Replay();
 	}
 
 	private void OnClick_Home()
 	{
-		FindObjectOfType<Scene_Game>().SaveGameData();
+		Scene.game.SaveGameData();
 
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
 
 	public void SetResult(int score, int gold, int exp)
 	{
-		// You ran 1024m, gaiend 1000 Golds & 10 exp!
 		txtmp_Score.text = $"You ran {score}m, gaiend {gold} Golds & {exp} exp!";
 
-		FindObjectOfType<Scene_Game>().AddExp(exp);
-		FindObjectOfType<Scene_Game>().SaveGameData();
+		Scene.game.AddExp(exp);
+		Scene.game.SaveGameData();
 	}
 }

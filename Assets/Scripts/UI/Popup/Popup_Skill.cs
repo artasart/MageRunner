@@ -1,8 +1,10 @@
+using DG.Tweening;
 using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static Enums;
 
 public class Popup_Skill : Popup_Base
 {
@@ -22,7 +24,7 @@ public class Popup_Skill : Popup_Base
 
 		game.gameState = GameState.Playing;
 
-		game.player.ToggleSimulation(true);
+		game.playerActor.ToggleSimulation(true);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 
@@ -37,7 +39,7 @@ public class Popup_Skill : Popup_Base
 
 		game.gameState = GameState.Paused;
 
-		game.player.ToggleSimulation(false);
+		game.playerActor.ToggleSimulation(false);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
 	}
@@ -70,7 +72,22 @@ public class Popup_Skill : Popup_Base
 		SetCard();
 
 		btn_Refresh.interactable = false;
+
+		for (int i = 0; i < group_Skills.childCount; i++)
+		{
+			item_SkillCards[i].GetComponent<RectTransform>().DOShakePosition(shakeDuration, shakeStrength, shakeVibrato, shakeRandomness, false);
+		}
 	}
+
+	public void ShakeCard(int index)
+	{
+		item_SkillCards[index].GetComponent<RectTransform>().DOShakePosition(shakeDuration, shakeStrength, shakeVibrato, shakeRandomness, false);
+	}
+
+	public float shakeDuration = 0.35f;
+	public Vector3 shakeStrength = new Vector3(10, 10, 0);
+	public int shakeVibrato = 40;
+	public float shakeRandomness = 90;
 
 	public void SetCard()
 	{
@@ -125,11 +142,12 @@ public enum Skills
 	Critical,
 	Speed,
 
+	Execution,
+	Electricute,
 	PowerOverWhelming,
+
 	Thunder,
 	ShockWave,
-	Electricute,
-	Execution,
 }
 
 [Serializable]

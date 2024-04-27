@@ -5,28 +5,29 @@ using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
-	public bool generateMonster = false;
-
-	public float groundProbability = .1f;
-	float groundProbabilityOrigin;
-
-	public float monsterProbability = .1f;
-	float monsterProbabilityOrigin;
-
-	public float coinProbability = .75f;
-	float coinProbabilityOrigin;
-
-	public float skillCardProbability = .2f;
-	float skillCardProbabilityOrigin;
-
+	[Header("Ground Speed")]
 	public float moveSpeed = 5f;
-	public int currentMoveMultiplier = 1;
+	public int moveSpeedMultiplier = 1;
+
+	[Header("Element Probability")]
+	public float groundProbability = .1f;
+	public float monsterProbability = .1f;
+	public float coinProbability = .75f;
+	public float skillCardProbability = .2f;
+
+	float groundProbabilityOrigin;
+	float monsterProbabilityOrigin;
+	float coinProbabilityOrigin;
+	float skillCardProbabilityOrigin;
 
     List<Ground> grounds = new List<Ground>();
 
     private void Awake()
 	{
-		grounds = FindObjectsOfType<Ground>().ToList();
+		for (int i = 0; i < this.transform.childCount; i++)
+		{
+			grounds.Add(this.transform.GetChild(i).GetComponent<Ground>());
+		}
 
 		monsterProbabilityOrigin = monsterProbability;
 		groundProbabilityOrigin = groundProbability;
@@ -34,39 +35,11 @@ public class LevelController : MonoBehaviour
 		skillCardProbabilityOrigin = skillCardProbability;
 	}
 
-	public float GetMoveSpeed()
-	{
-		return moveSpeed;
-	}
-
-	public void SetMoveMultiplier(int multiplier)
-	{
-		currentMoveMultiplier = multiplier;
-
-		foreach (var item in grounds)
-		{
-			item.moveSpeedMultiplier = multiplier;
-		}
-	}
-
-	public void MoveGround(float moveSpeed = 4f)
+	public void MoveGround()
     {
-		this.moveSpeed = moveSpeed;
-
 		foreach (var item in grounds)
 		{
-			item.moveSpeed = moveSpeed;
 			item.Move();
-		}
-	}
-
-	public void AddSpeed()
-	{
-		moveSpeed = Mathf.Clamp(moveSpeed += .1f, 0f, 10);
-
-		foreach (var item in grounds)
-		{
-			item.moveSpeed = moveSpeed;
 		}
 	}
 
@@ -78,19 +51,16 @@ public class LevelController : MonoBehaviour
 		}
 	}
 
-	public void AddProbability(float amount)
-	{
-		foreach (var item in grounds)
-		{
-			item.SetProbability(amount);
-		}
-	}
-
 	public void Refresh()
 	{ 
 		monsterProbability = monsterProbabilityOrigin;
 		groundProbability = groundProbabilityOrigin;
 		coinProbability = coinProbabilityOrigin;
 		skillCardProbability = skillCardProbabilityOrigin;
+
+		foreach (var item in grounds)
+		{
+			item.Refresh();
+		}
 	}
 }

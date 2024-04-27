@@ -5,7 +5,7 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
 	[Header("Virtual")]
-	public int health = 100;
+	public int health = 10;
 	public int damage = 100;
 	public bool isDead = false;
 
@@ -18,7 +18,7 @@ public class Actor : MonoBehaviour
 	{
 		healthOrigin = health;
 
-		animator = GetComponentInChildren<Animator>();
+		animator = this.transform.Search("UnitRoot").GetComponent<Animator>();
 	}
 
 	public virtual void Attack() { }

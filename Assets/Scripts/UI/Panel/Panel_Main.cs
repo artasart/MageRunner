@@ -60,12 +60,16 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_PlayGame()
 	{
-		GameManager.Scene.LoadScene(SceneName.Game);
+		Util.Zoom(Scene.main.virtualCamera, .1f, .025f);
+
+		GameManager.Scene.LoadScene(SceneName.Game, fadeSpeed: .25f);
 	}
 
 	private void OnClick_Settings()
 	{
 		Debug.Log("OnClick_Settings");
+
+		GameManager.UI.StackPopup<Popup_Settings>();
 	}
 
 	private void OnClick_Inventory()

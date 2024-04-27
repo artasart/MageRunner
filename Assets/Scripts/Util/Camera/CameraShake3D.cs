@@ -29,4 +29,9 @@ public class CameraShake3D : MonoBehaviour
 
 		cameraNoise.StartShake(noise);
 	}
+
+	public void Shake(CameraNoise.Properties noise = null)
+	{
+		cameraNoise.StartShake(noise);
+	}
 }

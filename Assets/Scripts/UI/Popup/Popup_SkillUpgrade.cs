@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -66,9 +67,9 @@ public class Popup_SkillUpgrade : Popup_Base
 
 		CancelInvoke(nameof(Hide));
 
-		if (LocalData.gameData.gold >= upgradeData.upgradeGold)
+		if (LocalData.gameData.gold >= Convert.ToInt32(upgradeData.upgradeGold))
 		{
-			LocalData.gameData.gold -= upgradeData.upgradeGold;
+			LocalData.gameData.gold -= Convert.ToInt32(upgradeData.upgradeGold);
 			GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
 			skill.level++;

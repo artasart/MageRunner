@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 621135356453093370}
   - component: {fileID: 6429367393584818938}
   m_Layer: 0
-  m_Name: particleSystem
+  m_Name: particle_Coins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4855,7 +4855,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -4936,8 +4936,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ps: {fileID: 621135356453093370}
   targetUI: {fileID: 0}
-  speed: 25
-  delay: 0.75
+  speed: 5
+  delay: 0.5
   destroyDistanceThreshold: 0.1
   duration: 0.1
 --- !u!114 &2408619635589106764

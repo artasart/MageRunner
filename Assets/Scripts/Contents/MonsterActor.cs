@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -19,6 +20,8 @@ public class MonsterActor : Actor
 
 	Transform hp;
 
+	ParticleSystem particle_SwordTrail;
+
 	#endregion
 
 
@@ -35,6 +38,10 @@ public class MonsterActor : Actor
 		base.Awake();
 
 		hp = this.transform.Search(nameof(hp));
+
+		particle_SwordTrail = this.transform.Search(nameof(particle_SwordTrail)).GetComponent<ParticleSystem>();
+
+		boxCollider2D = GetComponent<BoxCollider2D>();
 	}
 
 	#endregion
@@ -45,23 +52,29 @@ public class MonsterActor : Actor
 
 	#endregion
 
-
+	
 
 	#region Entity
 
 	public override void Attack()
 	{
 		animator.SetTrigger("Attack");
+
+		particle_SwordTrail.Play();
 	}
 
 	public override void Die()
 	{
+		if (isDead) return;
+
 		isDead = true;
 		health = 0;
 
-		var coin = PoolManager.Spawn("CoinSpawner", this.transform.position + Vector3.up *.5f, Quaternion.identity);
-		coin.transform.SetParent(this.transform.parent);
-		FindObjectOfType<CoinSpawner>().Spawn(gold);
+		PoolManager.Spawn("Skull", Vector3.zero + Vector3.up * .5f, Quaternion.identity, this.transform);
+
+		//var coin = PoolManager.Spawn("CoinSpawner", this.transform.position + Vector3.up *.5f, Quaternion.identity);
+		//coin.transform.SetParent(this.transform.parent);
+		//FindObjectOfType<CoinSpawner>().Spawn(gold);
 
 		animator.SetBool("Die", true);
 
@@ -70,9 +83,13 @@ public class MonsterActor : Actor
 
 		hp.GetComponent<TMP_Text>().text = 0.ToString();
 
-		GetItem();
+		Scene.game.AddGameExp(exp);
+
+		// GetItem();
 
 		CancelInvoke(nameof(ApplyDamage));
+
+		Invoke(nameof(Refresh), 2f);
 	}
 
 	
@@ -81,7 +98,7 @@ public class MonsterActor : Actor
 	{
 		base.Damage(amount, execute);
 
-		if (execute) amount = health;
+		if (execute) amount = damage;
 
 		if (health <= amount)
 		{
@@ -93,17 +110,18 @@ public class MonsterActor : Actor
 	{
 		base.Refresh();
 
+		CancelInvoke(nameof(Refresh));
+
 		animator.Rebind();
 		health = healthOrigin;
 
 		hp.GetComponent<TMP_Text>().text = health.ToString();
-
-		this.GetComponent<BoxCollider2D>().enabled = true;
+		boxCollider2D.enabled = true;
 		this.transform.Search("ExecuteTrigger").GetComponent<BoxCollider2D>().enabled = true;
 
-		//StopTarget();
-
 		isDead = false;
+
+		this.GetComponent<EquipmentController>().RefreshEquipment();
 
 		this.GetComponent<RePoolObject>().RePool();
 	}
@@ -120,9 +138,21 @@ public class MonsterActor : Actor
 		{
 			if (other.gameObject.GetComponent<PlayerActor>().isDead) return;
 
-			Attack();
+			if (other.GetComponent<PlayerActor>().health < health)
+			{
+				Attack();
 
-			Invoke(nameof(ApplyDamage), .2f);
+				Invoke(nameof(ApplyDamage), .2f);
+			}
+
+			else
+			{
+				Die();
+
+				other.GetComponent<PlayerActor>().Distortion();
+
+				Scene.game.cameraShake.Shake(new CameraNoise.Properties(90f, .05f, 10f, .5f, .125f, .089f, .028f));
+			}
 		}
 	}
 
@@ -139,9 +169,7 @@ public class MonsterActor : Actor
 	{
 		if (isDead) return;
 
-		var player = FindObjectOfType<PlayerActor>();
-
-		player.Damage(damage);		
+		Scene.game.playerActor.Damage(health);
 	}
 
 	#endregion
@@ -172,27 +200,27 @@ public class MonsterActor : Actor
 		{
 			if (string.IsNullOrEmpty(item)) continue;
 
-			if (game.gainedItems.ContainsKey(item))
+			if (game.bags.ContainsKey(item))
 			{
-				game.gainedItems[item]++;
+				game.bags[item]++;
 			}
 
 			else
 			{
-				game.gainedItems.Add(item, 1);
+				game.bags.Add(item, 1);
 			}
 		}
 
 		switch (type)
 		{
 			case EquipmentType.Cloth:
-				game.gainedItems[itemName] /= 3;
+				game.bags[itemName] /= 3;
 				break;
 			case EquipmentType.Armor:
-				game.gainedItems[itemName] /= 2;
+				game.bags[itemName] /= 2;
 				break;
 			case EquipmentType.Pant:
-				game.gainedItems[itemName] /= 3;
+				game.bags[itemName] /= 3;
 				break;
 			default:
 				break;

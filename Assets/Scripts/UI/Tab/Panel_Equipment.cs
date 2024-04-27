@@ -4,7 +4,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
+
+#if UNITY_EDITOR
 using static UnityEditor.Progress;
+#endif
 
 public class Panel_Equipment : Panel_Base
 {

@@ -1,11 +1,7 @@
 using MEC;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.Windows;
-using static Unity.Collections.AllocatorManager;
+using static Enums;
 
 public class Ground : LevelElement
 {
@@ -19,10 +15,11 @@ public class Ground : LevelElement
 	Scene_Game game;
 	LevelController levelController;
 
-	List<GameObject> generatedMonsters = new List<GameObject>();
+	public List<GameObject> generatedMonsters = new List<GameObject>();
+	public List<GameObject> generatedCoins = new List<GameObject>();
+	public List<GameObject> generatedSkillCards = new List<GameObject>();
 
 	public float moveSpeed { get; set; }
-	public float moveSpeedMultiplier = 1f;
 
 	private void OnDestroy()
 	{
@@ -77,7 +74,7 @@ public class Ground : LevelElement
 		{
 			yield return Timing.WaitUntilTrue(() => game.gameState == GameState.Playing);
 
-			transform.Translate(Vector3.left * moveSpeed * moveSpeedMultiplier * Time.deltaTime);
+			transform.Translate(Vector3.left * Scene.game.levelController.moveSpeed * Scene.game.levelController.moveSpeedMultiplier * Time.deltaTime);
 
 			yield return Timing.WaitForOneFrame;
 		}
@@ -135,31 +132,33 @@ public class Ground : LevelElement
 
 			blocks[i].SetActive(levelController.groundProbability <= random);
 
-			if (!levelController.generateMonster) continue;
-
 			if (blocks[i].activeSelf)
 			{
 				if (UnityEngine.Random.Range(0f, 1f) <= levelController.monsterProbability)
 				{
 					var monster = PoolManager.Spawn(Define.MONSTER_ACTOR, Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 2.48f, Quaternion.identity, blocks[i].transform);
-					monster.GetComponent<MonsterActor>().health = Random.Range(1, 3) * 10;
+					monster.GetComponent<MonsterActor>().damage = Random.Range(1, 3) * 10;
 
 					generatedMonsters.Add(monster);
 				}
 
 				else
 				{
-					if (UnityEngine.Random.Range(0f, 1f) <= levelController.skillCardProbability)
-					{
-						generatedSkillCards.Add(PoolManager.Spawn("SkillCard", Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 3.48f, Quaternion.identity, blocks[i].transform));
-
-					}
-
 					if (UnityEngine.Random.Range(0f, 1f) <= levelController.coinProbability)
 					{
 						for (int amount = -1; amount < 2; amount++)
 						{
 							generatedCoins.Add(PoolManager.Spawn("Coin", Vector3.right * (amount * 0.675f) + Vector3.up * 2.9f, Quaternion.identity, blocks[i].transform));
+						}
+					}
+
+					else
+					{
+						if (!isSkillCardGenerated && UnityEngine.Random.Range(0f, 1f) <= levelController.skillCardProbability)
+						{
+							generatedSkillCards.Add(PoolManager.Spawn("SkillCard", Vector3.up * 3f, Quaternion.identity, blocks[i].transform));
+
+							Util.RunCoroutine(Cehck_SkillCard(), nameof(Cehck_SkillCard));
 						}
 					}
 				}
@@ -172,8 +171,15 @@ public class Ground : LevelElement
 		}
 	}
 
-	public List<GameObject> generatedCoins = new List<GameObject>();
-	public List<GameObject> generatedSkillCards = new List<GameObject>();
+	public bool isSkillCardGenerated;
+	public IEnumerator<float> Cehck_SkillCard()
+	{
+		isSkillCardGenerated = true;
+
+		yield return Timing.WaitForSeconds(5f);
+
+		isSkillCardGenerated = false;
+	}
 
 	public void SetProbability(float amount)
 	{
@@ -189,15 +195,23 @@ public class Ground : LevelElement
 		}
 
 		this.transform.SetSiblingIndex(index);
-
 		this.transform.position = startPosition;
 
-		foreach (var item in generatedMonsters)
+		var monsters = FindObjectsOfType<MonsterActor>();
+		var coins = FindObjectsOfType<Coin>();
+		var skillcards = FindObjectsOfType<SkillCard>();
+
+		foreach (var item in monsters)
 		{
 			item.GetComponent<MonsterActor>().Refresh();
 		}
 
-		foreach (var item in generatedCoins)
+		foreach (var item in coins)
+		{
+			item.GetComponent<RePoolObject>().RePool();
+		}
+
+		foreach (var item in skillcards)
 		{
 			item.GetComponent<RePoolObject>().RePool();
 		}
@@ -205,5 +219,18 @@ public class Ground : LevelElement
 		generatedMonsters.Clear();
 		generatedCoins.Clear();
 		generatedSkillCards.Clear();
+	}
+
+	public void ResetItems()
+	{
+		foreach (var item in generatedCoins)
+		{
+			item.GetComponent<RePoolObject>().RePool();
+		}
+
+		foreach (var item in generatedSkillCards)
+		{
+			item.GetComponent<RePoolObject>().RePool();
+		}
 	}
 }

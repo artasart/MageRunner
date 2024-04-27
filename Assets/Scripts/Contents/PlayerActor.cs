@@ -3,6 +3,7 @@ using MEC;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static Enums;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -30,15 +31,20 @@ public class PlayerActor : Actor
 	[HideInInspector] public int attackPoint = 10;
 	[HideInInspector] public float moveSpeedOrigin = 5;
 
+
+	[Header("Die settings")]
 	public float dieVelocity = .75f;
 	public float pushForce = -2f;
 
-	Rigidbody2D rgbd2d;
-	Transform hp;
+	bool isDoubleJump = false;
+	public bool isFlyMode = false;
+	public float damageRadius = 10f;
 
-	Scene_Game game;
+	Transform hp;
+	Rigidbody2D rgbd2d;
 
 	ParticleSystem particle_ElectricMode;
+	ParticleSystem particle_Distortion;
 
 	#endregion
 
@@ -55,7 +61,6 @@ public class PlayerActor : Actor
 		hp = this.transform.Search(nameof(hp));
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
-		game = FindObjectOfType<Scene_Game>();
 		remainingJumps = maxJumps;
 	}
 
@@ -63,8 +68,8 @@ public class PlayerActor : Actor
 	{
 		moveSpeedOrigin = moveSpeed;
 
-		particle_ElectricMode = this.transform.Search(nameof(particle_ElectricMode)).GetComponent<ParticleSystem>();
-		particle_ElectricMode.Stop();
+		particle_Distortion = Util.GetParticle(this.gameObject, nameof(particle_Distortion));
+		particle_ElectricMode = Util.GetParticle(this.gameObject, nameof(particle_ElectricMode));
 	}
 
 	#endregion
@@ -75,163 +80,25 @@ public class PlayerActor : Actor
 
 	void Update()
 	{
-		if (game.gameState == GameState.Paused) return;
+		if (Scene.game.gameState == GameState.Paused || isDead) return;
 
-		if (isDead) return;
-
-		if (Input.GetKeyDown(KeyCode.Q))
-		{
-			if (!game.skills.ContainsKey(Skills.PowerOverWhelming))
-			{
-				Debug.Log("No Skill");
-
-				return;
-			}
-			PowerOverWelmingMode();
-		}
-
-		if (Input.GetKeyDown(KeyCode.W))
-		{
-			if (!game.skills.ContainsKey(Skills.Execution))
-			{
-				Debug.Log("No Skill");
-
-				return;
-			}
-			Thunder();
-		}
-
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			if (!game.skills.ContainsKey(Skills.ShockWave))
-			{
-				Debug.Log("No Skill");
-
-				return;
-			}
-
-			Explosion();
-		}
-
-		HandleSlideInput();
 		HandleJumpInput();
+		HandleSlideInput();
+		HandleSkills();
+	}
 
+	public void HandleJumpInput()
+	{
 		if (rgbd2d.velocity.y < 0) isGrounded = false;
-	}
 
-	public void Thunder()
-	{
-		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
-		MonsterActor closestMonster = null;
-
-		float closestDistance = Mathf.Infinity;
-
-		// 각 MonsterActor 오브젝트와 플레이어 간의 거리를 비교합니다.
-		foreach (MonsterActor monster in monsters)
+		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
-
-			// 현재까지 찾은 가장 가까운 MonsterActor를 업데이트합니다.
-			if (distance < closestDistance && !monster.isDead)
+			if (CanJump())
 			{
-				closestDistance = distance;
-				closestMonster = monster;
+				PerformJump();
+				HandleJumpCount();
 			}
 		}
-
-		// 가장 가까운 MonsterActor를 찾았습니다.
-		if (closestMonster != null)
-		{
-			closestMonster.Die();
-
-			PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
-
-			GameManager.Sound.PlaySound("Spawn", .5f);
-		}
-	}
-
-	public float killRadius = 10f;
-
-	public void Explosion()
-	{
-		PoolManager.Spawn("Thunder_Explosion", Vector3.zero, Quaternion.identity, this.transform);
-
-		GameManager.Sound.PlaySound("ElectricExplosion");
-
-		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
-
-		foreach (MonsterActor monster in monsters)
-		{
-			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
-
-			if (distance <= killRadius)
-			{
-				monster.Die();
-			}
-		}
-	}
-
-	// 기즈모를 그리는 함수
-	void OnDrawGizmosSelected()
-	{
-		// 기즈모 색상 설정
-		Gizmos.color = Color.red;
-
-		// 기즈모를 플레이어 주변에 그리기
-		Gizmos.DrawWireSphere(this.transform.position, killRadius);
-	}
-
-	public bool isPowerMode = false;
-	public void PowerOverWelmingMode()
-	{
-		isPowerMode = true;
-
-		this.gameObject.transform.DOMove(new Vector3(this.transform.position.x, 2.3f, this.transform.position.z), .5f).OnComplete(() =>
-		{
-			GameManager.Sound.PlaySound("ElectricFlow");
-
-			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
-
-			this.transform.Search("Root").gameObject.SetActive(false);
-			particle_ElectricMode.Play();
-
-			FindObjectOfType<LevelController>().SetMoveMultiplier(game.moveMultiplier);
-		});
-
-		rgbd2d.gravityScale = 0;
-		rgbd2d.velocity = Vector3.zero;
-
-		game.SetVirtualCamBody(new Vector3(4.5f, -1.25f, -10f));
-		game.ZoomCamera(4f);
-
-		Invoke(nameof(EndPower), 4.5f);
-	}
-
-	public void EndPower()
-	{
-		GameManager.Sound.PlaySound("Zap");
-
-		PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
-
-		FindObjectOfType<LevelController>().SetMoveMultiplier(1);
-
-		this.transform.Search("Root").gameObject.SetActive(true);
-		particle_ElectricMode.Stop();
-
-		rgbd2d.gravityScale = 1.5f;
-
-		game.SetVirtualCamBody(new Vector3(4f, 1.25f, -10f));
-		game.ZoomCamera(3f);
-
-		isPowerMode = false;
-	}
-
-	private void HandleFacingDirection(float moveInput)
-	{
-		if (moveInput > 0f)
-			SetFacingDirection(-1);
-		else if (moveInput < 0f)
-			SetFacingDirection(1);
 	}
 
 	public void HandleSlideInput()
@@ -248,23 +115,35 @@ public class PlayerActor : Actor
 		}
 	}
 
-	private void HandleMovement(float moveInput)
+	public void HandleSkills()
 	{
-		if (!isSliding || Mathf.Abs(rgbd2d.velocity.x) < 0.1f)
-			rgbd2d.velocity = new Vector2(moveInput * moveSpeed, rgbd2d.velocity.y);
-	}
-
-	public void HandleJumpInput()
-	{
-		if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKeyDown(KeyCode.Q))
 		{
-			if (CanJump())
+			StartFly();
+		}
+
+		if (Input.GetKeyDown(KeyCode.W))
+		{
+			if (!Scene.game.skills.ContainsKey(Skills.Execution))
 			{
-				PerformJump();
-				HandleJumpCount();
+				return;
 			}
+
+			Thunder();
+		}
+
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			if (!Scene.game.skills.ContainsKey(Skills.Electricute))
+			{
+				return;
+			}
+
+			Explosion();
 		}
 	}
+
+
 
 	public void Slide()
 	{
@@ -278,6 +157,24 @@ public class PlayerActor : Actor
 				EndSlide();
 		};
 	}
+
+	private void StartSlide()
+	{
+		isSliding = true;
+		slideTimer = slideDuration;
+		moveSpeed *= slideSpeedMultiplier;
+
+		animator.SetBool("Slide", true);
+	}
+
+	private void EndSlide()
+	{
+		isSliding = false;
+		moveSpeed /= slideSpeedMultiplier;
+
+		animator.SetBool("Slide", false);
+	}
+
 
 	public void Jump()
 	{
@@ -310,7 +207,7 @@ public class PlayerActor : Actor
 				{
 					GameManager.Sound.PlaySound("Jump_2");
 
-					game.ZoomCamera(4f);
+					Scene.game.ZoomCamera(4f);
 
 					isDoubleJump = true;
 				}
@@ -318,33 +215,9 @@ public class PlayerActor : Actor
 		}
 	}
 
-	bool isDoubleJump = false;
-
-	private void SetFacingDirection(float direction)
-	{
-		transform.localScale = hp.localScale = new Vector3(direction, 1, 1);
-	}
-
-	private void StartSlide()
-	{
-		isSliding = true;
-		slideTimer = slideDuration;
-		moveSpeed *= slideSpeedMultiplier;
-
-		animator.SetBool("Slide", true);
-	}
-
-	private void EndSlide()
-	{
-		isSliding = false;
-		moveSpeed /= slideSpeedMultiplier;
-
-		animator.SetBool("Slide", false);
-	}
-
 	public bool CanJump()
 	{
-		return (isGrounded || remainingJumps > 0) && !isPowerMode;
+		return (isGrounded || remainingJumps > 0) && !isFlyMode;
 	}
 
 	private void PerformJump()
@@ -354,25 +227,24 @@ public class PlayerActor : Actor
 		rgbd2d.velocity = new Vector2(rgbd2d.velocity.x, jumpValue);
 		isGrounded = false;
 
-		CheckIsJumping();
+		CheckJump();
 	}
 
-	private void CheckIsJumping()
+	private void CheckJump()
 	{
-		Util.RunCoroutine(Co_CheckIsJumping(), nameof(Co_CheckIsJumping), CoroutineTag.Content);
+		Util.RunCoroutine(Co_CheckJump(), nameof(Co_CheckJump), CoroutineTag.Content);
 	}
 
-	private IEnumerator<float> Co_CheckIsJumping()
+	private IEnumerator<float> Co_CheckJump()
 	{
 		isJumping = true;
 
 		yield return Timing.WaitUntilTrue(() => rgbd2d.velocity.y < 0);
 
-		if (isDoubleJump) game.ZoomCamera(3f);
+		if (isDoubleJump) Scene.game.ZoomCamera(3f);
 
 		isJumping = false;
 		isGrounded = false;
-		Debug.Log(isGrounded);
 
 		yield return Timing.WaitUntilTrue(() => isGrounded);
 
@@ -383,16 +255,106 @@ public class PlayerActor : Actor
 
 
 
-	#region Entity
+	#region Skills
 
-	public void Execute()
+	public void Thunder()
 	{
-		health = 0;
+		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
+		MonsterActor closestMonster = null;
 
-		hp.GetComponent<TMP_Text>().text = "Busted";
+		float closestDistance = Mathf.Infinity;
 
-		Die();
+		// 각 MonsterActor 오브젝트와 플레이어 간의 거리를 비교합니다.
+		foreach (MonsterActor monster in monsters)
+		{
+			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
+
+			// 현재까지 찾은 가장 가까운 MonsterActor를 업데이트합니다.
+			if (distance < closestDistance && this.transform.position.x -0.5f < monster.transform.position.x && !monster.isDead)
+			{
+				closestDistance = distance;
+				closestMonster = monster;
+			}
+		}
+
+		// 가장 가까운 MonsterActor를 찾았습니다.
+		if (closestMonster != null)
+		{
+			closestMonster.Die();
+
+			PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
+
+			GameManager.Sound.PlaySound("Spawn", .5f);
+		}
 	}
+
+	public void Explosion()
+	{
+		PoolManager.Spawn("Thunder_Explosion", Vector3.zero, Quaternion.identity, this.transform);
+
+		GameManager.Sound.PlaySound("ElectricExplosion");
+
+		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
+
+		foreach (MonsterActor monster in monsters)
+		{
+			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
+
+			if (distance <= damageRadius)
+			{
+				monster.Die();
+			}
+		}
+	}
+
+	public void StartFly()
+	{
+		isFlyMode = true;
+
+		this.gameObject.transform.DOMove(new Vector3(this.transform.position.x, 2.3f, this.transform.position.z), .5f).OnComplete(() =>
+		{
+			GameManager.Sound.PlaySound("ElectricFlow");
+
+			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
+
+			this.transform.Search("Root").gameObject.SetActive(false);
+			particle_ElectricMode.Play();
+
+			Scene.game.levelController.moveSpeedMultiplier = Scene.game.moveMultiplier;
+		});
+
+		rgbd2d.gravityScale = 0;
+		rgbd2d.velocity = Vector3.zero;
+
+		Scene.game.SetVirtualCamBody(new Vector3(4.5f, -1.25f, -10f));
+		Scene.game.ZoomCamera(4f);
+
+		Invoke(nameof(EndFly), 4.5f);
+	}
+
+	public void EndFly()
+	{
+		GameManager.Sound.PlaySound("Zap");
+
+		PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
+
+		Scene.game.levelController.moveSpeedMultiplier = 1;
+
+		this.transform.Search("Root").gameObject.SetActive(true);
+		particle_ElectricMode.Stop();
+
+		rgbd2d.gravityScale = 1.5f;
+
+		Scene.game.SetVirtualCamBody(new Vector3(4f, 1.25f, -10f));
+		Scene.game.ZoomCamera(3f);
+
+		isFlyMode = false;
+	}
+
+	#endregion
+
+
+	#region Entity
 
 	public override void Damage(int amount, bool execute = false)
 	{
@@ -402,7 +364,7 @@ public class PlayerActor : Actor
 		{
 			hp.GetComponent<TMP_Text>().text = "Busted";
 
-			FindObjectOfType<CameraShake3D>().Shake();
+			Scene.game.cameraShake.Shake();
 
 			var multiplier = isGrounded ? 1.5f : 1f;
 
@@ -418,51 +380,28 @@ public class PlayerActor : Actor
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 	}
 
-	public void UpdateAnimator(float moveInput)
-	{
-		animator.SetBool(Define.RUN, moveInput != 0);
-		animator.SetFloat(Define.RUNSTATE, Mathf.Abs(moveInput * .5f));
-		animator.SetBool(Define.SLIDE, isSliding);
-	}
-
 	public override void Die()
 	{
 		base.Die();
 
 		if (isDead) return;
 
+		GameManager.Sound.PlaySound(Define.SOUND_DIE);
+
 		isDead = true;
-
-		GameManager.Sound.PlaySound("BodyFall_1");
-
-		this.GetComponent<FootStepController>().StopWalk();
-		FindObjectOfType<LevelController>().StopGround();
-		var scroll = FindObjectsOfType<ParallexScrolling>();
-		foreach (var item in scroll)
-		{
-			item.StopScroll();
-		}
-
 		animator.SetBool(Define.DIE, true);
 		animator.SetBool(Define.EDITCHK, true);
-
 		rgbd2d.velocity *= dieVelocity;
-
-		game.SetCameraTarget(null);
-		game.StopDifficult();
 
 		this.transform.localEulerAngles = Vector3.forward * 13f;
 
+		Scene.game.StopEnviroment();
+		Scene.game.SetCameraTarget(null);
+		Scene.game.StopDifficulty();
+		Scene.game.StopScoreCount();
+		Scene.game.GameOver();
+
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
-
-		Invoke(nameof(ShowGameOverUI), .75f);
-	}
-
-	private void ShowGameOverUI()
-	{
-		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(game.score, game.gold, game.exp = Mathf.RoundToInt(game.score * .45f));
-
-		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
 
 	public override void Refresh()
@@ -482,16 +421,30 @@ public class PlayerActor : Actor
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
 
-	public void Stop()
+	public void Execute()
 	{
-		isDead = true;
-		rgbd2d.velocity *= dieVelocity;
+		health = 0;
 
-		Util.RunCoroutine(Co_SmoothStop(), nameof(Co_SmoothStop));
+		hp.GetComponent<TMP_Text>().text = "Busted";
+
+		Die();
 	}
 
-	IEnumerator<float> Co_SmoothStop()
+	public void UpdateAnimator(float moveInput)
 	{
+		animator.SetBool(Define.RUN, moveInput != 0);
+		animator.SetFloat(Define.RUNSTATE, Mathf.Abs(moveInput * .5f));
+		animator.SetBool(Define.SLIDE, isSliding);
+	}
+
+
+	public void Stop() => Util.RunCoroutine(Co_SmoothStop(), nameof(Co_SmoothStop), CoroutineTag.Content);
+	
+	private IEnumerator<float> Co_SmoothStop()
+	{
+		isDead = true;
+		rgbd2d.velocity *= dieVelocity; 
+		
 		var value = animator.GetFloat(Define.RUNSTATE);
 
 		while (value > 0)
@@ -508,7 +461,7 @@ public class PlayerActor : Actor
 
 		yield return Timing.WaitForSeconds(.5f);
 
-		ShowGameOverUI();
+		Scene.game.GameOver();
 	}
 
 	#endregion
@@ -529,7 +482,7 @@ public class PlayerActor : Actor
 			if (isDoubleJump)
 			{
 				isDoubleJump = false;
-				game.ZoomCamera(3f);
+				Scene.game.ZoomCamera(3f);
 			}
 		}
 
@@ -537,13 +490,11 @@ public class PlayerActor : Actor
 		{
 			Die();
 
-			FindObjectOfType<CameraShake3D>().Shake();
+			Scene.game.cameraShake.Shake();
 
 			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
 
 			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
-
-			Debug.Log("Monster");
 		}
 	}
 
@@ -572,6 +523,18 @@ public class PlayerActor : Actor
 				DebugManager.Log("Execute Monster", DebugColor.Game);
 			}
 		}
+
+
+		else if (collision.gameObject.CompareTag(Define.OBSTACLE))
+		{
+			Die();
+
+			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
+
+			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+
+			Scene.game.cameraShake.Shake();
+		}
 	}
 
 	#endregion
@@ -599,6 +562,17 @@ public class PlayerActor : Actor
 		}
 
 		rgbd2d.simulated = simulate;
+	}
+
+
+	public void IncreaseHealth(int health)
+	{
+		hp.GetComponent<TMP_Text>().text = health.ToString();
+	}
+
+	public void Distortion()
+	{
+		particle_Distortion.Play();
 	}
 
 	#endregion

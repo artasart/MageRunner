@@ -15,4 +15,10 @@ public static class Enums
 		Weapons = 6,
 		Back = 7,
 	}
+
+	public enum GameState
+	{
+		Playing,
+		Paused
+	}
 }

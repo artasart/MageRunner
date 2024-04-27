@@ -1,5 +1,8 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
+#endif
+
 using UnityEngine;
 
 public class RideController : MonoBehaviour
@@ -14,14 +17,18 @@ public class RideController : MonoBehaviour
 	SPUM_SpriteList actorSpriteList;
 	SPUM_SpriteList rideSpriteList;
 	SPUM_Prefabs spumPrefabs;
+
+#if UNITY_EDITOR
 	AnimatorController controller;
+#endif
 
 	private void Awake()
 	{
 		defaultActor = GameObject.Find("PlayerActor");
 		horseAvatar = GameObject.Find("PlayerHorseActor");
+#if UNITY_EDITOR
 		controller = Resources.Load<AnimatorController>("SPUM/SPUM_Sprites/RideSource/Horse1/Animation/Horse1_Animation");
-		
+#endif
 		spumPrefabs = horseAvatar.GetComponent<SPUM_Prefabs>();
 		horseAvatar.transform.position = Vector3.zero;
 	}
@@ -109,8 +116,8 @@ public class RideController : MonoBehaviour
 		rideSpriteList._backListString = actorSpriteList._backListString;
 		rideSpriteList._weaponListString = actorSpriteList._weaponListString;
 
-		horseAvatar.GetComponentInChildren<Animator>().runtimeAnimatorController = controller;
-		horseAvatar.GetComponent<SPUM_Prefabs>()._spriteOBj.ResyncData();
+		//horseAvatar.GetComponentInChildren<Animator>().runtimeAnimatorController = controller;
+		//horseAvatar.GetComponent<SPUM_Prefabs>()._spriteOBj.ResyncData();
 
 		if (isPreview) LocalData.gameData.ride = new Ride { name = name, index = index, };
 
@@ -134,61 +141,62 @@ public class RideController : MonoBehaviour
 
 	public void SetRideBody(string name)
 	{
-		SPUM_HorseSpriteList hST = horseAvatar.GetComponentInChildren<SPUM_HorseSpriteList>();
+		//SPUM_HorseSpriteList hST = horseAvatar.GetComponentInChildren<SPUM_HorseSpriteList>();
 
-		Object[] sprites = AssetDatabase.LoadAllAssetsAtPath(name);
-		for (var j = 0; j < sprites.Length; j++)
-		{
-			if (sprites[j].GetType() == typeof(Sprite))
-			{
-				Sprite tSP = (Sprite)sprites[j];
-				switch (sprites[j].name)
-				{
-					case "Head":
-						hST._spList[0].sprite = tSP;
-						break;
+		//Object[] sprites = AssetDatabase.LoadAllAssetsAtPath(name);
 
-					case "Neck":
-						hST._spList[1].sprite = tSP;
-						break;
+		//for (var j = 0; j < sprites.Length; j++)
+		//{
+		//	if (sprites[j].GetType() == typeof(Sprite))
+		//	{
+		//		Sprite tSP = (Sprite)sprites[j];
+		//		switch (sprites[j].name)
+		//		{
+		//			case "Head":
+		//				hST._spList[0].sprite = tSP;
+		//				break;
 
-					case "BodyFront":
-						hST._spList[2].sprite = tSP;
-						break;
+		//			case "Neck":
+		//				hST._spList[1].sprite = tSP;
+		//				break;
 
-					case "BodyBack":
-						hST._spList[3].sprite = tSP;
-						break;
+		//			case "BodyFront":
+		//				hST._spList[2].sprite = tSP;
+		//				break;
 
-					case "FootFrontTop":
-						hST._spList[4].sprite = tSP;
-						hST._spList[5].sprite = tSP;
-						break;
+		//			case "BodyBack":
+		//				hST._spList[3].sprite = tSP;
+		//				break;
 
-					case "FootFrontBottom":
-						hST._spList[6].sprite = tSP;
-						hST._spList[7].sprite = tSP;
-						break;
+		//			case "FootFrontTop":
+		//				hST._spList[4].sprite = tSP;
+		//				hST._spList[5].sprite = tSP;
+		//				break;
 
-					case "FootBackTop":
-						hST._spList[8].sprite = tSP;
-						hST._spList[9].sprite = tSP;
-						break;
+		//			case "FootFrontBottom":
+		//				hST._spList[6].sprite = tSP;
+		//				hST._spList[7].sprite = tSP;
+		//				break;
 
-					case "FootBackBottom":
-						hST._spList[10].sprite = tSP;
-						hST._spList[11].sprite = tSP;
-						break;
+		//			case "FootBackTop":
+		//				hST._spList[8].sprite = tSP;
+		//				hST._spList[9].sprite = tSP;
+		//				break;
 
-					case "Tail":
-						hST._spList[12].sprite = tSP;
-						break;
+		//			case "FootBackBottom":
+		//				hST._spList[10].sprite = tSP;
+		//				hST._spList[11].sprite = tSP;
+		//				break;
 
-					case "Acc":
-						hST._spList[13].sprite = tSP;
-						break;
-				}
-			}
-		}
+		//			case "Tail":
+		//				hST._spList[12].sprite = tSP;
+		//				break;
+
+		//			case "Acc":
+		//				hST._spList[13].sprite = tSP;
+		//				break;
+		//		}
+		//	}
+		//}
 	}
 }

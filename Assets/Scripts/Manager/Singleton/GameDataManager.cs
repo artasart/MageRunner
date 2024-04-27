@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameDataManager : SingletonManager<GameDataManager>
 {
+	public bool isSaved = false;
+
 	public void GetVersion(Action callback)
 	{
 		DebugManager.ClearLog("Get Version", DebugColor.Data);
@@ -22,8 +24,6 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 				var server = values[0];
 
-				Debug.Log(server + ", local : "  + localVersion);
-
 				if (Equals(server, localVersion))
 				{
 					DebugManager.Log("최신 버전 입니다.", DebugColor.Data);
@@ -40,6 +40,8 @@ public class GameDataManager : SingletonManager<GameDataManager>
 				LocalData.masterData.version.status = values[2];
 
 				DebugManager.Log("버전을 업데이트합니다.", DebugColor.Data);
+
+				break;
 			}
 
 			if (!isLatestVersion)
@@ -53,20 +55,22 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 	public void GetSheet(Action callback = null)
 	{
-		DebugManager.Log("Sheet 데이터를 가져옵니다.", DebugColor.Data);
+		DebugManager.Log("Try get sheet data", DebugColor.Data);
 
-		LocalData.masterData ??= new MasterData();
-
-		GoogleSheets.AddJob("Get Level Data", () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
-		GoogleSheets.AddJob("Get Equipment Data", () => GoogleSheets.GetData(Url.EQUIPMENT_SHEETID, SaveData<Item>));
-		GoogleSheets.AddJob("Get Skill Data", () => GoogleSheets.GetData(Url.SKILL_SHEETID, SaveData<Skill>));
-		GoogleSheets.AddJob("Get SkillUpgrade Data", () => GoogleSheets.GetData(Url.SKILL_UPGRADE_SHEETID, SaveData<SkillUpgrade>));
+		LocalData.masterData = new MasterData();
+	
+		GoogleSheets.AddJob("downloading level data...", () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
+		GoogleSheets.AddJob("downloading equipment data...", () => GoogleSheets.GetData(Url.EQUIPMENT_SHEETID, SaveData<Item>));
+		GoogleSheets.AddJob("downloading skill data...", () => GoogleSheets.GetData(Url.SKILL_SHEETID, SaveData<Skill>));
+		GoogleSheets.AddJob("downloading skill level data...", () => GoogleSheets.GetData(Url.SKILL_UPGRADE_SHEETID, SaveData<SkillUpgrade>));
 
 		GoogleSheets.GetDataAll(callback);
 	}
 
 	private void SaveData<T>(string data) where T : new()
 	{
+		isSaved = false;
+
 		var dataList = new List<T>();
 		var lines = data.Split('\n');
 
@@ -103,6 +107,8 @@ public class GameDataManager : SingletonManager<GameDataManager>
 		{
 			LocalData.masterData.skillUpgradeData = dataList.Cast<SkillUpgrade>().ToList();
 		}
+
+		isSaved = true;
 	}
 
 	public T CreateObject<T>(string[] values) where T : new()
