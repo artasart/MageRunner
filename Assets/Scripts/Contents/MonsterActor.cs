@@ -107,6 +107,13 @@ public class MonsterActor : Actor
 		{
 			Die();
 		}
+
+		else
+		{
+			damage -= amount;
+
+			hp.GetComponent<TMP_Text>().text = damage.ToString();
+		}
 	}
 
 	public override void Refresh()

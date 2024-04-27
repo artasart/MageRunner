@@ -117,11 +117,6 @@ public class PlayerActor : Actor
 
 	public void HandleSkills()
 	{
-		if (Input.GetKeyDown(KeyCode.Q))
-		{
-			StartFly();
-		}
-
 		if (Input.GetKeyDown(KeyCode.W))
 		{
 			if (!Scene.game.skills.ContainsKey(Skills.Execution))
@@ -257,6 +252,9 @@ public class PlayerActor : Actor
 
 	#region Skills
 
+	public int thunderCoolTime = 10;
+	public int thunderMana = 10;
+
 	public void Thunder()
 	{
 		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
@@ -264,29 +262,50 @@ public class PlayerActor : Actor
 
 		float closestDistance = Mathf.Infinity;
 
-		// 각 MonsterActor 오브젝트와 플레이어 간의 거리를 비교합니다.
 		foreach (MonsterActor monster in monsters)
 		{
 			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
 
-			// 현재까지 찾은 가장 가까운 MonsterActor를 업데이트합니다.
-			if (distance < closestDistance && this.transform.position.x -0.5f < monster.transform.position.x && !monster.isDead)
+			if (distance < closestDistance && this.transform.position.x - 0.5f < monster.transform.position.x && this.transform.position.x + 5f >= monster.transform.position.x && !monster.isDead)
 			{
 				closestDistance = distance;
 				closestMonster = monster;
 			}
 		}
 
-		// 가장 가까운 MonsterActor를 찾았습니다.
 		if (closestMonster != null)
 		{
+			if (thunderMana > Scene.game.totalMana)
+			{
+				Debug.Log("Not enough mana");
+
+				return;
+			}
+
+			Scene.game.totalMana -= thunderMana;
+
+			GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+
 			closestMonster.Die();
 
 			PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
 
 			GameManager.Sound.PlaySound("Spawn", .5f);
 		}
+
+		else
+		{
+			Debug.Log("Could not find monster");
+		}
 	}
+
+
+
+
+
+
+
+
 
 	public void Explosion()
 	{

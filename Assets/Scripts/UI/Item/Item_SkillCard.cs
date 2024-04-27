@@ -61,6 +61,13 @@ public class Item_SkillCard : Item_Base
 
 		else btn_ItemCard.interactable = true;
 
+		if(skill.skilltype == "Passive")
+		{
+			group_Upgrade.gameObject.SetActive(false);
+		}
+
+		else group_Upgrade.gameObject.SetActive(true);
+
 		txtmp_Name.text = skill.name;
 		txtmp_Description.text = skill.description;
 		img_Thumbnail.sprite = Resources.Load<Sprite>(skill.thumbnailPath);

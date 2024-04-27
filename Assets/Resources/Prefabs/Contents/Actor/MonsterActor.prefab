@@ -6280,7 +6280,6 @@ MonoBehaviour:
   exp: 34
   noticeRange: 2
   attackRange: 1
-  pushForce: 2
 --- !u!61 &3593315283470471886
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -13712,7 +13711,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.1}
+  m_Size: {x: 0.7, y: 0.1}
   m_EdgeRadius: 0
 --- !u!1 &9091732744858216074
 GameObject:

@@ -70,7 +70,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	#region Core Methods
 
-	public void LoadScene(SceneName sceneName, bool isAsync = true, float fadeSpeed = 1f) => Util.RunCoroutine(Co_LoadScene(sceneName, isAsync), nameof(Co_LoadScene));
+	public void LoadScene(SceneName sceneName, bool isAsync = true, float fadeSpeed = .5f) => Util.RunCoroutine(Co_LoadScene(sceneName, isAsync, fadeSpeed), nameof(Co_LoadScene));
 
 	private IEnumerator<float> Co_LoadScene(SceneName sceneName, bool isAsync = true, float fadeSpeed = 1f)
 	{

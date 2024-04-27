@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -55,8 +56,6 @@ public class Panel_HUD : Panel_Base
 
 	private void Start()
 	{
-		items_Skill[Skills.PowerOverWhelming].Refresh();
-		
 		slider_Level.value = 0f;
 		slider_Level.maxValue = LocalData.masterData.inGameLevel[Scene.game.level - 1].exp;
 		txtmp_Level = GetUI_TMPText(nameof(txtmp_Level), "Lv.1");
@@ -72,9 +71,9 @@ public class Panel_HUD : Panel_Base
 		Debug.Log("OnClick_Right");
 	}
 
-	private void OnClick_Down()
+	public void OnClick_Down()
 	{
-		Debug.Log("OnClick_Down");
+		if (Scene.game.playerActor.isDead) return;
 
 		UseSkill(Skills.PowerOverWhelming, 10);
 
@@ -102,7 +101,12 @@ public class Panel_HUD : Panel_Base
 		txtmp_Score.text = 0.ToString("N0");
 		txtmp_Coin.text = 0.ToString("N0");
 
-		items_Skill[Skills.PowerOverWhelming].Refresh();
+		foreach(var item in items_Skill)
+		{
+			item.Value.Refresh();
+		}
+
+		items_Skill.Clear();
 
 		slider_Level.value = 0f;
 		slider_Level.maxValue = LocalData.masterData.inGameLevel[0].exp;
@@ -150,14 +154,40 @@ public class Panel_HUD : Panel_Base
 		}
 	}
 
-	public void UseSkill(Skills skillType, int coolTime, float delay = 0f)
+	public void UseSkill(Skills skillType, float coolTime, float delay = 0f, Action action = null)
 	{
-		btn_Down.enabled = false;
+		//btn_Down.enabled = false;
 
 		Debug.Log("Skill is used : " + skillType.ToString());
 
-		items_Skill[skillType].UseSkill(coolTime, () => btn_Down.enabled = true);
+		items_Skill[skillType].UseSkill(coolTime, () =>
+		{
+			action?.Invoke();
+
+			//btn_Down.enabled = true;
+		});
 	}
+
+	int slotIndex = 0;
+
+	public void SetSlot(Skills skillType)
+	{
+		if (slotSet.Contains(skillType)) return;
+
+		slotSet.Add(skillType);
+
+		var sprite = Resources.Load<Sprite>(Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Skull");
+
+		group_Skills.GetChild(slotIndex).GetComponent<Item_Skill>().Refresh();
+		group_Skills.GetChild(slotIndex).Search("img_Thumbnail").GetComponent<Image>().sprite = sprite;
+		group_Skills.GetChild(slotIndex).Search("img_Thumbnail").gameObject.SetActive(true);
+
+		items_Skill.Add(skillType, group_Skills.GetChild(slotIndex).GetComponent<Item_Skill>());
+
+		slotIndex++;
+	}
+
+	List<Skills> slotSet = new List<Skills>();
 }
 
 

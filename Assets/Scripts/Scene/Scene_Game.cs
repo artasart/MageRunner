@@ -140,7 +140,12 @@ public class Scene_Game : SceneLogic
 		score = gold = 0;
 		level = 1;
 		goldMultiplier = 1;
+		expMultiplier = 1;
+		coolTimePercentage = 0;
+		totalMana = 100;
 		skills = new SerializableDictionary<Skills, ActiveSkill>();
+
+		Util.KillCoroutine(nameof(Co_UseThunder));
 
 		Util.RunCoroutine(Co_Replay(), nameof(Co_Replay), CoroutineTag.Content);
 	}
@@ -339,7 +344,7 @@ public class Scene_Game : SceneLogic
 
 	public void AddSkill(ActiveSkill skill)
 	{
-		var activeSKill = new ActiveSkill(skill.name, skill.description, skill.thumbnailPath, skill.type);
+		var activeSKill = new ActiveSkill(skill.name, skill.skilltype, skill.description, skill.thumbnailPath, skill.type);
 
 		if (!skills.ContainsKey(activeSKill.type))
 		{
@@ -357,14 +362,14 @@ public class Scene_Game : SceneLogic
 
 		else
 		{
-			skills[activeSKill.type].level++;
+			if (activeSKill.skilltype != "Passive") skills[activeSKill.type].level++;
 		}
 
 
 
 		// Skill Methods
 
-		if(activeSKill.type == Skills.Speed)
+		if (activeSKill.type == Skills.Speed)
 		{
 			var increaseValue = levelController.moveSpeed * ((float)skills[activeSKill.type].level * .015f);
 
@@ -386,9 +391,92 @@ public class Scene_Game : SceneLogic
 		{
 			goldMultiplier = skills[activeSKill.type].level + 1;
 		}
+
+		if (activeSKill.type == Skills.Exp)
+		{
+			expMultiplier = skills[activeSKill.type].level + 1;
+		}
+
+		if (activeSKill.type == Skills.Mana)
+		{
+			totalMana = (skills[activeSKill.type].level + 1) * 10;
+		}
+
+		if (activeSKill.type == Skills.CoolTime)
+		{
+			coolTimePercentage = skills[activeSKill.type].level + 1 * 10;
+		}
+
+		if (activeSKill.type == Skills.Execution)
+		{
+			Debug.Log("SKillThunder");
+
+			GameManager.UI.FetchPanel<Panel_HUD>().SetSlot(Skills.Execution);
+
+			Util.RunCoroutine(Co_UseThunder(), nameof(Co_UseThunder), CoroutineTag.Content);
+		}
 	}
 
+
+	private IEnumerator<float> Co_UseThunder()
+	{
+		while (true)
+		{
+			yield return Timing.WaitForOneFrame;
+
+			MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
+			MonsterActor closestMonster = null;
+			float closestDistance = Mathf.Infinity;
+
+			yield return Timing.WaitUntilTrue(() => Scene.game.gameState == GameState.Playing);
+
+			foreach (MonsterActor monster in monsters)
+			{
+				float distance = Vector3.Distance(this.transform.position, monster.transform.position);
+
+				if (distance < closestDistance && this.transform.position.x - 0.5f < monster.transform.position.x && this.transform.position.x + 5f >= monster.transform.position.x && !monster.isDead)
+				{
+					closestDistance = distance;
+					closestMonster = monster;
+				}
+			}
+
+			if (closestMonster != null)
+			{
+				if (thunderMana > Scene.game.totalMana)
+				{
+					Debug.Log("Not enough mana");
+				}
+
+				else
+				{
+					Scene.game.totalMana -= thunderMana;
+
+					GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Execution, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+
+					closestMonster.Damage(Scene.game.playerActor.health);
+
+					PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
+
+					GameManager.Sound.PlaySound("Spawn", .5f);
+
+					yield return Timing.WaitForSeconds(thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+				}
+
+				yield return Timing.WaitUntilTrue(() => Scene.game.totalMana - thunderMana >= 0);
+			}
+		}
+	}
+
+	public int thunderCoolTime = 10;
+	public int thunderMana = 10;
+
+
+
+	public int totalMana = 100;
+	public int coolTimePercentage = 0;
 	public int goldMultiplier = 1;
+	public int expMultiplier = 1;
 
 	private void ShowInterstitialAd()
 	{
@@ -409,8 +497,8 @@ public class Scene_Game : SceneLogic
 	public void AddGameExp()
 	{
 		if (Scene.game.level == 30) return;
-		Debug.Log("AddGameExp");
-		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp;
+
+		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp * expMultiplier;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(amount);
 	}

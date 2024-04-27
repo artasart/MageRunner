@@ -42,6 +42,8 @@ public class Popup_Skill : Popup_Base
 		game.playerActor.ToggleSimulation(false);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
+
+		btn_Refresh.interactable = Scene.game.gold > 100;
 	}
 
 	protected override void Awake()
@@ -69,6 +71,8 @@ public class Popup_Skill : Popup_Base
 
 	private void OnClick_Refresh()
 	{
+		Scene.game.gold -= 100;
+
 		SetCard();
 
 		btn_Refresh.interactable = false;
@@ -157,12 +161,14 @@ public class PlayerSkill
 	public string name;
 	public string description;
 	public string thumbnailPath;
+	public string skilltype;
 
-	public PlayerSkill(string name, string description, string thumbnailPath)
+	public PlayerSkill(string name, string skilltype, string description, string thumbnailPath)
 	{
 		this.name = name;
 		this.description = description;
 		this.thumbnailPath = thumbnailPath;
+		this.skilltype = skilltype;
 	}
 }
 
@@ -171,7 +177,7 @@ public class PlayerPassiveSkill : PlayerSkill
 {
 	public int level;
 
-	public PlayerPassiveSkill(string name, string description, string thumbnailPath, int level) : base(name, description, thumbnailPath)
+	public PlayerPassiveSkill(string name, string skilltype, string description, string thumbnailPath, int level) : base(name, skilltype, description, thumbnailPath)
 	{
 		this.level = level;
 	}
@@ -183,7 +189,7 @@ public class ActiveSkill : PlayerSkill
 	public Skills type;
 	public int level;
 
-	public ActiveSkill(string name, string description, string thumbnailPath, Skills skills) : base(name, description, thumbnailPath)
+	public ActiveSkill(string name, string skilltype, string description, string thumbnailPath, Skills skills) : base(name, skilltype, description, thumbnailPath)
 	{
 		this.type = skills;
 	}
