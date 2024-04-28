@@ -99,6 +99,13 @@ public class GameData
 	public int gold;
 	public int highScore;
 
+	public int energy;
+	public int energyTotal;
+	public bool isPremium;
+	public int runnerTag = 1;
+
+	public DateTime lastLogin;
+
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
 	public Ride ride;
 

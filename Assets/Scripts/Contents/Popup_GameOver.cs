@@ -33,6 +33,13 @@ public class Popup_GameOver : Popup_Base
 
 	private void OnClick_Retry()
 	{
+		if (LocalData.gameData.energy <= 0)
+		{
+			Debug.Log("No Energy");
+
+			return;
+		}
+
 		btn_Reward.interactable = true;
 
 		Scene.game.Replay();

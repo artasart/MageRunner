@@ -85,8 +85,6 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		GameManager.Sound.PlayBGM(Define.SOUND_DAWN, .5f);
-
 		GameManager.Scene.Fade(false, .1f);
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Pause>();
@@ -244,8 +242,13 @@ public class Scene_Game : SceneLogic
 		{
 			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
 
-			levelController.moveSpeed += (levelController.moveSpeed * .05f);
+			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .05f), 0f, 8.5f);
 			levelController.groundProbability += (levelController.groundProbability * .05f);
+
+			if(levelController.moveSpeed == 8.5f)
+			{
+				Debug.Log("최대 스피드에 도달했습니다.");
+			}
 
 			Debug.Log("Add dificullty");
 

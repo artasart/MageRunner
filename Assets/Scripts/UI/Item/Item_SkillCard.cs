@@ -16,11 +16,6 @@ public class Item_SkillCard : Item_Base
 
 	ActiveSkill selectedSkill;
 
-	public float shakeDuration = 0.35f;
-	public Vector3 shakeStrength = new Vector3(10, 10, 0);
-	public int shakeVibrato = 40;
-	public float shakeRandomness = 90;
-
 	Vector2 originSizeDelta;
 	public int selectedIndex = -1;
 

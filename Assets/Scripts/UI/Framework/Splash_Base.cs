@@ -16,7 +16,7 @@ public class Splash_Base : UI_Base
 	{
 		if(isInitialized)
 		{
-			Util.RunCoroutine(Co_DisableAfterSeconds(timeout));
+			Util.RunCoroutine(Co_DisableAfterSeconds(timeout), nameof(Co_DisableAfterSeconds) + this.GetHashCode(), CoroutineTag.UI);
 		}
 
 		isInitialized = true;

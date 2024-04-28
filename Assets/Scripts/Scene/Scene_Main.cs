@@ -42,7 +42,10 @@ public class Scene_Main : SceneLogic
 			LocalData.gameData.bags = new SerializableDictionary<string, int>();
 			LocalData.gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
 			LocalData.gameData.activeSkills = new List<ActiveSkill>();
-			LocalData.gameData.gold += 1000000;
+			LocalData.gameData.gold = 10000;
+			LocalData.gameData.energy = 5;
+			LocalData.gameData.energyTotal = 5;
+			LocalData.gameData.isPremium = false;
 		}
 
 		if(LocalData.invenData == null)
@@ -92,13 +95,37 @@ public class Scene_Main : SceneLogic
 
 		GetFarmedItem();
 
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("artasart", LocalData.gameData.runnerTag);
+
 		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
 		GameObject.Find("PlayerActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 		GameObject.Find("PlayerHorseActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 
 		GameManager.Sound.PlayBGM("Dawn");
+
+		LocalData.gameData.lastLogin = DateTime.Now;
+
+
+
+
+
+		DateTime nextMidnight = DateTime.Today.AddDays(1);
+		TimeSpan timeUntilMidnight = nextMidnight - DateTime.Now;
+
+		Invoke(nameof(DailyFunction), (float)timeUntilMidnight.TotalSeconds);
 	}
+
+	private void DailyFunction()
+	{
+		Debug.Log("매일 정각에 호출되는 함수 실행!");
+
+		if(LocalData.gameData.energy < LocalData.gameData.energyTotal)
+		{
+			LocalData.gameData.energy = LocalData.gameData.energyTotal;
+		}
+	}
+
 
 	public void GetFarmedItem()
 	{
@@ -149,8 +176,6 @@ public class Scene_Main : SceneLogic
 			DebugManager.Log("No Game Data", DebugColor.Data);
 
 			int index = 0;
-
-			Debug.Log("Count : " + LocalData.masterData.skillData.Count);
 
 			foreach (var item in LocalData.masterData.skillData)
 			{

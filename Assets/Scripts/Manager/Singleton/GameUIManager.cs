@@ -439,7 +439,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 				splashs[splashName].SetActive(true);
 				splashs[splashName].GetComponent<CanvasGroup>().alpha = 1f;
 				splashs[splashName].GetComponent<CanvasGroup>().blocksRaycasts = true;
-				splashs[splashName].GetComponent<Popup_Base>().isInstant = true;
+				splashs[splashName].GetComponent<Splash_Base>().isInstant = true;
 			}
 
 			else Show(splashs[splashName], true);
@@ -665,12 +665,12 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 
 
-	public void Move(GameObject _target, Vector3 _targetPosition, float _lerpSpeed = 1f)
+	public void Move(GameObject _target, Vector3 _targetPosition, float _lerpSpeed = 1f, Action callback = null)
 	{
-		Util.RunCoroutine(Co_Move(_target, _targetPosition, _lerpSpeed), nameof(Co_Move) + _target.GetHashCode(), CoroutineTag.UI);
+		Util.RunCoroutine(Co_Move(_target, _targetPosition, _lerpSpeed, callback), nameof(Co_Move) + _target.GetHashCode(), CoroutineTag.UI);
 	}
 
-	private IEnumerator<float> Co_Move(GameObject _target, Vector3 _targetPosition, float _lerpSpeed = 1f)
+	private IEnumerator<float> Co_Move(GameObject _target, Vector3 _targetPosition, float _lerpSpeed = 1f, Action callback = null)
 	{
 		float lerpvalue = 0f;
 
@@ -687,6 +687,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		}
 
 		_target.GetComponent<RectTransform>().anchoredPosition = targetPosition;
+
+		callback?.Invoke();
 	}
 
 	#endregion

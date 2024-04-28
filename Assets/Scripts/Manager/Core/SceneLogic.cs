@@ -17,6 +17,8 @@ public class SceneLogic : MonoBehaviour
 
 		gameManager.name = GAMEMANAGER;
 
-		Screen.SetResolution(1792, 828, false);
+		Screen.orientation = ScreenOrientation.LandscapeLeft;
+
+		//Screen.SetResolution(1792, 828, false);
 	}
 }

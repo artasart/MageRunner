@@ -1,25 +1,38 @@
+using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 
 public class Panel_Main : Panel_Base
 {
 	Button btn_PlayGame;
-	Button btn_RewardAd;
-	Button btn_CloseReward;
 	Button btn_Settings;
 	Button btn_Inventory;
 	Button btn_Mail;
 	Button btn_Rank;
 	Button btn_DayCheck;
 
-	GameObject rewardAd;
+	Button btn_Shop;
 
 	Image img_New;
-
 	TMP_Text txtmp_Gold;
+
+	ToastPopup toastPopup;
+
+	TMP_Text txtmp_RunnerTag;
+	TMP_Text txtmp_UserName;
+
+	TMP_Text txtmp_Energy;
+
+
+	Button btn_BuyGold;
+	Button btn_BuyEnergy;
+
+	Transform group_TopMenu;
 
 	protected override void Awake()
 	{
@@ -28,38 +41,118 @@ public class Panel_Main : Panel_Base
 		img_New = GetUI_Image(nameof(img_New));
 
 		txtmp_Gold = GetUI_TMPText(nameof(txtmp_Gold), string.Empty);
+		txtmp_Energy = GetUI_TMPText(nameof(txtmp_Energy), string.Empty);
 
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
-		btn_RewardAd = GetUI_Button(nameof(btn_RewardAd), OnClick_RewardedAd, useAnimation: true);
-		btn_CloseReward = GetUI_Button(nameof(btn_CloseReward), OnClick_CloseRewardAd, useAnimation: true);
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
 		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
 		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
 		btn_DayCheck = GetUI_Button(nameof(btn_DayCheck), OnClick_DayCheck, useAnimation: true);
 
-		btn_CloseReward.onClick.RemoveListener(OpenSound);
-		btn_CloseReward.onClick.AddListener(CloseSound);
+		btn_BuyGold = GetUI_Button(nameof(btn_BuyGold), OnClick_BuyGold, useAnimation: true);
+		btn_BuyEnergy = GetUI_Button(nameof(btn_BuyEnergy), OnClick_BuyEnergy, useAnimation: true);
+
+		btn_Shop = GetUI_Button(nameof(btn_Shop), OnClick_Shop, useAnimation: true);
+
+		txtmp_RunnerTag = GetUI_TMPText(nameof(txtmp_RunnerTag), string.Empty);
+		txtmp_UserName = GetUI_TMPText(nameof(txtmp_UserName), string.Empty);
+
+		toastPopup = this.GetComponentInChildren<ToastPopup>();
+
+		group_TopMenu = this.transform.Search(nameof(group_TopMenu));
 	}
 
 	private void Start()
 	{
-		rewardAd = btn_RewardAd.gameObject;
-		HideRewardAd(true);
+		SetEnergy();
 	}
 
-	private void OnClick_CloseRewardAd()
+	private void OnClick_BuyGold()
 	{
-		HideRewardAd();
+		// stack Popup
+		// 광고 시청할래요?
+
+		GameManager.UI.StackPopup<Popup_Basic>(true);
+
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Buy Gold",
+		() =>
+		{
+			Debug.Log("Watch AD!");
+
+			Invoke(nameof(GoldAd), 1f);
+		},
+		() =>
+		{
+			Debug.Log("Canceled..");
+		});
 	}
 
-	private void OnClick_RewardedAd()
+	private void OnClick_BuyEnergy()
 	{
-		Debug.Log("OnClick_RewardedAd");
+		GameManager.UI.StackPopup<Popup_Basic>(true);
+
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Buy Gold",
+		() =>
+		{
+			Debug.Log("Watch AD!");
+
+			Invoke(nameof(EnergyAd), 1f);
+		},
+		() =>
+		{
+			Debug.Log("Canceled..");
+		});
+	}
+
+	public void GoldAd()
+	{
+		Debug.Log("Watched..!");
+
+		LocalData.gameData.gold += 10000;
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+
+		SetGold(LocalData.gameData.gold);
+
+		GameManager.UI.PopPopup();
+	}
+
+	public void EnergyAd()
+	{
+		Debug.Log("Watched..!");
+
+		LocalData.gameData.energy += 5;
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+
+		SetEnergy();
+
+		GameManager.UI.PopPopup();
+	}
+
+	public void SetUserInfo(string username, int runnerTag)
+	{
+		txtmp_UserName.text = username;
+		txtmp_RunnerTag.text = $"<color=#FFC700>RUNNER #{runnerTag}</color>";
+	}
+
+	private void OnClick_Shop()
+	{
+		GameManager.UI.StackPanel<Panel_Shop>(true);
 	}
 
 	private void OnClick_PlayGame()
 	{
+		if (LocalData.gameData.energy <= 0)
+		{
+			btn_PlayGame.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			return;
+		}
+
+		LocalData.gameData.energy -= 1;
+
 		Util.Zoom(Scene.main.virtualCamera, .1f, .025f);
 
 		GameManager.Scene.LoadScene(SceneName.Game, fadeSpeed: .25f);
@@ -67,9 +160,7 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_Settings()
 	{
-		Debug.Log("OnClick_Settings");
-
-		GameManager.UI.StackPopup<Popup_Settings>();
+		GameManager.UI.StackPopup<Popup_Settings>(true);
 	}
 
 	private void OnClick_Inventory()
@@ -99,22 +190,61 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.StackPopup<Popup_DailyCheck>();
 	}
 
-
-	public void ShowRewardAd()
+	private void Update()
 	{
-		GameManager.UI.Move(rewardAd, new Vector3(0f, -110f, 0f));
-	}
-
-	public void HideRewardAd(bool isInstant = false)
-	{
-		if (isInstant)
+		if (Input.GetKeyDown(KeyCode.X))
 		{
-			rewardAd.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 80f, 0f);
+			var amount = UnityEngine.Random.Range(50, 100) * 100;
 
-			return;
+			ShowToastPopup($"Watch AD and get <color=orange>{amount}</color>", true, GoldAd);
 		}
 
-		GameManager.UI.Move(rewardAd, new Vector3(0f, 80f, 0f));
+		if (Input.GetKeyDown(KeyCode.Z))
+		{
+			CloseToastPopup();
+		}
+
+		if (Input.GetKeyDown(KeyCode.C))
+		{
+			ShowToastAndDisappear();
+		}
+
+		if (Input.GetKeyDown(KeyCode.V))
+		{
+			GameManager.UI.StackSplash<Splash_Reward>(true);
+		}	
+	}
+
+	public void ShowToastPopup(string message, bool isCancel = false, Action click = null, Action close = null)
+	{
+		toastPopup.ShowRewardAd(message, isCancel);
+
+		toastPopup.callback_Click = click;
+		toastPopup.callback_Close = close;
+	}
+
+	public void CloseToastPopup()
+	{
+		toastPopup.HideRewardAd();
+	}
+
+	public void ShowToastAndDisappear()
+	{
+		ShowToastPopup($"Toast popup test.", false, () => CancelInvoke(nameof(CloseToastPopup)));
+
+		Invoke(nameof(CloseToastPopup), 2f);
+	}
+
+
+
+	public void ShowTopMenu(bool isShow)
+	{
+		if (isShow)
+		{
+			GameManager.UI.FadeCanvasGroup(group_TopMenu.GetComponent<CanvasGroup>(), 1f);
+		}
+
+		else GameManager.UI.FadeCanvasGroup(group_TopMenu.GetComponent<CanvasGroup>(), .25f, _start: () => group_TopMenu.GetComponent<CanvasGroup>().blocksRaycasts = false);
 	}
 
 	public void ShowNewIcon(bool enable)
@@ -125,5 +255,19 @@ public class Panel_Main : Panel_Base
 	public void SetGold(int gold)
 	{
 		txtmp_Gold.text = Util.FormatNumber(gold);
+	}
+
+	public void SetEnergy()
+	{
+		string amount = string.Empty;
+
+		if (LocalData.gameData.energy > LocalData.gameData.energyTotal)
+		{
+			amount = $"<color=#FFC700>{LocalData.gameData.energy}</color>";
+		}
+
+		else amount = LocalData.gameData.energy.ToString();
+
+		txtmp_Energy.text = $"{amount}/{LocalData.gameData.energyTotal}";
 	}
 }
