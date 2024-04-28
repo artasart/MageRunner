@@ -38,68 +38,68 @@ public class Popup_SkillUpgrade : Popup_Base
 
 	public void Test()
 	{
-		int index = 0;
+		//int index = 0;
 
-		foreach (var item in passiveButtons)
-		{
-			var level = LocalData.gameData.passiveSkills[Util.ConvertIntToEnum<Skills>(index)].level;
+		//foreach (var item in passiveButtons)
+		//{
+		//	var level = LocalData.gameData.passiveSkills[Util.ConvertIntToEnum<Skills>(index)].level;
 
-			if (level == LocalData.masterData.skillUpgradeData.Count)
-			{
-				item.interactable = false;
+		//	if (level == LocalData.masterData.skillUpgradeData.Count)
+		//	{
+		//		item.interactable = false;
 
-				// enable max Level
-			}
+		//		// enable max Level
+		//	}
 
-			item.transform.Search("txtmp_SkillName").GetComponent<TMP_Text>().text = LocalData.masterData.skillData[index].name;
-			item.transform.Search("txtmp_CurrentLevel").GetComponent<TMP_Text>().text = $"upgrade to <color=orange>Lv.{level+1}</color>";
-			item.transform.Search("txtmp_UpgradeGold").GetComponent<TMP_Text>().text = LocalData.masterData.skillUpgradeData[level-1].upgradeGold.ToString();
+		//	item.transform.Search("txtmp_SkillName").GetComponent<TMP_Text>().text = LocalData.masterData.skillData[index].name;
+		//	item.transform.Search("txtmp_CurrentLevel").GetComponent<TMP_Text>().text = $"upgrade to <color=orange>Lv.{level+1}</color>";
+		//	item.transform.Search("txtmp_UpgradeGold").GetComponent<TMP_Text>().text = LocalData.masterData.skillUpgradeData[level-1].upgradeGold.ToString();
 
-			index++;
-		}
+		//	index++;
+		//}
 	}
 
 	public void OnClick_Action(int index)
 	{
 		var type = Util.ConvertIntToEnum<Skills>(index);
-		var skill = LocalData.gameData.passiveSkills[type];
-		var upgradeData = LocalData.masterData.skillUpgradeData[skill.level];
+		// var skill = LocalData.gameData.passiveSkills[type];
+		// var upgradeData = LocalData.masterData.skillUpgradeData[skill.level];
 
-		CancelInvoke(nameof(Hide));
+		//CancelInvoke(nameof(Hide));
 
-		if (LocalData.gameData.gold >= Convert.ToInt32(upgradeData.upgradeGold))
-		{
-			LocalData.gameData.gold -= Convert.ToInt32(upgradeData.upgradeGold);
-			GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
+		//if (LocalData.gameData.gold >= Convert.ToInt32(upgradeData.upgradeGold))
+		//{
+		//	LocalData.gameData.gold -= Convert.ToInt32(upgradeData.upgradeGold);
+		//	GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
-			skill.level++;
-			LocalData.gameData.passiveSkills[type] = skill;
+		//	//skill.level++;
+		//	// LocalData.gameData.passiveSkills[type] = skill;
 
-			if (skill.level == LocalData.masterData.skillUpgradeData.Count)
-			{
-				passiveButtons[index].interactable = false;
-			}
+		//	//if (skill.level == LocalData.masterData.skillUpgradeData.Count)
+		//	//{
+		//	//	passiveButtons[index].interactable = false;
+		//	//}
 
-			var currentLevelText = passiveButtons[index].transform.Search("txtmp_CurrentLevel").GetComponent<TMP_Text>();
-			currentLevelText.text = $"upgrade to <color=orange>Lv.{skill.level + 1}</color>";
+		//	var currentLevelText = passiveButtons[index].transform.Search("txtmp_CurrentLevel").GetComponent<TMP_Text>();
+		//	// currentLevelText.text = $"upgrade to <color=orange>Lv.{skill.level + 1}</color>";
 
-			var upgradeGoldText = passiveButtons[index].transform.Search("txtmp_UpgradeGold").GetComponent<TMP_Text>();
-			upgradeGoldText.text = LocalData.masterData.skillUpgradeData[skill.level - 1].upgradeGold.ToString();
+		//	var upgradeGoldText = passiveButtons[index].transform.Search("txtmp_UpgradeGold").GetComponent<TMP_Text>();
+		//	// upgradeGoldText.text = LocalData.masterData.skillUpgradeData[skill.level - 1].upgradeGold.ToString();
 
-			JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		//	JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 
-			Debug.Log("Upgrade!!");
-		}
+		//	Debug.Log("Upgrade!!");
+		//}
 
-		else
-		{
-			Debug.Log("Not Enough Money..!");
+		//else
+		//{
+		//	Debug.Log("Not Enough Money..!");
 
-			this.transform.Search("img_Panel").GetComponent<RectTransform>().DOShakePosition(shakeDuration, shakeStrength, shakeVibrato, shakeRandomness, false);
-			txtmp_Message.text = "<color=red>not enough gold</color>";
+		//	this.transform.Search("img_Panel").GetComponent<RectTransform>().DOShakePosition(shakeDuration, shakeStrength, shakeVibrato, shakeRandomness, false);
+		//	txtmp_Message.text = "<color=red>not enough gold</color>";
 
-			Invoke(nameof(Hide), .75f);
-		}
+		//	Invoke(nameof(Hide), .75f);
+		//}
 	}
 
 	public float shakeDuration = 0.5f;

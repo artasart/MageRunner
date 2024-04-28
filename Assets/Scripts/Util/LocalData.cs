@@ -12,17 +12,6 @@ public static class LocalData
 	public static MasterData masterData;
 	public static InvenData invenData;
 
-	public static void InitGameData()
-	{
-		gameData = new GameData();
-		gameData.ride = new Ride();
-		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
-		gameData.bags = new SerializableDictionary<string, int>();
-		gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
-		gameData.activeSkills = new List<ActiveSkill>();
-		gameData.gold = 10000;
-	}
-
 	public static void LoadMasterData()
 	{
 		masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
@@ -44,12 +33,46 @@ public static class LocalData
 		if (gameData == null)
 		{
 			InitGameData();
+
+			JsonManager<GameData>.SaveData(gameData, Define.JSON_GAMEDATA);
 		}
 
 		else
 		{
 			gameData.bags.Clear();
 		}
+	}
+
+	public static void InitGameData()
+	{
+		gameData = new GameData();
+		gameData.ride = new Ride();
+		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
+		gameData.bags = new SerializableDictionary<string, int>();
+		// gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
+
+		gameData.gold = 10000;
+		gameData.energy = 5;
+		gameData.energyTotal = 5;
+		gameData.isPremium = false;
+
+		if (masterData == null) return;
+
+		gameData.actorSkills = new List<ActorSkill>();
+
+		for (int i = 0; i < masterData.skillData.Count; i++)
+		{
+			gameData.actorSkills.Add(new ActorSkill(
+				masterData.skillData[i].name,
+				masterData.skillData[i].type,
+				masterData.skillData[i].description,
+				masterData.skillData[i].thumbnailPath,
+				masterData.skillData[i].maxLevel,
+				masterData.skillData[i].value,
+				1));
+		}
+
+		DebugManager.Log($"actorSKills saved.. {gameData.actorSkills.Count}", DebugColor.Data);
 	}
 
 	public static void SaveGameData(int score, int gold, SerializableDictionary<string, int> bags)
@@ -67,7 +90,21 @@ public static class LocalData
 
 	public static void InitSkill()
 	{
-		gameData.activeSkills.ToList().ForEach(item => item.level = 0);
+		gameData.actorSkills.ToList().ForEach(item => item.level = 0);
+	}
+
+	public static void LoadInvenData()
+	{
+		invenData = JsonManager<InvenData>.LoadData(Define.JSON_INVENDATA);
+
+		if (invenData == null)
+		{
+			invenData = new InvenData();
+			invenData.invenItemData = new List<InvenItemData>();
+			invenData.amount = 0;
+			invenData.totalAmount = 10;
+			invenData.stashLevel = 1;
+		}
 	}
 }
 
@@ -111,8 +148,8 @@ public class GameData
 
 	public SerializableDictionary<string, int> bags;
 
-	public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
-	public List<ActiveSkill> activeSkills;
+	// public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
+	public List<ActorSkill> actorSkills;
 }
 
 [Serializable]
@@ -130,13 +167,10 @@ public class Skill
 {
 	public string name;
 	public string type;
+	public string description;
 	public string thumbnailPath;
-
-	public string level1;
-	public string level2;
-	public string level3;
-	public string level4;
-	public string level5;
+	public int maxLevel;
+	public string value;
 }
 
 [Serializable]

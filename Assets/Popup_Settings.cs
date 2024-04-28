@@ -117,6 +117,8 @@ public class Popup_Settings : Popup_Base
 		GameManager.Sound.bgmVolume = value;
 
 		GameManager.Sound.bgm.volume = value;
+
+		txtmp_BGMVolume.text = (value * 100).ToString("N0");
 	}
 
 	private void OnValueChanged_SFX(float value)

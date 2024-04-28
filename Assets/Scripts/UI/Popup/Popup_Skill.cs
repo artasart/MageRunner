@@ -95,25 +95,25 @@ public class Popup_Skill : Popup_Base
 
 	public void SetCard()
 	{
-		var selectedSkills = LocalData.gameData.activeSkills
+		var actorSkills = LocalData.gameData.actorSkills
 			.OrderBy(x => Guid.NewGuid())
 			.Where(skill => skill.level != 5)
 			.Take(3)
 			.ToList();
 
-		if(selectedSkills.Count == 0)
+		if (actorSkills.Count == 0)
 		{
-			Debug.Log("Empty..");
+			DebugManager.Log("Card is now empty..", DebugColor.Game);
 
 			GameManager.UI.PopPopup(false);
 		}
 
-		for (int i = 0; i < selectedSkills.Count; i++)
+		for (int i = 0; i < actorSkills.Count; i++)
 		{
-			item_SkillCards[i].SetCardInfo(selectedSkills[i], i);
+			item_SkillCards[i].SetCardInfo(actorSkills[i], i);
 		}
 
-		for (int i = 3; i > selectedSkills.Count; i--)
+		for (int i = 3; i > actorSkills.Count; i--)
 		{
 			item_SkillCards[i - 1].gameObject.SetActive(false);
 		}
@@ -157,41 +157,25 @@ public enum Skills
 }
 
 [Serializable]
-public class PlayerSkill
+public class ActorSkill
 {
 	public string name;
+	public string type;
 	public string description;
 	public string thumbnailPath;
-	public string skilltype;
+	public int maxLevel;
+	public string value;
 
-	public PlayerSkill(string name, string skilltype, string description, string thumbnailPath)
+	public int level;
+
+	public ActorSkill(string name, string type, string description, string thumbnailPath, int maxLevel, string value, int level)
 	{
 		this.name = name;
+		this.type = type;
 		this.description = description;
 		this.thumbnailPath = thumbnailPath;
-		this.skilltype = skilltype;
-	}
-}
-
-[Serializable]
-public class PlayerPassiveSkill : PlayerSkill
-{
-	public int level;
-
-	public PlayerPassiveSkill(string name, string skilltype, string description, string thumbnailPath, int level) : base(name, skilltype, description, thumbnailPath)
-	{
+		this.maxLevel = maxLevel;
+		this.value = value;
 		this.level = level;
-	}
-}
-
-[Serializable]
-public class ActiveSkill : PlayerSkill
-{
-	public Skills type;
-	public int level;
-
-	public ActiveSkill(string name, string skilltype, string description, string thumbnailPath, Skills skills) : base(name, skilltype, description, thumbnailPath)
-	{
-		this.type = skills;
 	}
 }

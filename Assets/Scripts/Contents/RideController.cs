@@ -99,7 +99,7 @@ public class RideController : MonoBehaviour
 		LocalData.gameData.ride.name = string.Empty;
 		LocalData.gameData.ride.index = 0;
 
-		FindObjectOfType<Scene_Main>().DownCamera();
+		Scene.main.CameraDown();
 	}
 
 	public void RideAndSave(bool isPreview = false)
@@ -121,7 +121,7 @@ public class RideController : MonoBehaviour
 
 		if (isPreview) LocalData.gameData.ride = new Ride { name = name, index = index, };
 
-		FindObjectOfType<Scene_Main>().UpCamera();
+		Scene.main.CameraUp();
 	}
 
 	public void SetRide(string name)

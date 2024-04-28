@@ -26,6 +26,8 @@ public class SkillCard : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
+		if (Scene.game.playerActor.isDead) return;
+
 		if (other.CompareTag(Define.PLAYER))
 		{
 			GameManager.Sound.PlaySound("Pick", .125f);

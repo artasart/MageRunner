@@ -66,7 +66,7 @@ public class Ground : LevelElement
 
 	IEnumerator<float> Co_Move()
 	{
-		while (this.transform.position.x >= -10f)
+		while (this.transform.position.x >= -20f)
 		{
 			yield return Timing.WaitUntilTrue(() => game.gameState == GameState.Playing);
 

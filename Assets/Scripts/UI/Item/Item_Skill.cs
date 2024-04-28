@@ -47,13 +47,15 @@ public class Item_Skill : Item_Base
 
 	IEnumerator<float> Co_UseSkill(float time, Action callback = null)
 	{
+		if (img_CoolTime) yield break;
+
 		float totalTime = time;
 
 		img_CoolTime.fillAmount = 1f;
 
 		canvasGroup.alpha = 1f;
 
-		while (time >= 0)
+		while (time >= 0 && img_CoolTime != null)
 		{
 			yield return Timing.WaitUntilTrue(() => Scene.game.gameState == GameState.Playing);
 

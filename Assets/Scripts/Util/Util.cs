@@ -773,6 +773,59 @@ public static class Util
 	{
 		return gameObject.transform.Search(name).GetComponent<ParticleSystem>(); ;
 	}
+
+	public static string ExtractSubstring(string originalString)
+	{
+		string pattern = @"_\d+$";
+
+		string extractedString = Regex.Replace(originalString, pattern, "");
+
+		return extractedString;
+	}
+
+	public static string RemoveAssetPath(string filePath)
+	{
+		string modifiedPath = filePath.Replace("Assets/Resources/", "");
+		return modifiedPath;
+	}
+
+	public static int ExtractNumber(string input)
+	{
+		Match match = Regex.Match(input, @"\d+");
+		if (match.Success)
+		{
+			return int.Parse(match.Value);
+		}
+		else
+		{
+			throw new InvalidOperationException("숫자를 찾을 수 없습니다.");
+		}
+	}
+
+	public static string GetFileNameFromPath(string filePath)
+	{
+		string[] pathParts = filePath.Split('/');
+
+		string fileName = pathParts[pathParts.Length - 1];
+
+		return fileName;
+	}
+
+	public static int[] ParseStringToIntArray(string input)
+	{
+		string[] numbersString = input.Split(new char[] { '[', ',', ']', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+		List<int> numbersList = new List<int>();
+		foreach (string numString in numbersString)
+		{
+			if (int.TryParse(numString, out int num))
+			{
+				numbersList.Add(num);
+			}
+		}
+
+		return numbersList.ToArray();
+	}
 }
 
 

@@ -144,6 +144,8 @@ public class MonsterActor : Actor
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
+		if (Scene.game.playerActor.isDead) return;
+
 		if (other.CompareTag(Define.PLAYER))
 		{
 			if (other.gameObject.GetComponent<PlayerActor>().isDead) return;
@@ -167,8 +169,6 @@ public class MonsterActor : Actor
 
 		else if (other.CompareTag(Define.COLLECTOR))
 		{
-			Debug.Log("Coin Repool");
-
 			Refresh();
 		}
 	}

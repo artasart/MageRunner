@@ -43,6 +43,7 @@ public static class Define
 	public const string OBSTACLE = "Obstacle";
 	public const string COLLECTOR = "Collector";
 
+	public const string RENDER_TEXTURE_CAMERA = "RenderTextureCamera";
 
 	public const string RUN = "Run";
 	public const string RUNSTATE = "RunState";
@@ -64,6 +65,7 @@ public static class Define
 	public const string VFX_BIG_THUNDER_EXPLOSION = "Thunder_Explosion";
 	public const string VFX_SMALL_THUNDER_EXPLOSION = "Thunder_ExplosionSmall";
 	public const string VFX_UI_ELECTRIC_MESH = "ElectricMesh";
+	public const string VFX_PUFF = "Puff";
 
 	public const string ITEM_COIN_SPAWNER = "CoinSpawner";
 	public const string ITEM_COIN = "Coin";

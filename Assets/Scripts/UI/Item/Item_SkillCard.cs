@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using Unity.VisualScripting;
+using System.Linq;
 
 public class Item_SkillCard : Item_Base
 {
@@ -14,7 +15,7 @@ public class Item_SkillCard : Item_Base
 
 	Transform group_Upgrade;
 
-	ActiveSkill selectedSkill;
+	ActorSkill selectedSkill;
 
 	Vector2 originSizeDelta;
 	public int selectedIndex = -1;
@@ -51,42 +52,46 @@ public class Item_SkillCard : Item_Base
 		canvasGroup = this.AddComponent<CanvasGroup>();
 	}
 
-	public void SetCardInfo(ActiveSkill skill, int index)
+	public void SetCardInfo(ActorSkill skill, int index)
 	{
-		selectedIndex = index;
-
-		if (Scene.game.skills.ContainsKey(skill.type))
-		{
-			btn_ItemCard.interactable = Scene.game.skills[skill.type].level < 5 ? true : false;
-		}
-
-		else btn_ItemCard.interactable = true;
-
-		if(skill.skilltype == "Passive")
-		{
-			group_Upgrade.gameObject.SetActive(false);
-		}
-
-		else group_Upgrade.gameObject.SetActive(true);
-
 		txtmp_Name.text = skill.name;
-		txtmp_Description.text = skill.description + AddSkillDescription(skill.type);
-		img_Thumbnail.sprite = Resources.Load<Sprite>(skill.thumbnailPath);
+		img_Thumbnail.sprite = Resources.Load<Sprite>(Define.PATH_ICON + skill.thumbnailPath);
+
+		if (skill.maxLevel == 0)
+		{
+			txtmp_Description.text = skill.description + " " + skill.value;
+		}
+
+		else
+		{
+			int level = 0;
+
+			if (Scene.game.actorSkills.ContainsKey(skill.name)) { level = Scene.game.actorSkills[skill.name].level; }
+
+			txtmp_Description.text = skill.description + " " + Util.ParseStringToIntArray(skill.value)[level].ToString();
+		}
+
+
+
+		group_Upgrade.gameObject.SetActive(skill.type == "active");
 
 		for (int i = 0; i < group_Upgrade.childCount; i++)
 		{
 			group_Upgrade.GetChild(i).GetComponent<Image>().color = new Color(0f, 0f, 0f, .43f);
 		}
 
-		if (Scene.game.skills.ContainsKey(skill.type))
+		if (Scene.game.actorSkills.ContainsKey(skill.name))
 		{
-			for (int i = 0; i < Scene.game.skills[skill.type].level; i++)
+			for (int i = 0; i < Scene.game.actorSkills[skill.name].level; i++)
 			{
 				group_Upgrade.GetChild(i).GetComponent<Image>().color = Color.white;
 			}
 		}
 
+		selectedIndex = index;
 		selectedSkill = skill;
+
+		btn_ItemCard.interactable = true;
 	}
 
 	private void Onclick_Select()
@@ -95,7 +100,7 @@ public class Item_SkillCard : Item_Base
 
 		Scene.game.AddSkill(selectedSkill);
 
-		for (int i = 0; i < Scene.game.skills[selectedSkill.type].level; i++)
+		for (int i = 0; i < Scene.game.actorSkills[selectedSkill.name].level; i++)
 		{
 			group_Upgrade.GetChild(i).GetComponent<Image>().color = Color.white;
 		}
@@ -113,8 +118,6 @@ public class Item_SkillCard : Item_Base
 
 	public void SetSize()
 	{
-		var size = this.transform.GetComponent<RectTransform>().sizeDelta;
-
 		this.transform.GetComponent<RectTransform>().DOScale(Vector3.one * .85f, .25f);
 
 		btn_ItemCard.interactable = false;
@@ -126,37 +129,5 @@ public class Item_SkillCard : Item_Base
 		particle.GetComponent<RePoolObject>().RePool();
 
 		GameManager.UI.PopPopup();
-	}
-
-
-	public string AddSkillDescription(Skills skillType)
-	{
-		var value = string.Empty;
-
-		switch(skillType)
-		{
-			case Skills.Gold:
-				value = (Scene.game.goldMultiplier + 1).ToString();
-				break;
-			case Skills.Exp:
-				value = (Scene.game.expMultiplier + 1).ToString();
-				break;
-			case Skills.Damage:
-				value = "5";
-				break;
-			case Skills.Mana:
-				value = "10";
-				break;
-			case Skills.CoolTime:
-				value = "10%";
-				break;
-			case Skills.Speed:
-				value = "10%";
-				break;
-			default:
-				break;
-		}
-
-		return value;
 	}
 }

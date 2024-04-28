@@ -84,7 +84,6 @@ public class PlayerActor : Actor
 
 		HandleJumpInput();
 		HandleSlideInput();
-		HandleSkills();
 	}
 
 	public void HandleJumpInput()
@@ -114,31 +113,6 @@ public class PlayerActor : Actor
 				EndSlide();
 		}
 	}
-
-	public void HandleSkills()
-	{
-		if (Input.GetKeyDown(KeyCode.W))
-		{
-			if (!Scene.game.skills.ContainsKey(Skills.Execution))
-			{
-				return;
-			}
-
-			Thunder();
-		}
-
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			if (!Scene.game.skills.ContainsKey(Skills.Electricute))
-			{
-				return;
-			}
-
-			Explosion();
-		}
-	}
-
-
 
 	public void Slide()
 	{
@@ -255,58 +229,6 @@ public class PlayerActor : Actor
 	public int flyCoolTime = 10;
 	public int thunderCoolTime = 10;
 	public int thunderMana = 10;
-
-	public void Thunder()
-	{
-		MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
-		MonsterActor closestMonster = null;
-
-		float closestDistance = Mathf.Infinity;
-
-		foreach (MonsterActor monster in monsters)
-		{
-			float distance = Vector3.Distance(this.transform.position, monster.transform.position);
-
-			if (distance < closestDistance && this.transform.position.x - 0.5f < monster.transform.position.x && this.transform.position.x + 5f >= monster.transform.position.x && !monster.isDead)
-			{
-				closestDistance = distance;
-				closestMonster = monster;
-			}
-		}
-
-		if (closestMonster != null)
-		{
-			if (thunderMana > Scene.game.totalMana)
-			{
-				Debug.Log("Not enough mana");
-
-				return;
-			}
-
-			Scene.game.totalMana -= thunderMana;
-
-			GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
-
-			closestMonster.Die();
-
-			PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
-
-			GameManager.Sound.PlaySound("Spawn", .5f);
-		}
-
-		else
-		{
-			Debug.Log("Could not find monster");
-		}
-	}
-
-
-
-
-
-
-
-
 
 	public void Explosion()
 	{
@@ -503,6 +425,8 @@ public class PlayerActor : Actor
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
+		if (isDead) return;
+
 		if (collision.gameObject.CompareTag(Define.GROUND))
 		{
 			isGrounded = true;
@@ -531,6 +455,8 @@ public class PlayerActor : Actor
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
+		if (isDead) return;
+
 		if (collision.gameObject.CompareTag(Define.EXECUTE))
 		{
 			if (!isGrounded && !isJumping && this.transform.position.y > collision.gameObject.transform.position.y - 0.1f)
@@ -606,6 +532,11 @@ public class PlayerActor : Actor
 		health += amount;
 
 		hp.GetComponent<TMP_Text>().text = health.ToString();
+	}
+
+	public void AddMana(int amount)
+	{
+		
 	}
 
 	#endregion

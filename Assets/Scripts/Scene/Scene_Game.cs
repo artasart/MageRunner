@@ -3,6 +3,7 @@ using UnityEngine;
 using Cinemachine;
 using MEC;
 using static Enums;
+using System;
 using System.Linq;
 
 public class Scene_Game : SceneLogic
@@ -25,7 +26,7 @@ public class Scene_Game : SceneLogic
 
 	[Header("Game Data")]
 	public SerializableDictionary<string, int> bags = new SerializableDictionary<string, int>();
-	public SerializableDictionary<Skills, ActiveSkill> skills = new SerializableDictionary<Skills, ActiveSkill>();
+	public SerializableDictionary<string, ActorSkill> actorSkills = new SerializableDictionary<string, ActorSkill>();
 
 	private CinemachineVirtualCamera virtualCamera { get; set; }
 	public CameraShake3D cameraShake { get; private set; }
@@ -52,9 +53,9 @@ public class Scene_Game : SceneLogic
 
 	private void OnDisable()
 	{
-		for (int i = 0; i < LocalData.gameData.activeSkills.Count; i++)
+		for (int i = 0; i < LocalData.gameData.actorSkills.Count; i++)
 		{
-			LocalData.gameData.activeSkills[i].level = 0;
+			LocalData.gameData.actorSkills[i].level = 0;
 		}
 
 		StopScoreCount();
@@ -140,8 +141,9 @@ public class Scene_Game : SceneLogic
 		goldMultiplier = 1;
 		expMultiplier = 1;
 		coolTimePercentage = 0;
-		totalMana = 100;
-		skills = new SerializableDictionary<Skills, ActiveSkill>();
+		playerActor.mana = 100;
+
+		actorSkills = new SerializableDictionary<string, ActorSkill>();
 
 		Util.KillCoroutine(nameof(Co_UseThunder));
 
@@ -242,12 +244,12 @@ public class Scene_Game : SceneLogic
 		{
 			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
 
-			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .05f), 0f, 8.5f);
+			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .01f), 0f, 10f);
 			levelController.groundProbability += (levelController.groundProbability * .05f);
 
-			if(levelController.moveSpeed == 8.5f)
+			if (levelController.moveSpeed >= 10f)
 			{
-				Debug.Log("최대 스피드에 도달했습니다.");
+				DebugManager.ClearLog("경고!!! 최대 스피드에 도달했습니다.");
 			}
 
 			Debug.Log("Add dificullty");
@@ -340,84 +342,91 @@ public class Scene_Game : SceneLogic
 		}
 	}
 
-	public void AddSkill(ActiveSkill skill)
+	public void AddSkill(ActorSkill actorSkill)
 	{
-		var activeSKill = new ActiveSkill(skill.name, skill.skilltype, skill.description, skill.thumbnailPath, skill.type);
+		var skill = new ActorSkill(actorSkill.name, actorSkill.type, actorSkill.description, actorSkill.thumbnailPath, actorSkill.maxLevel, actorSkill.value, actorSkill.level);
 
-		if (!skills.ContainsKey(activeSKill.type))
+		if (!actorSkills.ContainsKey(skill.name))
 		{
-			skills.Add(activeSKill.type, activeSKill);
-			skills[activeSKill.type].level = 1;
+			actorSkills.Add(skill.name, skill);
 
-			for (int i = 0; i < LocalData.gameData.activeSkills.Count; i++)
-			{
-				if (LocalData.gameData.activeSkills[i].type == activeSKill.type)
-				{
-					LocalData.gameData.activeSkills[i] = skills[activeSKill.type];
-				}
-			}
+			actorSkills[skill.name].level = 1;
 		}
 
 		else
 		{
-			if (activeSKill.skilltype != "Passive") skills[activeSKill.type].level++;
+			if (actorSkills[skill.name].maxLevel != 0)
+			{
+				actorSkills[skill.name].level = Mathf.Clamp(actorSkills[skill.name].level += 1, 0, actorSkills[skill.name].maxLevel);
+
+				DebugManager.ClearLog($"{skill.name} curren current level  : " + actorSkills[skill.name].level, DebugColor.Game);
+			}
 		}
 
+		LocalData.gameData.actorSkills.FirstOrDefault(element => element.name == actorSkill.name).level = actorSkills[skill.name].level;
 
+		Debug.Log(LocalData.gameData.actorSkills.FirstOrDefault(element => element.name == actorSkill.name).level);
 
-		// Skill Methods
-
-		if (activeSKill.type == Skills.Speed)
+		if (skill.name == Skills.Gold.ToString())
 		{
-			var increaseValue = levelController.moveSpeed * ((float)skills[activeSKill.type].level * .015f);
+			var multiplier = Util.ParseStringToIntArray(actorSkills[skill.name].value);
 
-			Debug.Log($"Speed Upagreded : {levelController.moveSpeed} -> {levelController.moveSpeed + increaseValue}");
+			goldMultiplier = multiplier[actorSkills[skill.name].level - 1];
 
-			levelController.moveSpeed += increaseValue;
+			DebugManager.Log($"Gold Upgrade : {goldMultiplier}", DebugColor.Game);
 		}
 
-		if (activeSKill.type == Skills.Damage)
+		if (skill.name == Skills.Exp.ToString())
 		{
-			var increaseValue = 5;
+			var multiplier = Util.ParseStringToIntArray(actorSkills[skill.name].value);
 
-			Debug.Log($"Daamge Upagreded : {playerActor.health} -> {playerActor.health + increaseValue}");
+			expMultiplier = multiplier[actorSkills[skill.name].level - 1];
 
-			playerActor.AddDamage((int)increaseValue);
+			DebugManager.Log($"Exp Upgrade : {goldMultiplier}", DebugColor.Game);
 		}
 
-		if (activeSKill.type == Skills.Gold)
+		if (skill.name == Skills.Damage.ToString())
 		{
-			goldMultiplier = skills[activeSKill.type].level + 1;
+			DebugManager.Log($"Daamge Added : {playerActor.health} -> {playerActor.health + Convert.ToInt32(actorSkills[skill.name].value)}", DebugColor.Game);
+
+			playerActor.AddDamage(Convert.ToInt32(actorSkills[skill.name].value));
 		}
 
-		if (activeSKill.type == Skills.Exp)
+		if (skill.name == Skills.Mana.ToString())
 		{
-			expMultiplier = skills[activeSKill.type].level + 1;
+			DebugManager.Log($"Mana Added : {playerActor.mana} -> {playerActor.mana + Convert.ToInt32(actorSkills[skill.name].value)}", DebugColor.Game);
+
+			playerActor.AddMana(Convert.ToInt32(actorSkills[skill.name].value));
 		}
 
-		if (activeSKill.type == Skills.Mana)
+		if (skill.name == Skills.Speed.ToString())
 		{
-			totalMana = (skills[activeSKill.type].level + 1) * 10;
+			var value = levelController.moveSpeed * Convert.ToInt32(actorSkills[skill.name].value) / 100;
+
+			DebugManager.Log($"Speed Upgrade : {levelController.moveSpeed} -> {levelController.moveSpeed + value}", DebugColor.Game);
+
+			levelController.moveSpeed += value;
 		}
 
-		if (activeSKill.type == Skills.CoolTime)
+		//if (skill.name == Skills.CoolTime.ToString())
+		//{
+		//	coolTimePercentage = actorSkills[skill.name].level + 1 * 10;
+		//}
+
+		if (skill.name == Skills.Thunder.ToString())
 		{
-			coolTimePercentage = skills[activeSKill.type].level + 1 * 10;
-		}
+			GameManager.UI.FetchPanel<Panel_HUD>().SetSlot(Skills.Thunder);
 
-		if (activeSKill.type == Skills.Execution)
-		{
-			Debug.Log("SKillThunder");
-
-			GameManager.UI.FetchPanel<Panel_HUD>().SetSlot(Skills.Execution);
-
-			Util.RunCoroutine(Co_UseThunder().Delay(1f), nameof(Co_UseThunder), CoroutineTag.Content);
+			if (!isThunderRunning) Util.RunCoroutine(Co_UseThunder().Delay(1f), nameof(Co_UseThunder), CoroutineTag.Content);
 		}
 	}
 
+	bool isThunderRunning = false;
 
 	private IEnumerator<float> Co_UseThunder()
 	{
+		isThunderRunning = true;
+
 		while (true)
 		{
 			yield return Timing.WaitForOneFrame;
@@ -441,7 +450,7 @@ public class Scene_Game : SceneLogic
 
 			if (closestMonster != null)
 			{
-				if (thunderMana > Scene.game.totalMana)
+				if (thunderMana > Scene.game.playerActor.mana)
 				{
 					Debug.Log("Not enough mana");
 				}
@@ -450,9 +459,9 @@ public class Scene_Game : SceneLogic
 				{
 					if(!closestMonster.isDead)
 					{
-						Scene.game.totalMana -= thunderMana;
+						Scene.game.playerActor.mana -= thunderMana;
 
-						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Execution, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
 
 						closestMonster.Die();
 
@@ -464,7 +473,7 @@ public class Scene_Game : SceneLogic
 					}
 				}
 
-				yield return Timing.WaitUntilTrue(() => Scene.game.totalMana - thunderMana >= 0);
+				yield return Timing.WaitUntilTrue(() => Scene.game.playerActor.mana - thunderMana >= 0);
 			}
 		}
 	}
@@ -473,8 +482,6 @@ public class Scene_Game : SceneLogic
 	public int thunderMana = 10;
 
 
-
-	public int totalMana = 100;
 	public int coolTimePercentage = 0;
 	public int goldMultiplier = 1;
 	public int expMultiplier = 1;
