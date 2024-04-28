@@ -41,13 +41,6 @@ public class Panel_HUD : Panel_Base
 
 		group_Skills = this.transform.Search(nameof(group_Skills));
 
-		items_Skill.Add(Skills.PowerOverWhelming, btn_Down.GetComponent<Item_Skill>());
-
-		//for (int i = 0; i < group_Skills.childCount; i++)
-		//{
-		//	items_Skill.Add(group_Skills.GetChild(i).GetComponent<Item_Skill>());
-		//}
-
 		btn_Up.onClick.RemoveListener(OpenSound);
 		btn_Down.onClick.RemoveListener(OpenSound);
 
@@ -59,6 +52,8 @@ public class Panel_HUD : Panel_Base
 		slider_Level.value = 0f;
 		slider_Level.maxValue = LocalData.masterData.inGameLevel[Scene.game.level - 1].exp;
 		txtmp_Level = GetUI_TMPText(nameof(txtmp_Level), "Lv.1");
+
+		items_Skill.Add(Skills.PowerOverWhelming, btn_Down.GetComponent<Item_Skill>());
 	}
 
 	private void OnClick_Left()
@@ -73,9 +68,11 @@ public class Panel_HUD : Panel_Base
 
 	public void OnClick_Down()
 	{
+		if (Scene.game.playerActor.isFlyMode) return;
+
 		if (Scene.game.playerActor.isDead) return;
 
-		UseSkill(Skills.PowerOverWhelming, 10);
+		if (isUsed.ContainsKey(Skills.PowerOverWhelming) && isUsed[Skills.PowerOverWhelming]) return;
 
 		FindObjectOfType<PlayerActor>().StartFly();
 	}
@@ -101,16 +98,19 @@ public class Panel_HUD : Panel_Base
 		txtmp_Score.text = 0.ToString("N0");
 		txtmp_Coin.text = 0.ToString("N0");
 
-		foreach(var item in items_Skill)
+		foreach (var item in items_Skill)
 		{
 			item.Value.Refresh();
 		}
-
+		slotSet.Clear();
 		items_Skill.Clear();
-
+		isUsed.Clear();
+		slotIndex = 0;
 		slider_Level.value = 0f;
 		slider_Level.maxValue = LocalData.masterData.inGameLevel[0].exp;
 		txtmp_Level.text = "Lv.1";
+
+		items_Skill.Add(Skills.PowerOverWhelming, btn_Down.GetComponent<Item_Skill>());
 	}
 
 	public void SetScoreUI(int amount)
@@ -148,23 +148,28 @@ public class Panel_HUD : Panel_Base
 
 			Scene.game.playerActor.AddDamage(5);
 
-			GameManager.UI.StartPopup<Popup_Skill>();
-
-			GameManager.UI.FetchPopup<Popup_Skill>().SetCard();
+			Invoke(nameof(OpenSKillPopup), .25f);
 		}
+	}
+
+	public void OpenSKillPopup()
+	{
+		GameManager.UI.StartPopup<Popup_Skill>();
+
+		GameManager.UI.FetchPopup<Popup_Skill>().SetCard();
 	}
 
 	public void UseSkill(Skills skillType, float coolTime, float delay = 0f, Action action = null)
 	{
-		//btn_Down.enabled = false;
-
 		Debug.Log("Skill is used : " + skillType.ToString());
+
+		if (!isUsed.ContainsKey(skillType)) isUsed.Add(skillType, true);
 
 		items_Skill[skillType].UseSkill(coolTime, () =>
 		{
 			action?.Invoke();
 
-			//btn_Down.enabled = true;
+			isUsed[skillType] = false;
 		});
 	}
 
@@ -188,6 +193,8 @@ public class Panel_HUD : Panel_Base
 	}
 
 	List<Skills> slotSet = new List<Skills>();
+
+	public Dictionary<Skills, bool> isUsed = new Dictionary<Skills, bool>();
 }
 
 

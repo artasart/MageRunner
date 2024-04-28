@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
-using static UnityEngine.ParticleSystem;
+using Unity.VisualScripting;
 
 public class Item_SkillCard : Item_Base
 {
@@ -26,10 +26,14 @@ public class Item_SkillCard : Item_Base
 
 	GameObject particle;
 
+	CanvasGroup canvasGroup;
+
 	private void OnDisable()
 	{
 		this.GetComponent<RectTransform>().sizeDelta = originSizeDelta;
 		this.GetComponent<RectTransform>().localScale = Vector3.one;
+
+		canvasGroup.blocksRaycasts = true;
 	}
 
 	protected override void Awake()
@@ -48,6 +52,8 @@ public class Item_SkillCard : Item_Base
 		group_Upgrade = this.transform.Search(nameof(group_Upgrade));
 
 		originSizeDelta = this.GetComponent<RectTransform>().sizeDelta;
+
+		canvasGroup = this.AddComponent<CanvasGroup>();
 	}
 
 	public void SetCardInfo(ActiveSkill skill, int index)
@@ -69,7 +75,7 @@ public class Item_SkillCard : Item_Base
 		else group_Upgrade.gameObject.SetActive(true);
 
 		txtmp_Name.text = skill.name;
-		txtmp_Description.text = skill.description;
+		txtmp_Description.text = skill.description + AddSkillDescription(skill.type);
 		img_Thumbnail.sprite = Resources.Load<Sprite>(skill.thumbnailPath);
 
 		for (int i = 0; i < group_Upgrade.childCount; i++)
@@ -125,5 +131,37 @@ public class Item_SkillCard : Item_Base
 		particle.GetComponent<RePoolObject>().RePool();
 
 		GameManager.UI.PopPopup();
+	}
+
+
+	public string AddSkillDescription(Skills skillType)
+	{
+		var value = string.Empty;
+
+		switch(skillType)
+		{
+			case Skills.Gold:
+				value = (Scene.game.goldMultiplier + 1).ToString();
+				break;
+			case Skills.Exp:
+				value = (Scene.game.expMultiplier + 1).ToString();
+				break;
+			case Skills.Damage:
+				value = "5";
+				break;
+			case Skills.Mana:
+				value = "10";
+				break;
+			case Skills.CoolTime:
+				value = "10%";
+				break;
+			case Skills.Speed:
+				value = "10%";
+				break;
+			default:
+				break;
+		}
+
+		return value;
 	}
 }

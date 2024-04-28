@@ -27,8 +27,6 @@ public class Coin : LevelElement
 
 		else if (other.CompareTag(Define.COLLECTOR))
 		{
-			Debug.Log("Coin Repool");
-
 			this.GetComponent<RePoolObject>().RePool();
 		}
 	}

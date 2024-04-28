@@ -133,6 +133,7 @@ public class Popup_Skill : Popup_Base
 
 			item_SkillCards[i].SetSize();
 			item_SkillCards[i].GetComponent<Button>().interactable = false;
+			item_SkillCards[i].GetComponent<CanvasGroup>().blocksRaycasts = false;
 		}
 	}
 }

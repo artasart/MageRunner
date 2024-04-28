@@ -164,17 +164,17 @@ public class Scene_Main : SceneLogic
 
 		if (LocalData.gameData.activeSkills.Count == 0)
 		{
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Thunder", "Active", "This is Thunder Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Skull", Skills.Execution));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Thunder", "Active", "Hit and damage with thunder.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Skull", Skills.Execution));
 			// LocalData.gameData.activeSkills.Add(new ActiveSkill("Explosion", "Active", "This is Explosion Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Horner", Skills.Electricute));
 			// LocalData.gameData.activeSkills.Add(new ActiveSkill("PowerOverWhelming", "This is PowerOverWhelming Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Shield_A", Skills.PowerOverWhelming));
 
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Gold", "Passive", "This is Gold Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Gold", Skills.Gold));
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Exp", "Passive", "This is Exp Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Soulgem", Skills.Exp));
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Damage", "Passive", "This is Damage Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sword_A", Skills.Damage));
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Mana", "Passive", "This is Mana Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Potion_Blue", Skills.Mana));
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("CoolTime", "Passive", "This is CoolTime Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sandglass", Skills.CoolTime));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Gold", "Passive", "Gold x ", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Gold", Skills.Gold));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Exp", "Passive", "Exp x ", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Soulgem", Skills.Exp));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Damage", "Passive", "Damage + ", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sword_A", Skills.Damage));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Mana", "Passive", "Mana + ", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Potion_Blue", Skills.Mana));
+			// LocalData.gameData.activeSkills.Add(new ActiveSkill("CoolTime", "Passive", "Cool Time - ", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Sandglass", Skills.CoolTime));
 			// LocalData.gameData.activeSkills.Add(new ActiveSkill("Critical", "This is Critical Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Target", Skills.Critical));
-			LocalData.gameData.activeSkills.Add(new ActiveSkill("Speed", "Passive", "This is Speed Skill.", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Talaria", Skills.Speed));
+			LocalData.gameData.activeSkills.Add(new ActiveSkill("Speed", "Passive", "Speed + ", Define.PATH_ICON + "HandDrawn/Icon_ItemIcon_Talaria", Skills.Speed));
 		}
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);

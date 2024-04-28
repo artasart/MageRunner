@@ -88,7 +88,7 @@ public class MonsterActor : Actor
 
 		Scene.game.AddGameExp();
 
-		// GetItem();
+		GetItem();
 
 		CancelInvoke(nameof(ApplyDamage));
 
@@ -129,6 +129,8 @@ public class MonsterActor : Actor
 
 		isDead = false;
 
+		CancelInvoke(nameof(ApplyDamage));
+
 		this.GetComponent<EquipmentController>().RefreshEquipment();
 
 		this.GetComponent<RePoolObject>().RePool();
@@ -167,7 +169,7 @@ public class MonsterActor : Actor
 		{
 			Debug.Log("Coin Repool");
 
-			this.GetComponent<RePoolObject>().RePool();
+			Refresh();
 		}
 	}
 
@@ -199,10 +201,17 @@ public class MonsterActor : Actor
 
 		//GainEquipment(EquipmentType.Hair, spumPrefabs._spriteOBj._hairListString);
 		//GainEquipment(EquipmentType.Weapons, spumPrefabs._spriteOBj._weaponListString);
-		GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
-		GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
-		GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
-		GainEquipment(EquipmentType.Pant, spumPrefabs._spriteOBj._pantListString);
+		
+		if(UnityEngine.Random.Range(0f, 1f) < 0.01f)
+		{
+			GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
+			GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
+			GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
+
+			DebugManager.ClearLog("You gained item..!");
+		}
+
+		//GainEquipment(EquipmentType.Pant, spumPrefabs._spriteOBj._pantListString);
 	}
 
 	public void GainEquipment(EquipmentType type, List<string> test)

@@ -176,7 +176,7 @@ public class Scene_Game : SceneLogic
 
 		yield return Timing.WaitUntilFalse(GameManager.Scene.IsFaded);
 
-		// StartDifficulty();
+		StartDifficulty();
 		StartScoreCount();
 
 		playerActor.isDead = false;
@@ -240,21 +240,16 @@ public class Scene_Game : SceneLogic
 	
 	private IEnumerator<float> Co_StartDifficulty()
 	{
-		int index = 0;
-
 		while (true)
 		{
-			yield return Timing.WaitForSeconds(10f);
+			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
 
-			//levelController.AddSpeed();
+			levelController.moveSpeed += (levelController.moveSpeed * .05f);
+			levelController.groundProbability += (levelController.groundProbability * .05f);
 
-			index++;
+			Debug.Log("Add dificullty");
 
-			if (index % 3 == 0)
-			{
-				levelController.groundProbability += .1f;
-				//levelController.monsterProbability += .1f;
-			}
+			yield return Timing.WaitForSeconds(10);
 		}
 	}
 
@@ -413,7 +408,7 @@ public class Scene_Game : SceneLogic
 
 			GameManager.UI.FetchPanel<Panel_HUD>().SetSlot(Skills.Execution);
 
-			Util.RunCoroutine(Co_UseThunder(), nameof(Co_UseThunder), CoroutineTag.Content);
+			Util.RunCoroutine(Co_UseThunder().Delay(1f), nameof(Co_UseThunder), CoroutineTag.Content);
 		}
 	}
 
@@ -434,7 +429,7 @@ public class Scene_Game : SceneLogic
 			{
 				float distance = Vector3.Distance(this.transform.position, monster.transform.position);
 
-				if (distance < closestDistance && this.transform.position.x - 0.5f < monster.transform.position.x && this.transform.position.x + 5f >= monster.transform.position.x && !monster.isDead)
+				if (distance < closestDistance && this.transform.position.x - 0.5f < monster.transform.position.x && this.transform.position.x + 8f >= monster.transform.position.x && !monster.isDead)
 				{
 					closestDistance = distance;
 					closestMonster = monster;
@@ -450,17 +445,20 @@ public class Scene_Game : SceneLogic
 
 				else
 				{
-					Scene.game.totalMana -= thunderMana;
+					if(!closestMonster.isDead)
+					{
+						Scene.game.totalMana -= thunderMana;
 
-					GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Execution, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Execution, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
 
-					closestMonster.Damage(Scene.game.playerActor.health);
+						closestMonster.Die();
 
-					PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
+						PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
+						
+						GameManager.Sound.PlaySound("Spawn", .5f);
 
-					GameManager.Sound.PlaySound("Spawn", .5f);
-
-					yield return Timing.WaitForSeconds(thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+						yield return Timing.WaitForSeconds(thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+					}
 				}
 
 				yield return Timing.WaitUntilTrue(() => Scene.game.totalMana - thunderMana >= 0);

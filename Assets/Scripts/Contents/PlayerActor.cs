@@ -252,6 +252,7 @@ public class PlayerActor : Actor
 
 	#region Skills
 
+	public int flyCoolTime = 10;
 	public int thunderCoolTime = 10;
 	public int thunderMana = 10;
 
@@ -332,6 +333,15 @@ public class PlayerActor : Actor
 
 		this.gameObject.transform.DOMove(new Vector3(this.transform.position.x, 2.3f, this.transform.position.z), .5f).OnComplete(() =>
 		{
+			if (isDead)
+			{
+				CancelInvoke(nameof(EndFly));
+
+				EndFly();
+
+				return;
+			}
+
 			GameManager.Sound.PlaySound("ElectricFlow");
 
 			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
@@ -366,6 +376,8 @@ public class PlayerActor : Actor
 
 		Scene.game.SetVirtualCamBody(new Vector3(4f, 1.25f, -10f));
 		Scene.game.ZoomCamera(3f);
+
+		GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.PowerOverWhelming, 10f);
 
 		isFlyMode = false;
 	}
@@ -458,12 +470,12 @@ public class PlayerActor : Actor
 
 
 	public void Stop() => Util.RunCoroutine(Co_SmoothStop(), nameof(Co_SmoothStop), CoroutineTag.Content);
-	
+
 	private IEnumerator<float> Co_SmoothStop()
 	{
 		isDead = true;
-		rgbd2d.velocity *= dieVelocity; 
-		
+		rgbd2d.velocity *= dieVelocity;
+
 		var value = animator.GetFloat(Define.RUNSTATE);
 
 		while (value > 0)

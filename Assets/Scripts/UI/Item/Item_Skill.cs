@@ -6,12 +6,15 @@ using TMPro;
 using MEC;
 using System;
 using static Enums;
+using Unity.VisualScripting;
 
 public class Item_Skill : Item_Base
 {
 	Image img_CoolTime;
 	TMP_Text txtmp_SkillTime;
 	Image img_Thumbnail;
+
+	CanvasGroup canvasGroup;
 
 	protected override void Awake()
 	{
@@ -20,17 +23,21 @@ public class Item_Skill : Item_Base
 		img_CoolTime = GetUI_Image(nameof(img_CoolTime));
 		txtmp_SkillTime = GetUI_TMPText(nameof(txtmp_SkillTime), string.Empty);
 		img_Thumbnail = GetUI_Image(nameof(img_Thumbnail));
+
+		canvasGroup = img_CoolTime.AddComponent<CanvasGroup>();
 	}
 
 	public void Refresh()
 	{
 		Util.KillCoroutine(nameof(Co_UseSkill) + this.GetHashCode());
+		Util.KillCoroutine(canvasGroup.GetHashCode().ToString());
 
+		canvasGroup.alpha = 0;
 		img_CoolTime.fillAmount = 0;
 		txtmp_SkillTime.text = string.Empty;
 
-		img_Thumbnail.sprite = null;
-		img_Thumbnail.gameObject.SetActive(false);
+		if (img_Thumbnail) img_Thumbnail.sprite = null;
+		if (img_Thumbnail) img_Thumbnail.gameObject.SetActive(false);
 	}
 
 	public void UseSkill(float time, Action callback = null)
@@ -43,6 +50,8 @@ public class Item_Skill : Item_Base
 		float totalTime = time;
 
 		img_CoolTime.fillAmount = 1f;
+
+		canvasGroup.alpha = 1f;
 
 		while (time >= 0)
 		{
@@ -57,9 +66,9 @@ public class Item_Skill : Item_Base
 
 			yield return Timing.WaitForOneFrame;
 		}
-
-		img_CoolTime.fillAmount = 0;
 		txtmp_SkillTime.text = string.Empty;
+
+		Util.FadeCanvasGroup(canvasGroup, 0f, .5f, end: () => img_CoolTime.fillAmount = 0);
 
 		callback?.Invoke();
 	}
