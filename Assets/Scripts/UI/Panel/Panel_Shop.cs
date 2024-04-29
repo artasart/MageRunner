@@ -15,11 +15,6 @@ public class Panel_Shop : Panel_Base
 
 	TMP_Text current;
 
-	private void OnEnable()
-	{
-		GameManager.UI.FetchPanel<Panel_Main>().Show();
-	}
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -37,7 +32,25 @@ public class Panel_Shop : Panel_Base
 		OnClick_BuySkin();
 	}
 
-	public void Init() => OnClick_BuySkin();
+	protected override void OnClick_Back()
+	{
+		base.OnClick_Back();
+
+		var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
+
+		Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
+		Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+		Scene.main.navigator.transform.SetAsLastSibling();
+	}
+
+	public void Init()
+	{
+		Scene.main.navigator.transform.SetParent(this.transform.Search("MobileSafeArea"));
+		Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+		Scene.main.navigator.transform.SetAsLastSibling();
+
+		OnClick_BuySkin();
+	}
 
 	private void OnClick_BuySkin()
 	{

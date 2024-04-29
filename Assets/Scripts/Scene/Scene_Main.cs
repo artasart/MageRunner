@@ -7,6 +7,7 @@ using UnityEngine;
 using Cinemachine;
 using TMPro;
 using static Enums;
+using MEC;
 
 public class Scene_Main : SceneLogic
 {
@@ -16,12 +17,12 @@ public class Scene_Main : SceneLogic
 
 	public CinemachineVirtualCamera virtualCamera { get; private set; }
 	public EquipmentManager equipmentManager { get; private set; }
-	public RideController rideController { get; private set; }
+	public RideManager rideManager { get; private set; }
 	public GameObject playerActor { get; private set; }
 	public GameObject playerHorseActor { get; private set; }
 	public Transform particle_RingShield { get; private set; }
 	public Transform renderTextureCam { get; private set; }
-
+	public GameObject navigator { get; private set; }
 
 	public int payAmount = 10000;
 
@@ -53,15 +54,15 @@ public class Scene_Main : SceneLogic
 		LocalData.LoadInvenData();
 
 		equipmentManager = FindObjectOfType<EquipmentManager>();
-		rideController = FindObjectOfType<RideController>();
+		rideManager = FindObjectOfType<RideManager>();
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-		renderTextureCam = this.transform.Search(Define.RENDER_TEXTURE_CAMERA);
+		renderTextureCam = GameObject.Find(Define.RENDER_TEXTURE_CAMERA).transform;
 
 		playerActor = GameObject.Find("PlayerActor");
 		playerActor.transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 
 		playerHorseActor = GameObject.Find("PlayerHorseActor");
-		playerActor.transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+		playerHorseActor.transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
 
 		particle_RingShield = playerActor.transform.Search(nameof(particle_RingShield));
 
@@ -76,21 +77,35 @@ public class Scene_Main : SceneLogic
 		GameManager.Scene.Fade(false, .1f);
 
 		GameManager.UI.Restart();
-
 		GameManager.UI.StackLastPopup<Popup_Basic>();
-
 		GameManager.UI.StartPanel<Panel_Main>(true);
-
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("artasart", LocalData.gameData.runnerTag);
-
 		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
-		GameManager.Sound.PlayBGM("Dawn");
+		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
+	}
+
+	private IEnumerator<float> Co_MainStart()
+	{
+		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
+		{
+			GameManager.Sound.PlayBGM("Dawn");
+			PlayerPrefs.SetInt("isBGMPlayed", 1);
+		}
+
+		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
 		GetFarmedItem();
-
 		CheckLogin();
+
+		yield return Timing.WaitForOneFrame;
+
+		if (!string.IsNullOrEmpty(LocalData.gameData.ride.name))
+		{
+			rideManager.Ride();
+		}
 	}
+
 
 	private void CheckLogin()
 	{
@@ -148,15 +163,19 @@ public class Scene_Main : SceneLogic
 		Util.LerpPosition(virtualCamera.transform, new Vector3(0f, .5f, -10f));
 
 		SetCameraPositionY(.5f);
-
 		SetCameraSize(1.2f);
+
+		particle_RingShield = playerActor.transform.Search(nameof(particle_RingShield));
 	}
 
 	public void CameraDown()
 	{
 		Util.LerpPosition(virtualCamera.transform, new Vector3(0f, .4f, -10f));
+
 		SetCameraPositionY(.4f);
 		SetCameraSize(1f);
+
+		particle_RingShield = playerHorseActor.transform.Search(nameof(particle_RingShield));
 	}
 
 	private void SetCameraPositionY(float y)

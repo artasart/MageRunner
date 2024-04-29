@@ -75,6 +75,7 @@ public class RowCellView_ShopItem : RowCellView
 		txtmp_Title.text = itemData.name;
 		txtmp_Price.text = itemData.type == "cash" ? $"${itemData.price}" : "Watch AD";
 		txtmp_Quantity.text = itemData.amount.ToString("N0");
+
 		img_Thumbnail.sprite = Resources.Load<Sprite>(itemData.thumbnailPath);
 
 		shopItemData = itemData;

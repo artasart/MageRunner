@@ -826,6 +826,18 @@ public static class Util
 
 		return numbersList.ToArray();
 	}
+
+	public static void InsertImage(Image img, Sprite sprite)
+	{
+		img.sprite = sprite;
+
+		float spriteWidth = img.sprite.rect.width;
+		float spriteHeight = img.sprite.rect.height;
+		float spriteAspectRatio = spriteWidth / spriteHeight;
+
+		RectTransform rectTransform = img.rectTransform;
+		rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectTransform.rect.height * spriteAspectRatio);
+	}
 }
 
 

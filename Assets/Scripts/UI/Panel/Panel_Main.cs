@@ -1,7 +1,4 @@
 using DG.Tweening;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +8,10 @@ public class Panel_Main : Panel_Base
 	Button btn_PlayGame;
 	Button btn_Settings;
 	Button btn_Inventory;
-	Button btn_Mail;
-	Button btn_Rank;
-	Button btn_DayCheck;
+
+	//Button btn_Mail;
+	//Button btn_Rank;
+	//Button btn_DayCheck;
 
 	Button btn_Shop;
 
@@ -30,8 +28,9 @@ public class Panel_Main : Panel_Base
 	Button btn_BuyGold;
 	Button btn_BuyEnergy;
 
-	Transform group_TopMenu;
+	public Transform group_TopMenu { get; private set; }
 	Transform btn_Energy;
+
 
 	protected override void Awake()
 	{
@@ -45,9 +44,9 @@ public class Panel_Main : Panel_Base
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
-		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
-		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
-		btn_DayCheck = GetUI_Button(nameof(btn_DayCheck), OnClick_DayCheck, useAnimation: true);
+		//btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
+		//btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
+		//btn_DayCheck = GetUI_Button(nameof(btn_DayCheck), OnClick_DayCheck, useAnimation: true);
 
 		btn_BuyGold = GetUI_Button(nameof(btn_BuyGold), OnClick_BuyGold, useAnimation: true);
 		btn_BuyEnergy = GetUI_Button(nameof(btn_BuyEnergy), OnClick_BuyEnergy, useAnimation: true);
@@ -74,21 +73,17 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_BuyGold()
 	{
-		// stack Popup
-		// 광고 시청할래요?
-
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Reward",
 		() =>
 		{
-			Debug.Log("Watch AD!");
-
 			Invoke(nameof(GoldAd), 1f);
 		},
+
 		() =>
 		{
-			Debug.Log("Canceled..");
+
 		});
 	}
 
@@ -146,8 +141,6 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.StackPanel<Panel_Shop>(true);
 
 		GameManager.UI.FetchPanel<Panel_Shop>().Init();
-
-		GameManager.UI.FetchPanel<Panel_Main>().Show();
 	}
 
 	private void OnClick_PlayGame()
