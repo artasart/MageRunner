@@ -226,10 +226,6 @@ public class PlayerActor : Actor
 
 	#region Skills
 
-	public int flyCoolTime = 10;
-	public int thunderCoolTime = 10;
-	public int thunderMana = 10;
-
 	public void Explosion()
 	{
 		PoolManager.Spawn("Thunder_Explosion", Vector3.zero, Quaternion.identity, this.transform);

@@ -18,15 +18,14 @@ public class Scene_Game : SceneLogic
 	public int score;
 	public int level = 1;
 	public int exp;
-
-	public int playerExp;
-
 	public int scoreMultiplier = 1;
 	public int moveMultiplier = 3;
 
+	[Header("Skill")]
+	public SerializableDictionary<string, ActorSkill> actorSkills = new SerializableDictionary<string, ActorSkill>();
+
 	[Header("Game Data")]
 	public SerializableDictionary<string, int> bags = new SerializableDictionary<string, int>();
-	public SerializableDictionary<string, ActorSkill> actorSkills = new SerializableDictionary<string, ActorSkill>();
 
 	private CinemachineVirtualCamera virtualCamera { get; set; }
 	public CameraShake3D cameraShake { get; private set; }
@@ -34,6 +33,7 @@ public class Scene_Game : SceneLogic
 	public LevelController levelController { get; private set; }
 	public ParallexScrollController[] parallexScrollController { get; private set; }
 	public FootStepController footStepController { get; private set; }
+	public EquipmentManager equipmentManager { get; private set; }
 
 	GameObject playerModel;
 
@@ -75,6 +75,7 @@ public class Scene_Game : SceneLogic
 		levelController = FindObjectOfType<LevelController>();
 		parallexScrollController = FindObjectsOfType<ParallexScrollController>();
 		cameraShake = FindObjectOfType<CameraShake3D>();
+		equipmentManager = FindObjectOfType<EquipmentManager>();
 
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		virtualCamera.m_Lens.OrthographicSize = 5f;
@@ -111,6 +112,8 @@ public class Scene_Game : SceneLogic
 		
 		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
 
+		equipmentManager.EquipAll(LocalData.gameData.equipment);
+
 		GameManager.Sound.PlaySound(Define.SOUND_THUNDER, .5f);
 		PoolManager.Spawn(Define.VFX_THUNDER, new Vector3(0f, -0.2f, 0f), Quaternion.identity);
 		cameraShake.Shake();
@@ -123,7 +126,7 @@ public class Scene_Game : SceneLogic
 		playerActor.UpdateAnimator(1f);
 
 		StartScoreCount();
-		// StartDifficulty();
+		StartDifficulty();
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 	}
@@ -135,6 +138,7 @@ public class Scene_Game : SceneLogic
 		ShowInterstitialAd();
 
 		LocalData.InitSkill();
+		LocalData.gameData.energy -= 1;
 
 		score = gold = 0;
 		level = 1;
@@ -188,9 +192,9 @@ public class Scene_Game : SceneLogic
 	{
 		DebugManager.Log("Game Over", DebugColor.Game);
 
-		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(Scene.game.score, Scene.game.gold, Scene.game.playerExp = Mathf.RoundToInt(Scene.game.score * .45f));
+		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(Scene.game.score, Scene.game.gold, Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f));
 
-		GameManager.UI.StartPopup<Popup_GameOver>();
+		GameManager.UI.StartPopup<Popup_GameOver>(true);
 	}
 
 
@@ -242,19 +246,12 @@ public class Scene_Game : SceneLogic
 	{
 		while (true)
 		{
-			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
+			yield return Timing.WaitForSeconds(10);
 
-			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .01f), 0f, 10f);
+			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .01f), 0f, 8.5f);
 			levelController.groundProbability += (levelController.groundProbability * .05f);
 
-			if (levelController.moveSpeed >= 10f)
-			{
-				DebugManager.ClearLog("경고!!! 최대 스피드에 도달했습니다.");
-			}
-
-			Debug.Log("Add dificullty");
-
-			yield return Timing.WaitForSeconds(10);
+			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
 		}
 	}
 
@@ -311,6 +308,7 @@ public class Scene_Game : SceneLogic
 		transposer.m_FollowOffset = bodyPosition;
 	}
 
+	public void AddScore(int amount) => GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score += amount);
 	public void AddGold(int amount) =>	GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold += (amount * goldMultiplier));
 
 	public void AddExp(int exp)
@@ -364,8 +362,6 @@ public class Scene_Game : SceneLogic
 		}
 
 		LocalData.gameData.actorSkills.FirstOrDefault(element => element.name == actorSkill.name).level = actorSkills[skill.name].level;
-
-		Debug.Log(LocalData.gameData.actorSkills.FirstOrDefault(element => element.name == actorSkill.name).level);
 
 		if (skill.name == Skills.Gold.ToString())
 		{

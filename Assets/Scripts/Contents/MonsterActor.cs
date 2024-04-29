@@ -90,6 +90,8 @@ public class MonsterActor : Actor
 
 		GetItem();
 
+		Scene.game.AddScore(score);
+
 		CancelInvoke(nameof(ApplyDamage));
 
 		Invoke(nameof(Refresh), 2f);
@@ -202,49 +204,47 @@ public class MonsterActor : Actor
 		//GainEquipment(EquipmentType.Hair, spumPrefabs._spriteOBj._hairListString);
 		//GainEquipment(EquipmentType.Weapons, spumPrefabs._spriteOBj._weaponListString);
 		
-		if(UnityEngine.Random.Range(0f, 1f) < 0.01f)
+		if(UnityEngine.Random.Range(0f, 1f) <= 1f)
 		{
 			GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
 			GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
 			GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
-
-			DebugManager.ClearLog("You gained item..!");
 		}
+
+		DebugManager.ClearLog(Scene.game.bags.Count);
 
 		//GainEquipment(EquipmentType.Pant, spumPrefabs._spriteOBj._pantListString);
 	}
 
 	public void GainEquipment(EquipmentType type, List<string> test)
 	{
-		var game = FindObjectOfType<Scene_Game>();
-
 		var itemName = (type == EquipmentType.Cloth || type == EquipmentType.Armor || type == EquipmentType.Pant) ? test[0] : "";
 
 		foreach (var item in test)
 		{
 			if (string.IsNullOrEmpty(item)) continue;
 
-			if (game.bags.ContainsKey(item))
+			if (Scene.game.bags.ContainsKey(item))
 			{
-				game.bags[item]++;
+				Scene.game.bags[item]++;
 			}
 
 			else
 			{
-				game.bags.Add(item, 1);
+				Scene.game.bags.Add(item, 1);
 			}
 		}
 
 		switch (type)
 		{
 			case EquipmentType.Cloth:
-				game.bags[itemName] /= 3;
+				Scene.game.bags[itemName] /= 3;
 				break;
 			case EquipmentType.Armor:
-				game.bags[itemName] /= 2;
+				Scene.game.bags[itemName] /= 2;
 				break;
 			case EquipmentType.Pant:
-				game.bags[itemName] /= 3;
+				Scene.game.bags[itemName] /= 3;
 				break;
 			default:
 				break;

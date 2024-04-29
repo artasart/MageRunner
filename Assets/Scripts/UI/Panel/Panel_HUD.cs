@@ -35,8 +35,19 @@ public class Panel_HUD : Panel_Base
 
 		btn_Left = GetUI_Button(nameof(btn_Left), OnClick_Left, useAnimation: true);
 		btn_Right = GetUI_Button(nameof(btn_Right), OnClick_Right, useAnimation: true);
-		btn_Down = GetUI_Button(nameof(btn_Down), OnClick_Down, useAnimation: true);
-		btn_Up = GetUI_Button(nameof(btn_Up), OnClick_Up, useAnimation: true);
+		
+		btn_Down = this.transform.Search(nameof(btn_Down)).GetComponent<Button>();
+		btn_Down.UseAnimation();
+		btn_Down.UseClickAction();
+		btn_Down.GetComponent<ButtonClickAction>().action_PointerDown += OnClick_Down;
+
+		btn_Up = this.transform.Search(nameof(btn_Up)).GetComponent<Button>();
+		btn_Up.UseAnimation();
+		btn_Up.UseClickAction();
+		btn_Up.GetComponent<ButtonClickAction>().action_PointerDown += OnClick_Up;
+
+		//btn_Down = GetUI_Button(nameof(btn_Down), OnClick_Down, useAnimation: true);
+		//btn_Up = GetUI_Button(nameof(btn_Up), OnClick_Up, useAnimation: true);
 		btn_Pause = GetUI_Button(nameof(btn_Pause), OnClick_Pause, useAnimation: true);
 
 		group_Skills = this.transform.Search(nameof(group_Skills));

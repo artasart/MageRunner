@@ -16,6 +16,30 @@ public static class Enums
 		Back = 7,
 	}
 
+	public enum EquipmentThumbnailType
+	{
+		Weapons = 0,
+		Armor = 1,
+		Back = 2,
+		Pant = 3,
+		Helmet = 4,
+		Horse = 5,
+		Ring = 6,
+		Pet = 7,
+	}
+	public enum EquipmentCategoryType
+	{
+		All = -1,
+		Weapons = 0,
+		Armor = 1,
+		Back = 2,
+		Pant = 3,
+		Helmet = 4,
+		Horse = 5,
+		Ring = 6,
+		Pet = 7,
+	}
+
 	public enum GameState
 	{
 		Playing,

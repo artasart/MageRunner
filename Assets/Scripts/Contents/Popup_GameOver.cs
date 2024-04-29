@@ -1,6 +1,8 @@
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class Popup_GameOver : Popup_Base
@@ -10,6 +12,9 @@ public class Popup_GameOver : Popup_Base
 	Button btn_Home;
 
 	TMP_Text txtmp_Score;
+	TMP_Text txtmp_Energy;
+
+	Transform group_Menu_Horizontal;
 
 	protected override void Awake()
 	{
@@ -18,10 +23,13 @@ public class Popup_GameOver : Popup_Base
 		base.Awake();
 
 		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), string.Empty);
+		txtmp_Energy = GetUI_TMPText(nameof(txtmp_Energy), string.Empty);
 
 		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
 		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
 		btn_Home = GetUI_Button(nameof(btn_Home), OnClick_Home, useAnimation: true);
+
+		group_Menu_Horizontal = this.transform.Search(nameof(group_Menu_Horizontal));
 	}
 
 	private void OnClick_Reward()
@@ -35,7 +43,7 @@ public class Popup_GameOver : Popup_Base
 	{
 		if (LocalData.gameData.energy <= 0)
 		{
-			Debug.Log("No Energy");
+			btn_Retry.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
 			return;
 		}
@@ -56,7 +64,29 @@ public class Popup_GameOver : Popup_Base
 	{
 		txtmp_Score.text = $"You ran {score}m, gaiend {gold} Golds & {exp} exp!";
 
+		if (score > LocalData.gameData.highScore)
+		{
+			group_Menu_Horizontal.GetComponent<CanvasGroup>().blocksRaycasts = false;
+
+			this.highestScore = score;
+
+			ShowHighScore();
+		}
+
 		Scene.game.AddExp(exp);
 		Scene.game.SaveGameData();
+
+		txtmp_Energy.text = $"{LocalData.gameData.energy}/{LocalData.gameData.energyTotal}";
+	}
+
+	int highestScore;
+
+	private void ShowHighScore()
+	{
+		group_Menu_Horizontal.GetComponent<CanvasGroup>().blocksRaycasts = true;
+
+		LocalData.gameData.highScore = highestScore;
+
+		GameManager.UI.StackSplash<Splash_Congrates>();
 	}
 }

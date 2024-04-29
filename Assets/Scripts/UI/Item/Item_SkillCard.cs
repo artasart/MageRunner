@@ -55,6 +55,7 @@ public class Item_SkillCard : Item_Base
 	public void SetCardInfo(ActorSkill skill, int index)
 	{
 		txtmp_Name.text = skill.name;
+		DebugManager.Log(Define.PATH_ICON + skill.thumbnailPath);
 		img_Thumbnail.sprite = Resources.Load<Sprite>(Define.PATH_ICON + skill.thumbnailPath);
 
 		if (skill.maxLevel == 0)

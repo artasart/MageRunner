@@ -28,8 +28,8 @@ public class EquipmentController : MonoBehaviour
 	{
 		ClearEquipmentAll();
 
-		GetRandomEquipmentType(EquipmentType.Hair);
-		GetRandomEquipmentType(EquipmentType.FaceHair);
+		//GetRandomEquipmentType(EquipmentType.Hair);
+		//GetRandomEquipmentType(EquipmentType.FaceHair);
 		GetRandomEquipmentType(EquipmentType.Cloth);
 		GetRandomEquipmentType(EquipmentType.Pant);
 		GetRandomEquipmentType(EquipmentType.Helmet);

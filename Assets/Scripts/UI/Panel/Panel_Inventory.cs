@@ -21,8 +21,6 @@ public class Panel_Inventory : Panel_Base
 
 	private void OnClick_Equipment()
 	{
-		img_Background.sprite = null;
-
 		ShowNewIcon(false);
 
 		GameManager.UI.StackPanel<Panel_Equipment>(true);

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.WSA;
 
 public class Panel_Main : Panel_Base
 {
@@ -27,12 +26,14 @@ public class Panel_Main : Panel_Base
 	TMP_Text txtmp_UserName;
 
 	TMP_Text txtmp_Energy;
+	TMP_Text txtmp_Message;
 
 
 	Button btn_BuyGold;
 	Button btn_BuyEnergy;
 
 	Transform group_TopMenu;
+	Transform btn_Energy;
 
 	protected override void Awake()
 	{
@@ -60,12 +61,19 @@ public class Panel_Main : Panel_Base
 
 		toastPopup = this.GetComponentInChildren<ToastPopup>();
 
+		btn_Energy = this.transform.Search(nameof(btn_Energy));
+
 		group_TopMenu = this.transform.Search(nameof(group_TopMenu));
+
+		txtmp_Message = GetUI_TMPText(nameof(txtmp_Message), "mind controlling...");
+		txtmp_Message.UsePingPong();
 	}
 
 	private void Start()
 	{
 		SetEnergy();
+
+		txtmp_Message.StartPingPong(.25f);
 	}
 
 	private void OnClick_BuyGold()
@@ -146,12 +154,17 @@ public class Panel_Main : Panel_Base
 	{
 		if (LocalData.gameData.energy <= 0)
 		{
+			btn_Energy.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 			btn_PlayGame.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
 			return;
 		}
 
+		btn_PlayGame.interactable = false;
+
 		LocalData.gameData.energy -= 1;
+
+		Scene.main.particle_RingShield.DOScale(Vector3.one * .75f, .5f);
 
 		Util.Zoom(Scene.main.virtualCamera, .1f, .025f);
 

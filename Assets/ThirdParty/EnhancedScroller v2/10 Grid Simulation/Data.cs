@@ -24,5 +24,10 @@ namespace EnhancedScrollerDemos.GridSimulation
 
         public int spaceCount;
 		public bool isRide;
+
+		public InvenItemData(string name)
+		{
+			this.name = name;
+		}
 	}
 }

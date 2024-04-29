@@ -1,9 +1,12 @@
 using EnhancedScrollerDemos.GridSimulation;
 using UnityEngine;
 using UnityEngine.UI;
+using static Enums;
 
 public class RowCellView_InvenItem : RowCellView
 {
+	#region Members
+
 	InvenItemData invenItemData;
 
 	Button btn_Container;
@@ -11,9 +14,12 @@ public class RowCellView_InvenItem : RowCellView
 
 	public bool isChanged = false;
 
+	#endregion
+
+
 	private void Awake()
 	{
-		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_EquipItem, true);
+		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_ChangeEquipment, true);
 		img_Thumnail = Util.FindImage(this.gameObject, nameof(img_Thumnail));
 	}
 
@@ -23,60 +29,78 @@ public class RowCellView_InvenItem : RowCellView
 
 		var invenData = data as InvenItemData;
 
-		if(invenData != null)
+		if (invenData != null)
 		{
-			if(invenData.thumbnail != null)
-			{
-				var sprite = Resources.Load<Sprite>(invenData.thumbnail);
+			var path = invenData.name == "empty" ? Define.PATH_ICON + "Hand/trash" : invenData.thumbnail;
 
-				img_Thumnail.sprite = sprite;
-			}
+			img_Thumnail.sprite = Resources.Load<Sprite>(path);
 		}
 
 		invenItemData = invenData;
 	}
 
-	private void OnClick_EquipItem()
+
+	private void OnClick_ChangeEquipment()
 	{
-		if (invenItemData.isRide)
+		if (invenItemData.name == "empty")
 		{
-			FindObjectOfType<RideController>().Init(invenItemData.nameIndex, invenItemData.index);
-		}
-
-		else
-		{
-			var equipment = new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index);
-
-			FindObjectOfType<EquipmentManager>().PreviewEquipment(equipment, invenItemData.thumbnail);
-
-			GameManager.UI.FetchPanel<Panel_Equipment>().SetEquippedThumbnail(invenItemData.type, invenItemData.thumbnail);
-			GameManager.UI.FetchPanel<Panel_Equipment>().isChanged = true;
-
-			if (LocalData.gameData.equipment.ContainsKey(invenItemData.type))
+			if (GameManager.UI.FetchPanel<Panel_Equipment>().category == EquipmentCategoryType.All)
 			{
-				var type = LocalData.gameData.equipment[invenItemData.type].type;
-				var nameIndex = LocalData.gameData.equipment[invenItemData.type].name;
-				var index = LocalData.gameData.equipment[invenItemData.type].index;
-				var thumbnail = LocalData.gameData.equipment[invenItemData.type].path.Replace("Assets/Resources/", "").Replace(".png", "");
-
-				LocalData.gameData.equipment[invenItemData.type].type = invenItemData.type;
-				LocalData.gameData.equipment[invenItemData.type].name = invenItemData.nameIndex;
-				LocalData.gameData.equipment[invenItemData.type].index = invenItemData.index;
-				LocalData.gameData.equipment[invenItemData.type].path = invenItemData.thumbnail;
-
-				invenItemData.type = type;
-				invenItemData.nameIndex = nameIndex;
-				invenItemData.index = index;
-				invenItemData.thumbnail = thumbnail;
-
-				img_Thumnail.sprite = Resources.Load<Sprite>(invenItemData.thumbnail);
-
-				FindObjectOfType<EquipmentManager>().previewSprite.Remove((int)invenItemData.type);
+				Scene.main.equipmentManager.ClearEquipmentAll();
 			}
+
 			else
 			{
+				string category = GameManager.UI.FetchPanel<Panel_Equipment>().category.ToString();
 
+				Scene.main.equipmentManager.ClearEquipment(Util.String2Enum<EquipmentType>(category));
 			}
 		}
+
+		Scene.main.equipmentManager.ChangeEquipment(new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index), true);
+
+		GameManager.UI.FetchPanel<Panel_Equipment>().SetPlayerEquipSlot(invenItemData.type.ToString(), invenItemData.thumbnail);
+
+
+		//if (invenItemData.isRide)
+		//{
+		//	Scene.main.rideController.Init(invenItemData.nameIndex, invenItemData.index);
+		//}
+
+		//else
+		//{
+		//	var equipment = new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index);
+
+		//	Scene.main.equipmentManager.PreviewEquipment(equipment, invenItemData.thumbnail);
+
+		//	GameManager.UI.FetchPanel<Panel_Equipment>().SetEquippedThumbnail(invenItemData.type, invenItemData.thumbnail);
+		//	GameManager.UI.FetchPanel<Panel_Equipment>().isChanged = true;
+
+		//	if (LocalData.gameData.equipment.ContainsKey(invenItemData.type))
+		//	{
+		//		var type = LocalData.gameData.equipment[invenItemData.type].type;
+		//		var nameIndex = LocalData.gameData.equipment[invenItemData.type].name;
+		//		var index = LocalData.gameData.equipment[invenItemData.type].index;
+		//		var thumbnail = LocalData.gameData.equipment[invenItemData.type].path.Replace("Assets/Resources/", "").Replace(".png", "");
+
+		//		LocalData.gameData.equipment[invenItemData.type].type = invenItemData.type;
+		//		LocalData.gameData.equipment[invenItemData.type].name = invenItemData.nameIndex;
+		//		LocalData.gameData.equipment[invenItemData.type].index = invenItemData.index;
+		//		LocalData.gameData.equipment[invenItemData.type].path = invenItemData.thumbnail;
+
+		//		invenItemData.type = type;
+		//		invenItemData.nameIndex = nameIndex;
+		//		invenItemData.index = index;
+		//		invenItemData.thumbnail = thumbnail;
+
+		//		img_Thumnail.sprite = Resources.Load<Sprite>(invenItemData.thumbnail);
+
+		//		Scene.main.equipmentManager.previewSprite.Remove((int)invenItemData.type);
+		//	}
+		//	else
+		//	{
+
+		//	}
+		//}
 	}
 }

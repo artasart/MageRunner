@@ -734,15 +734,15 @@ public static class Util
 		}
 	}
 
-	public static void AnimateText(TMP_Text text, int target, float _duration = .25f) => Timing.RunCoroutine(Co_AnimateText(text, target, _duration));
+	public static void AnimateText(TMP_Text text, int target, float _duration = .25f, float delay = 0f) => RunCoroutine(Co_AnimateText(text, target, _duration).Delay(delay), nameof(Co_AnimateText), CoroutineTag.Content);
 
 	private static IEnumerator<float> Co_AnimateText(TMP_Text txtmp, int target, float _duration = .25f)
 	{
-		yield return Timing.WaitForOneFrame;
-
 		float elapsedTime = 0f;
 
-		float start = Convert.ToInt32(txtmp.text);
+		float start = 0f;
+
+		Debug.Log(start + " " + target);
 
 		while (elapsedTime < _duration)
 		{

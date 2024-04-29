@@ -36,11 +36,6 @@ public static class LocalData
 
 			JsonManager<GameData>.SaveData(gameData, Define.JSON_GAMEDATA);
 		}
-
-		else
-		{
-			gameData.bags.Clear();
-		}
 	}
 
 	public static void InitGameData()
@@ -49,9 +44,7 @@ public static class LocalData
 		gameData.ride = new Ride();
 		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
 		gameData.bags = new SerializableDictionary<string, int>();
-		// gameData.passiveSkills = new SerializableDictionary<Skills, PlayerPassiveSkill>();
-
-		gameData.gold = 10000;
+		gameData.gold = 1000;
 		gameData.energy = 5;
 		gameData.energyTotal = 5;
 		gameData.isPremium = false;
@@ -72,7 +65,12 @@ public static class LocalData
 				1));
 		}
 
-		DebugManager.Log($"actorSKills saved.. {gameData.actorSkills.Count}", DebugColor.Data);
+		foreach(var item in gameData.equipment)
+		{
+			item.Value.path = string.Empty;
+		}
+
+		DebugManager.Log($"Game data initialized.. {gameData.actorSkills.Count}", DebugColor.Data);
 	}
 
 	public static void SaveGameData(int score, int gold, SerializableDictionary<string, int> bags)
@@ -125,6 +123,7 @@ public class MasterData
 
 	public List<SkillUpgrade> skillUpgradeData;
 	public List<InGameLevel> inGameLevel;
+	public List<SkillEntity> skillEntity;
 }
 
 [Serializable]
@@ -178,6 +177,14 @@ public class SkillUpgrade
 {
 	public string level;
 	public string upgradeGold;
+}
+
+[Serializable]
+public class SkillEntity
+{
+	public string name;
+	public string mana;
+	public string cooltime;
 }
 
 
@@ -269,7 +276,7 @@ public class Equipment
 
 		var typeName = $"{(int)type}_{type}/";
 
-		path = $"{basePath}{category}{version}{typeName}{fileName}";
+		if (name != string.Empty) path = $"{basePath}{category}{version}{typeName}{fileName}";
 	}
 
 	private bool IsPackageItem(string fileName)

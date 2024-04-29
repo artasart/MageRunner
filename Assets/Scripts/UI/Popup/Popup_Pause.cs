@@ -58,6 +58,8 @@ public class Popup_Pause : Popup_Base
 
 	private void OnClick_Home()
 	{
+		Scene.game.SaveGameData();
+
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
 

@@ -12,13 +12,18 @@ public class Scene_Main : SceneLogic
 {
 	#region Members
 
+	List<InvenItemData> invenData = new List<InvenItemData>();
+
 	public CinemachineVirtualCamera virtualCamera { get; private set; }
-	Transform renderTextureCam;
+	public EquipmentManager equipmentManager { get; private set; }
+	public RideController rideController { get; private set; }
+	public GameObject playerActor { get; private set; }
+	public GameObject playerHorseActor { get; private set; }
+	public Transform particle_RingShield { get; private set; }
+	public Transform renderTextureCam { get; private set; }
 
-	EquipmentManager equipmentManager;
 
-	public List<InvenItemData> equipmentData = new List<InvenItemData>();
-
+	public int payAmount = 10000;
 
 	#endregion
 
@@ -28,13 +33,15 @@ public class Scene_Main : SceneLogic
 
 	private void OnDestroy()
 	{
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
-		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
+		Debug.Log("Current inventory : " + LocalData.invenData.invenItemData.Count);
 	}
 
 	private void OnDisable()
 	{
 		LocalData.gameData.equipment = equipmentManager.equipments;
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
 	}
 
 	protected override void Awake()
@@ -46,11 +53,17 @@ public class Scene_Main : SceneLogic
 		LocalData.LoadInvenData();
 
 		equipmentManager = FindObjectOfType<EquipmentManager>();
+		rideController = FindObjectOfType<RideController>();
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		renderTextureCam = this.transform.Search(Define.RENDER_TEXTURE_CAMERA);
 
-		GameObject.Find("PlayerActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
-		GameObject.Find("PlayerHorseActor").transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+		playerActor = GameObject.Find("PlayerActor");
+		playerActor.transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+
+		playerHorseActor = GameObject.Find("PlayerHorseActor");
+		playerActor.transform.Search("hp").GetComponent<TMP_Text>().text = "Lv." + LocalData.gameData.level;
+
+		particle_RingShield = playerActor.transform.Search(nameof(particle_RingShield));
 
 		PoolManager.InitPool();
 		PoolManager.SetPoolData(Define.VFX_PUFF, 10, Define.PATH_VFX);
@@ -69,12 +82,12 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.StartPanel<Panel_Main>(true);
 
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("artasart", LocalData.gameData.runnerTag);
-		
+
 		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 
 		GameManager.Sound.PlayBGM("Dawn");
 
-		// GetFarmedItem();
+		GetFarmedItem();
 
 		CheckLogin();
 	}
@@ -97,65 +110,36 @@ public class Scene_Main : SceneLogic
 
 	public void GetFarmedItem()
 	{
-		if (LocalData.gameData != null)
+		GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(false);
+
+		GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(LocalData.gameData.bags.Count > 0);
+
+		foreach (var element in LocalData.gameData.bags)
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(LocalData.gameData.bags.Count > 0);
+			string thumnailPath = Util.RemoveAssetPath(element.Key).Replace(".png", "");
+			string filename = Util.GetFileNameFromPath(element.Key).Replace(".png", "");
+			int quantity = element.Value;
 
-			foreach (var element in LocalData.gameData.bags)
-			{
-				string thumnailPath = Util.RemoveAssetPath(element.Key).Replace(".png", "");
-				string filename = Util.GetFileNameFromPath(element.Key).Replace(".png", "");
-				int quantity = element.Value;
+			var invenItem = LocalData.masterData.itemData.FirstOrDefault(item => item.filename == filename);
 
-				var invenItem = LocalData.masterData.itemData.FirstOrDefault(item => item.filename == filename);
+			var itemData = new InvenItemData(invenItem.name);
+			itemData.type = Util.String2Enum<EquipmentType>(invenItem.type);
+			itemData.nameIndex = Util.ExtractSubstring(invenItem.filename);
+			itemData.index = Util.ExtractNumber(invenItem.filename);
+			itemData.price = invenItem.price;
+			itemData.quantity = quantity;
+			itemData.thumbnail = thumnailPath;
 
-				var itemData = new InvenItemData();
-				itemData.type = Util.String2Enum<EquipmentType>(invenItem.type);
-				itemData.name = invenItem.name;
-				itemData.nameIndex = Util.ExtractSubstring(invenItem.filename);
-				itemData.index = Util.ExtractNumber(invenItem.filename);
-				itemData.price = invenItem.price;
-				itemData.quantity = quantity;
-				itemData.thumbnail = thumnailPath;
-
-				equipmentData.Add(itemData);
-			}
-
-			foreach (var item in equipmentData)
-			{
-				LocalData.invenData.invenItemData.Add(item);
-			}
-
-			JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
-
-			LocalData.gameData.bags.Clear();
-			LocalData.gameData.bags = null;
-
-			JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+			invenData.Add(itemData);
 		}
 
-		else
+		foreach (var item in invenData)
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().ShowNewIcon(false);
+			LocalData.invenData.invenItemData.Add(item);
 		}
 
-		//if (LocalData.gameData.passiveSkills.Count == 0)
-		//{
-		//	DebugManager.Log("No Game Data", DebugColor.Data);
-
-		//	int index = 0;
-
-		//	foreach (var item in LocalData.masterData.skillData)
-		//	{
-		//		var passiveSkills = new PlayerPassiveSkill(item.name, "active", string.Empty, item.thumbnailPath, 1);
-
-		//		LocalData.gameData.passiveSkills.Add(Util.ConvertIntToEnum<Skills>(index), passiveSkills);
-
-		//		index++;
-		//	}
-		//}
-
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		LocalData.gameData.bags.Clear();
+		LocalData.gameData.bags = null;
 	}
 
 
