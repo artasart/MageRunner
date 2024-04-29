@@ -64,8 +64,6 @@ public class ToastPopup : UI_Base
 		btn_CloseReward.gameObject.SetActive(isCancel);
 
 		GameManager.UI.Move(this.transform.gameObject, new Vector3(0f, -110f, 0f));
-
-		GameManager.UI.FetchPanel<Panel_Main>().ShowTopMenu(false);
 	}
 
 	public void HideRewardAd(bool isInstant = false)
@@ -83,7 +81,5 @@ public class ToastPopup : UI_Base
 			callback_Close = null;
 			txtmp_ToastMessage.text = string.Empty;
 		});
-
-		GameManager.UI.FetchPanel<Panel_Main>().ShowTopMenu(true);
 	}
 }

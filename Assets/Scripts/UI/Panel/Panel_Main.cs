@@ -20,8 +20,6 @@ public class Panel_Main : Panel_Base
 	Image img_New;
 	TMP_Text txtmp_Gold;
 
-	ToastPopup toastPopup;
-
 	TMP_Text txtmp_RunnerTag;
 	TMP_Text txtmp_UserName;
 
@@ -59,8 +57,6 @@ public class Panel_Main : Panel_Base
 		txtmp_RunnerTag = GetUI_TMPText(nameof(txtmp_RunnerTag), string.Empty);
 		txtmp_UserName = GetUI_TMPText(nameof(txtmp_UserName), string.Empty);
 
-		toastPopup = this.GetComponentInChildren<ToastPopup>();
-
 		btn_Energy = this.transform.Search(nameof(btn_Energy));
 
 		group_TopMenu = this.transform.Search(nameof(group_TopMenu));
@@ -83,7 +79,7 @@ public class Panel_Main : Panel_Base
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Buy Gold",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Reward",
 		() =>
 		{
 			Debug.Log("Watch AD!");
@@ -100,7 +96,7 @@ public class Panel_Main : Panel_Base
 	{
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Buy Gold",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Reward",
 		() =>
 		{
 			Debug.Log("Watch AD!");
@@ -148,6 +144,10 @@ public class Panel_Main : Panel_Base
 	private void OnClick_Shop()
 	{
 		GameManager.UI.StackPanel<Panel_Shop>(true);
+
+		GameManager.UI.FetchPanel<Panel_Shop>().Init();
+
+		GameManager.UI.FetchPanel<Panel_Main>().Show();
 	}
 
 	private void OnClick_PlayGame()
@@ -202,53 +202,6 @@ public class Panel_Main : Panel_Base
 		Debug.Log("OnClick_DayCheck");
 		GameManager.UI.StackPopup<Popup_DailyCheck>();
 	}
-
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.X))
-		{
-			var amount = UnityEngine.Random.Range(50, 100) * 100;
-
-			ShowToastPopup($"Watch AD and get <color=orange>{amount}</color>", true, GoldAd);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Z))
-		{
-			CloseToastPopup();
-		}
-
-		if (Input.GetKeyDown(KeyCode.C))
-		{
-			ShowToastAndDisappear();
-		}
-
-		if (Input.GetKeyDown(KeyCode.V))
-		{
-			GameManager.UI.StackSplash<Splash_Reward>(true);
-		}	
-	}
-
-	public void ShowToastPopup(string message, bool isCancel = false, Action click = null, Action close = null)
-	{
-		toastPopup.ShowRewardAd(message, isCancel);
-
-		toastPopup.callback_Click = click;
-		toastPopup.callback_Close = close;
-	}
-
-	public void CloseToastPopup()
-	{
-		toastPopup.HideRewardAd();
-	}
-
-	public void ShowToastAndDisappear()
-	{
-		ShowToastPopup($"Toast popup test.", false, () => CancelInvoke(nameof(CloseToastPopup)));
-
-		Invoke(nameof(CloseToastPopup), 2f);
-	}
-
-
 
 	public void ShowTopMenu(bool isShow)
 	{

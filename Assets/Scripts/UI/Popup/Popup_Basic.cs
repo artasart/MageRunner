@@ -74,6 +74,7 @@ public class Popup_Basic : Popup_Base
 
 	public void Clear()
 	{
+		txtmp_Alert.text = "Notice";
 		txtmp_Description.text = "Do you really want to exit?";
 		callback_confirm = () => Application.Quit();
 		callback_cancel = null;

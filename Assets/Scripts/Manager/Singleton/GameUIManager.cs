@@ -80,6 +80,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 	{
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
+			if (IsLogoScene()) return;
+
 			Back();
 		}
 	}
@@ -689,6 +691,12 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		_target.GetComponent<RectTransform>().anchoredPosition = targetPosition;
 
 		callback?.Invoke();
+	}
+
+
+	private bool IsLogoScene()
+	{
+		return GameManager.Scene.GetCurrentSceneName() == "01_" + SceneName.Logo.ToString();
 	}
 
 	#endregion

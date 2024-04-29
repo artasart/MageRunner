@@ -10,17 +10,34 @@ public class RowCellView_InvenItem : RowCellView
 	InvenItemData invenItemData;
 
 	Button btn_Container;
-	Image img_Thumnail;
+	Image img_Thumbnail;
 
-	public bool isChanged = false;
+	public Color outlineColor { get; set; }
 
+
+	public bool isEmpty = false;
 	#endregion
 
 
 	private void Awake()
 	{
 		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_ChangeEquipment, true);
-		img_Thumnail = Util.FindImage(this.gameObject, nameof(img_Thumnail));
+		img_Thumbnail = Util.FindImage(this.gameObject, nameof(img_Thumbnail));
+
+		outlineColor = btn_Container.GetComponent<Outline>().effectColor;
+	}
+
+	public void UseOutline(bool turnOn)
+	{
+		if(turnOn)
+		{
+			btn_Container.GetComponent<Outline>().effectColor = new Color(outlineColor.r, outlineColor.g, outlineColor.b, 1f);
+		}
+
+		else
+		{
+			btn_Container.GetComponent<Outline>().effectColor = new Color(outlineColor.r, outlineColor.g, outlineColor.b, 0f);
+		}
 	}
 
 	public override void SetData(EnhancedScrollerDemos.GridSimulation.Data data)
@@ -31,9 +48,49 @@ public class RowCellView_InvenItem : RowCellView
 
 		if (invenData != null)
 		{
-			var path = invenData.name == "empty" ? Define.PATH_ICON + "Hand/trash" : invenData.thumbnail;
+			isEmpty = invenData.name == "empty";
 
-			img_Thumnail.sprite = Resources.Load<Sprite>(path);
+			var path = isEmpty ? Define.PATH_ICON + "Hand/trash" : invenData.thumbnail;
+			img_Thumbnail.sprite = Resources.Load<Sprite>(path);
+
+			if(isEmpty)
+			{
+				UseOutline(false);
+			}
+
+			else
+			{
+				string playerEquipmnet = string.Empty;
+
+				if (LocalData.gameData.equipment.ContainsKey(invenData.type))
+				{
+					playerEquipmnet = LocalData.gameData.equipment[invenData.type].name + "_" + LocalData.gameData.equipment[invenData.type].index;
+				}
+
+				string thisEquipment = invenData.nameIndex + "_" + invenData.index;
+
+				Debug.Log(playerEquipmnet);
+				Debug.Log(thisEquipment);
+
+				if (playerEquipmnet == thisEquipment)
+				{
+					Debug.Log("Is equipped Item..!");
+
+					UseOutline(true);
+
+					if (!GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.ContainsKey(invenData.type.ToString()))
+					{
+						GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Add(invenData.type.ToString(), this);
+					}
+				}
+
+				else
+				{
+					Debug.Log("Not equippeded");
+
+					UseOutline(false);
+				}
+			}
 		}
 
 		invenItemData = invenData;
@@ -47,6 +104,8 @@ public class RowCellView_InvenItem : RowCellView
 			if (GameManager.UI.FetchPanel<Panel_Equipment>().category == EquipmentCategoryType.All)
 			{
 				Scene.main.equipmentManager.ClearEquipmentAll();
+
+				GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(true);
 			}
 
 			else
@@ -54,7 +113,23 @@ public class RowCellView_InvenItem : RowCellView
 				string category = GameManager.UI.FetchPanel<Panel_Equipment>().category.ToString();
 
 				Scene.main.equipmentManager.ClearEquipment(Util.String2Enum<EquipmentType>(category));
+
+				GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(false);
 			}
+		}
+
+		else
+		{
+			if (GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.ContainsKey(invenItemData.type.ToString()))
+			{
+				GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem[invenItemData.type.ToString()].UseOutline(false);
+
+				GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Remove(invenItemData.type.ToString());
+			}
+
+			UseOutline(true);
+
+			GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Add(invenItemData.type.ToString(), this);
 		}
 
 		Scene.main.equipmentManager.ChangeEquipment(new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index), true);

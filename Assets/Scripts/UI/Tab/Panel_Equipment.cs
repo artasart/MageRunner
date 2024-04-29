@@ -104,8 +104,6 @@ public class Panel_Equipment : Panel_Base
 		OnClick_All();
 	}
 
-
-
 	private void OnClick_BuyStash()
 	{
 		GameManager.UI.StackPopup<Popup_Basic>(true);
@@ -201,6 +199,8 @@ public class Panel_Equipment : Panel_Base
 
 	private void OnClick_All()
 	{
+		RemovePlayerEquipSlot(true);
+
 		category = EquipmentCategoryType.All;
 		txtmp_Menu.text = "All";
 
@@ -223,4 +223,36 @@ public class Panel_Equipment : Panel_Base
 
 		thumbnails[type].sprite = Resources.Load<Sprite>(path);
 	}
+
+	public void RemovePlayerEquipSlot(bool isAll = false)
+	{
+		if (isAll)
+		{
+			for (int i = 0; i < Util.GetEnumLength<EquipmentThumbnailType>(); i++)
+			{
+				var value = Util.ConvertIntToEnum<EquipmentThumbnailType>(i).ToString();
+
+				thumbnails[value].gameObject.SetActive(false);
+				thumbnails[value].sprite = null;
+			}
+
+			foreach (var item in selectedItem)
+			{
+				item.Value.UseOutline(false);
+			}
+
+			selectedItem.Clear();
+		}
+
+		else
+		{
+			selectedItem[category.ToString()].UseOutline(false);
+			thumbnails[category.ToString()].gameObject.SetActive(false);
+
+			selectedItem[category.ToString()].UseOutline(false);
+			selectedItem.Remove(category.ToString());
+		}
+	}
+
+	public SerializableDictionary<string, RowCellView_InvenItem> selectedItem = new SerializableDictionary<string, RowCellView_InvenItem>();
 }

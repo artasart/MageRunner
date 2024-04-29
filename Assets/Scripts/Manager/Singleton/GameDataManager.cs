@@ -58,13 +58,14 @@ public class GameDataManager : SingletonManager<GameDataManager>
 		DebugManager.Log("Try get sheet data", DebugColor.Data);
 
 		LocalData.masterData = new MasterData();
-	
+
 		GoogleSheets.AddJob("downloading level data...", () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
 		GoogleSheets.AddJob("downloading equipment data...", () => GoogleSheets.GetData(Url.EQUIPMENT_SHEETID, SaveData<Item>));
 		GoogleSheets.AddJob("downloading skill data...", () => GoogleSheets.GetData(Url.SKILL_SHEETID, SaveData<Skill>));
 		GoogleSheets.AddJob("downloading skill level data...", () => GoogleSheets.GetData(Url.SKILL_UPGRADE_SHEETID, SaveData<SkillUpgrade>));
 		GoogleSheets.AddJob("downloading skill entity data...", () => GoogleSheets.GetData(Url.SKILL_ENTITY_SHEETID, SaveData<SkillEntity>));
 		GoogleSheets.AddJob("downloading in game level data...", () => GoogleSheets.GetData(Url.INGAME_SHEETID, SaveData<InGameLevel>));
+		GoogleSheets.AddJob("downloading shop data...", () => GoogleSheets.GetData(Url.SHOP_SHEETID, SaveData<ShopItem>));
 
 		GoogleSheets.GetDataAll(callback);
 	}
@@ -92,7 +93,7 @@ public class GameDataManager : SingletonManager<GameDataManager>
 	}
 
 	private void SetMasterData<T>(List<T> dataList)
-	{		
+	{
 		if (typeof(T) == typeof(Level))
 		{
 			LocalData.masterData.levelData = dataList.Cast<Level>().ToList();
@@ -116,6 +117,10 @@ public class GameDataManager : SingletonManager<GameDataManager>
 		else if (typeof(T) == typeof(InGameLevel))
 		{
 			LocalData.masterData.inGameLevel = dataList.Cast<InGameLevel>().ToList();
+		}
+		else if (typeof(T) == typeof(ShopItem))
+		{
+			LocalData.masterData.shopItem = dataList.Cast<ShopItem>().ToList();
 		}
 
 		isSaved = true;

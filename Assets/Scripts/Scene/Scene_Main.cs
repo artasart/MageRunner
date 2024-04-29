@@ -33,7 +33,7 @@ public class Scene_Main : SceneLogic
 
 	private void OnDestroy()
 	{
-		Debug.Log("Current inventory : " + LocalData.invenData.invenItemData.Count);
+
 	}
 
 	private void OnDisable()

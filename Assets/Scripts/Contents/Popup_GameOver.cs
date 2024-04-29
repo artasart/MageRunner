@@ -64,29 +64,9 @@ public class Popup_GameOver : Popup_Base
 	{
 		txtmp_Score.text = $"You ran {score}m, gaiend {gold} Golds & {exp} exp!";
 
-		if (score > LocalData.gameData.highScore)
-		{
-			group_Menu_Horizontal.GetComponent<CanvasGroup>().blocksRaycasts = false;
-
-			this.highestScore = score;
-
-			ShowHighScore();
-		}
-
 		Scene.game.AddExp(exp);
 		Scene.game.SaveGameData();
 
 		txtmp_Energy.text = $"{LocalData.gameData.energy}/{LocalData.gameData.energyTotal}";
-	}
-
-	int highestScore;
-
-	private void ShowHighScore()
-	{
-		group_Menu_Horizontal.GetComponent<CanvasGroup>().blocksRaycasts = true;
-
-		LocalData.gameData.highScore = highestScore;
-
-		GameManager.UI.StackSplash<Splash_Congrates>();
 	}
 }

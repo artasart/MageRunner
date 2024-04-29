@@ -192,9 +192,38 @@ public class Scene_Game : SceneLogic
 	{
 		DebugManager.Log("Game Over", DebugColor.Game);
 
-		GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(Scene.game.score, Scene.game.gold, Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f));
+		Invoke(nameof(ShowGameResult), .5f);
+	}
 
-		GameManager.UI.StartPopup<Popup_GameOver>(true);
+	private void ShowGameResult()
+	{
+		if (Scene.game.score > LocalData.gameData.highScore)
+		{
+			GameManager.UI.FetchSplash<Splash_Congrates>().SetEndAction(() =>
+			{
+				GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
+						Scene.game.score,
+						Scene.game.gold,
+						Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
+				);
+
+				GameManager.UI.StartPopup<Popup_GameOver>(true);
+			});
+
+			GameManager.UI.StackSplash<Splash_Congrates>();
+			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(Scene.game.score);
+		}
+
+		else
+		{
+			GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
+			Scene.game.score,
+			Scene.game.gold,
+			Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
+			);
+
+			GameManager.UI.StartPopup<Popup_GameOver>();
+		}
 	}
 
 

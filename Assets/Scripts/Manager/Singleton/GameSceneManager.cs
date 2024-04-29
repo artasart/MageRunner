@@ -1,4 +1,5 @@
 using MEC;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,12 +22,16 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 	public GameObject go_Fade { get; set; }
 	public GameObject go_FadeRound { get; set; }
 	public GameObject go_Dim { get; set; }
+	public GameObject go_Toast { get; set; }
 
 	bool isFadeDone = false;
 	bool isDimDone = false;
 
 	bool isFade = false;
 	bool isDim = false;
+
+	public Action callback_ShowToast;
+	public Action callback_CloseToast;
 
 	#endregion
 
@@ -44,9 +49,10 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 		go_MasterCanvas = Instantiate(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + "go_Canvas_Master"), Vector3.zero, Quaternion.identity, this.transform);
 		go_MasterCanvas.name = "go_Canvas_Master";
 
-		go_Fade = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + "go_Fade"));
-		go_FadeRound = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + "go_FadeRound"));
-		go_Dim = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + "go_Dim"));
+		go_Fade = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + nameof(go_Fade)));
+		go_FadeRound = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + nameof(go_FadeRound)));
+		go_Dim = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + nameof(go_Dim)));
+		go_Toast = CreateTransUI(UnityEngine.Resources.Load<GameObject>(Define.PATH_UI + nameof(go_Toast)));
 	}
 
 	private GameObject CreateTransUI(GameObject prefab)
@@ -297,6 +303,35 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 		isFadeDone = true;
 		this.isFade = isFade;
+	}
+
+	public void ShowToastPopup(string message, bool isCancel = false, Action click = null, Action close = null)
+	{
+		go_Toast.GetComponent<RectTransform>().anchoredPosition = Vector2.up * 80f;
+		go_Toast.gameObject.SetActive(true);
+		go_Toast.GetComponent<CanvasGroup>().alpha = 1f;
+		go_Toast.GetComponent<CanvasGroup>().blocksRaycasts = true;
+
+		go_Toast.GetComponent<ToastPopup>().ShowRewardAd(message, isCancel);
+
+		go_Toast.GetComponent<ToastPopup>().callback_Click = click;
+		go_Toast.GetComponent<ToastPopup>().callback_Close = close;
+
+		callback_ShowToast?.Invoke();
+	}
+
+	public void CloseToastPopup()
+	{
+		go_Toast.GetComponent<ToastPopup>().HideRewardAd();
+
+		callback_CloseToast?.Invoke();
+	}
+
+	public void ShowToastAndDisappear(string message)
+	{
+		ShowToastPopup($"{message}", false, () => CancelInvoke(nameof(CloseToastPopup)));
+
+		Invoke(nameof(CloseToastPopup), 2f);
 	}
 
 	#endregion

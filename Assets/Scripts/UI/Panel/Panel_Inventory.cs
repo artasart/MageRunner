@@ -1,3 +1,5 @@
+using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Panel_Inventory : Panel_Base
@@ -30,12 +32,12 @@ public class Panel_Inventory : Panel_Base
 
 	private void OnClick_Resources()
 	{
-
+		btn_Resources.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 	}
 
 	private void OnClick_Craft()
 	{
-
+		btn_Craft.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 	}
 
 	public void ShowNewIcon(bool enable)

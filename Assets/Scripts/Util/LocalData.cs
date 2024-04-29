@@ -124,6 +124,7 @@ public class MasterData
 	public List<SkillUpgrade> skillUpgradeData;
 	public List<InGameLevel> inGameLevel;
 	public List<SkillEntity> skillEntity;
+	public List<ShopItem> shopItem;
 }
 
 [Serializable]
@@ -323,4 +324,15 @@ public class InGameLevel
 	public float monsterProbability;
 	public int monsterExp;
 	public int monsterDamage;
+}
+
+[Serializable]
+public class ShopItem
+{
+	public string name;
+	public string type;
+	public string category;
+	public int amount;
+	public int price;
+	public string thumbnailPath;
 }

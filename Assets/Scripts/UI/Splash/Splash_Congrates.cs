@@ -11,14 +11,6 @@ public class Splash_Congrates : Splash_Base
 	protected override void OnEnable()
 	{
 		base.OnEnable();
-
-		if(isInitialized)
-		{
-			if(LocalData.gameData != null)
-			{
-				SetScore(LocalData.gameData.highScore);
-			}
-		}
 	}
 
 	protected override void Awake()
