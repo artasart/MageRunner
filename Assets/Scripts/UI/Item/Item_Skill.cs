@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -45,10 +44,8 @@ public class Item_Skill : Item_Base
 		Util.RunCoroutine(Co_UseSkill(time, callback), nameof(Co_UseSkill) + this.GetHashCode(), CoroutineTag.Content);
 	}
 
-	IEnumerator<float> Co_UseSkill(float time, Action callback = null)
+	private IEnumerator<float> Co_UseSkill(float time, Action callback = null)
 	{
-		if (img_CoolTime) yield break;
-
 		float totalTime = time;
 
 		img_CoolTime.fillAmount = 1f;
@@ -68,6 +65,7 @@ public class Item_Skill : Item_Base
 
 			yield return Timing.WaitForOneFrame;
 		}
+
 		txtmp_SkillTime.text = string.Empty;
 
 		Util.FadeCanvasGroup(canvasGroup, 0f, .5f, end: () => img_CoolTime.fillAmount = 0);

@@ -172,8 +172,6 @@ public class Panel_HUD : Panel_Base
 
 	public void UseSkill(Skills skillType, float coolTime, float delay = 0f, Action action = null)
 	{
-		Debug.Log("Skill is used : " + skillType.ToString());
-
 		if (!isUsed.ContainsKey(skillType)) isUsed.Add(skillType, true);
 
 		items_Skill[skillType].UseSkill(coolTime, () =>

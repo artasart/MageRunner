@@ -32,7 +32,7 @@ public class Scene_Main : SceneLogic
 
 	#region Initialize
 
-	private void OnDestroy()
+	protected override void OnDestroy()
 	{
 
 	}

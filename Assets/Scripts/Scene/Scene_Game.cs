@@ -46,8 +46,10 @@ public class Scene_Game : SceneLogic
 
 	#region Initialize
 
-	private void OnDestroy()
+	protected override void OnDestroy()
 	{
+		base.OnDestroy();
+
 		SaveGameData();
 	}
 
@@ -199,6 +201,8 @@ public class Scene_Game : SceneLogic
 	{
 		if (Scene.game.score > LocalData.gameData.highScore)
 		{
+			GameManager.UI.StackSplash<Splash_Congrates>();
+
 			GameManager.UI.FetchSplash<Splash_Congrates>().SetEndAction(() =>
 			{
 				GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
@@ -210,7 +214,6 @@ public class Scene_Game : SceneLogic
 				GameManager.UI.StartPopup<Popup_GameOver>(true);
 			});
 
-			GameManager.UI.StackSplash<Splash_Congrates>();
 			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(Scene.game.score);
 		}
 

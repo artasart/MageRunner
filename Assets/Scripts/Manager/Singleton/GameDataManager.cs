@@ -62,7 +62,6 @@ public class GameDataManager : SingletonManager<GameDataManager>
 		GoogleSheets.AddJob("downloading level data...", () => GoogleSheets.GetData(Url.LEVEL_SHEETID, SaveData<Level>));
 		GoogleSheets.AddJob("downloading equipment data...", () => GoogleSheets.GetData(Url.EQUIPMENT_SHEETID, SaveData<Item>));
 		GoogleSheets.AddJob("downloading skill data...", () => GoogleSheets.GetData(Url.SKILL_SHEETID, SaveData<Skill>));
-		GoogleSheets.AddJob("downloading skill level data...", () => GoogleSheets.GetData(Url.SKILL_UPGRADE_SHEETID, SaveData<SkillUpgrade>));
 		GoogleSheets.AddJob("downloading skill entity data...", () => GoogleSheets.GetData(Url.SKILL_ENTITY_SHEETID, SaveData<SkillEntity>));
 		GoogleSheets.AddJob("downloading in game level data...", () => GoogleSheets.GetData(Url.INGAME_SHEETID, SaveData<InGameLevel>));
 		GoogleSheets.AddJob("downloading shop data...", () => GoogleSheets.GetData(Url.SHOP_SHEETID, SaveData<ShopItem>));

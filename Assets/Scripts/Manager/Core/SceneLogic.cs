@@ -5,7 +5,7 @@ public class SceneLogic : MonoBehaviour
 {
 	const string GAMEMANAGER = "GameManager";
 
-	private void OnDestroy()
+	protected virtual void OnDestroy()
 	{
 		Timing.KillCoroutines((int)CoroutineTag.UI);
 		Timing.KillCoroutines((int)CoroutineTag.Content);

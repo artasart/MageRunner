@@ -69,8 +69,6 @@ public static class LocalData
 		{
 			item.Value.path = string.Empty;
 		}
-
-		DebugManager.Log($"Game data initialized.. {gameData.actorSkills.Count}", DebugColor.Data);
 	}
 
 	public static void SaveGameData(int score, int gold, SerializableDictionary<string, int> bags)
