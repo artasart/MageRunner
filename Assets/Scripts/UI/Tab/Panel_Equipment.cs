@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
+using static UnityEditor.Progress;
 
 public class Panel_Equipment : Panel_Base
 {
@@ -16,11 +17,14 @@ public class Panel_Equipment : Panel_Base
 
 	TMP_Text txtmp_Menu;
 	TMP_Text txtmp_SpaceAmount;
+	TMP_Text txtmp_DamageRate;
+	TMP_Text txtmp_SpeedRate;
 
 	Button btn_BuyStash;
 
 	Button btn_Weapon;
 	Button btn_Armor;
+	Button btn_Cloth;
 	Button btn_Helmet;
 	Button btn_Pants;
 	Button btn_Backs;
@@ -44,10 +48,13 @@ public class Panel_Equipment : Panel_Base
 
 		txtmp_Menu = GetUI_TMPText(nameof(txtmp_Menu), "All");
 		txtmp_SpaceAmount = GetUI_TMPText(nameof(txtmp_SpaceAmount), $"{0}/{100}");
+		txtmp_DamageRate = GetUI_TMPText(nameof(txtmp_DamageRate), "1");
+		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), "5");
 
 		btn_Weapon = GetUI_Button(nameof(btn_Weapon), OnClick_Weapons, useAnimation: true);
 		btn_Armor = GetUI_Button(nameof(btn_Armor), OnClick_Armor, useAnimation: true);
 		btn_Helmet = GetUI_Button(nameof(btn_Helmet), OnClick_Helmet, useAnimation: true);
+		btn_Cloth = GetUI_Button(nameof(btn_Cloth), OnClick_Cloth, useAnimation: true);
 		btn_Pants = GetUI_Button(nameof(btn_Pants), OnClick_Pants, useAnimation: true);
 		btn_Backs = GetUI_Button(nameof(btn_Backs), OnClick_Backs, useAnimation: true);
 		btn_All = GetUI_Button(nameof(btn_All), OnClick_All, useAnimation: true);
@@ -59,14 +66,14 @@ public class Panel_Equipment : Panel_Base
 
 		int enumLength = Util.GetEnumLength<EquipmentThumbnailType>();
 
-		for (int i = 0; i < enumLength - 3; i++)
+		for (int i = 0; i < enumLength - 4; i++)
 		{
 			var name = Util.ConvertIntToEnum<EquipmentThumbnailType>(i).ToString();
 
 			thumbnails.Add(name, group_Normal.GetChild(i).GetChild(0).GetComponent<Image>());
 		}
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			var name = Util.ConvertIntToEnum<EquipmentThumbnailType>(i + 5).ToString();
 
@@ -85,9 +92,10 @@ public class Panel_Equipment : Panel_Base
 
 	public void GenerateItem()
 	{
-		var equipment = LocalData.gameData.equipment.
-			Where(item => item.Key != EquipmentType.Cloth &&
-						  item.Key != EquipmentType.Hair &&
+		RemovePlayerEquipSlot(true);
+
+		var equipment = Scene.main.equipmentManager.equipments.
+			Where(item => item.Key != EquipmentType.Hair &&
 						  item.Key != EquipmentType.FaceHair).ToList();
 
 		foreach (var item in equipment)
@@ -98,7 +106,24 @@ public class Panel_Equipment : Panel_Base
 				thumbnails[item.Key.ToString()].gameObject.SetActive(true);
 			}
 
-			else thumbnails[item.Key.ToString()].gameObject.SetActive(false);
+			else
+			{
+				thumbnails[item.Key.ToString()].gameObject.SetActive(false);
+			}
+		}
+
+		if (!string.IsNullOrEmpty(LocalData.gameData.ride.name))
+		{
+			string filename = LocalData.gameData.ride.name + "_" + LocalData.gameData.ride.index;
+
+			SetPlayerEquipSlot("Horse", $"Sprites/Ride/{filename}");
+
+			thumbnails["Horse"].gameObject.SetActive(true);
+		}
+
+		else
+		{
+			thumbnails["Horse"].gameObject.SetActive(false);
 		}
 
 		OnClick_All();
@@ -158,6 +183,19 @@ public class Panel_Equipment : Panel_Base
 		infiniteGridScroller.Refresh(data);
 	}
 
+	private void OnClick_Cloth()
+	{
+		category = EquipmentCategoryType.Cloth;
+		txtmp_Menu.text = "Cloth";
+
+		var data = LocalData.invenData.invenItemData
+			.Where(item => item.type == EquipmentType.Cloth)
+			.ToList();
+		data.Insert(0, new InvenItemData("empty"));
+
+		infiniteGridScroller.Refresh(data);
+	}
+
 	private void OnClick_Helmet()
 	{
 		category = EquipmentCategoryType.Helmet;
@@ -199,16 +237,21 @@ public class Panel_Equipment : Panel_Base
 
 	private void OnClick_All()
 	{
-		RemovePlayerEquipSlot(true);
-
 		category = EquipmentCategoryType.All;
 		txtmp_Menu.text = "All";
 
 		var data = LocalData.invenData.invenItemData
-			.Where(item => item.type != EquipmentType.Cloth &&
-						   item.type != EquipmentType.Hair &&
+			.Where(item => item.type != EquipmentType.Hair &&
 						   item.type != EquipmentType.FaceHair)
 			.ToList();
+
+		var ride = LocalData.invenData.invenItemData.Where(item => item.isRide == true).ToList();
+
+		for (int i = 0; i < ride.Count; i++)
+		{
+			data.Add(ride[i]);
+		}
+
 		data.Insert(0, new InvenItemData("empty"));
 
 		infiniteGridScroller.Refresh(data);
@@ -235,24 +278,17 @@ public class Panel_Equipment : Panel_Base
 				thumbnails[value].gameObject.SetActive(false);
 				thumbnails[value].sprite = null;
 			}
-
-			foreach (var item in selectedItem)
-			{
-				item.Value.UseOutline(false);
-			}
-
-			selectedItem.Clear();
 		}
 
 		else
 		{
-			selectedItem[category.ToString()].UseOutline(false);
 			thumbnails[category.ToString()].gameObject.SetActive(false);
-
-			selectedItem[category.ToString()].UseOutline(false);
-			selectedItem.Remove(category.ToString());
 		}
 	}
 
-	public SerializableDictionary<string, RowCellView_InvenItem> selectedItem = new SerializableDictionary<string, RowCellView_InvenItem>();
+	public void SetRideAbility(int damage, int speed)
+	{
+		txtmp_DamageRate.text = damage.ToString();
+		txtmp_SpeedRate.text = speed.ToString();
+	}
 }

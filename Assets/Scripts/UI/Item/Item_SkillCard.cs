@@ -55,7 +55,7 @@ public class Item_SkillCard : Item_Base
 	public void SetCardInfo(ActorSkill skill, int index)
 	{
 		txtmp_Name.text = skill.name;
-		DebugManager.Log(Define.PATH_ICON + skill.thumbnailPath);
+
 		img_Thumbnail.sprite = Resources.Load<Sprite>(Define.PATH_ICON + skill.thumbnailPath);
 
 		if (skill.maxLevel == 0)
@@ -69,12 +69,20 @@ public class Item_SkillCard : Item_Base
 
 			if (Scene.game.actorSkills.ContainsKey(skill.name)) { level = Scene.game.actorSkills[skill.name].level; }
 
-			txtmp_Description.text = skill.description + " " + Util.ParseStringToIntArray(skill.value)[level].ToString();
+			if(skill.type == "passive")
+			{
+				txtmp_Description.text = skill.description + " " + Util.ParseStringToIntArray(skill.value)[level].ToString();
+			}
+
+			else
+			{
+				txtmp_Description.text = skill.description;
+			}
 		}
 
 
 
-		group_Upgrade.gameObject.SetActive(skill.type == "active");
+		group_Upgrade.gameObject.SetActive(skill.maxLevel != 0);
 
 		for (int i = 0; i < group_Upgrade.childCount; i++)
 		{

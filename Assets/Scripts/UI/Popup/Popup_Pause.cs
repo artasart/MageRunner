@@ -9,18 +9,18 @@ public class Popup_Pause : Popup_Base
 	Button btn_NoAds;
 	Button btn_Language;
 
-	Scene_Game game;
-
 	bool isBgm = true;
 	bool isSfx = true;
+
+	Button btn_Confirm;
 
 	private void OnDisable()
 	{
 		if (!isInitialized) { isInitialized = true; return; }
 
-		game.gameState = GameState.Playing;
+		Scene.game.gameState = GameState.Playing;
 
-		game.playerActor.ToggleSimulation(true);
+		Scene.game.playerActor.ToggleSimulation(true);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
@@ -29,9 +29,9 @@ public class Popup_Pause : Popup_Base
 	{
 		if (!isInitialized) { return; }
 
-		game.gameState = GameState.Paused;
+		Scene.game.gameState = GameState.Paused;
 
-		game.playerActor.ToggleSimulation(false);
+		Scene.game.playerActor.ToggleSimulation(false);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();		
 	}
@@ -53,7 +53,7 @@ public class Popup_Pause : Popup_Base
 		btn_BGM.transform.Search("img_Icon_Block").gameObject.SetActive(false);
 		btn_SFX.transform.Search("img_Icon_Block").gameObject.SetActive(false);
 
-		game = FindObjectOfType<Scene_Game>();
+		btn_Confirm = GetUI_Button(nameof(btn_Confirm), OnClick_Confirm);
 	}
 
 	private void OnClick_Home()

@@ -73,28 +73,16 @@ public class MonsterActor : Actor
 		isDead = true;
 		damage = 0;
 
-		PoolManager.Spawn("Skull", Vector3.zero + Vector3.up * .5f, Quaternion.identity, this.transform);
-
-		//var coin = PoolManager.Spawn("CoinSpawner", this.transform.position + Vector3.up *.5f, Quaternion.identity);
-		//coin.transform.SetParent(this.transform.parent);
-		//FindObjectOfType<CoinSpawner>().Spawn(gold);
-
+		var vfx = PoolManager.Spawn("Skull", Vector3.zero + Vector3.up * .5f, Quaternion.identity, this.transform);
+		vfx.GetComponent<ParticleSystem>().Play();
 		animator.SetBool("Die", true);
-
-		this.GetComponent<BoxCollider2D>().enabled = false;
 		this.transform.Search("ExecuteTrigger").GetComponent<BoxCollider2D>().enabled = false;
-
 		hp.GetComponent<TMP_Text>().text = 0.ToString();
-
-		Scene.game.AddGameExp();
-
 		GetItem();
 
+		Scene.game.AddGameExp();
 		Scene.game.AddScore(score);
-
 		CancelInvoke(nameof(ApplyDamage));
-
-		Invoke(nameof(Refresh), 2f);
 	}
 
 	
@@ -134,7 +122,6 @@ public class MonsterActor : Actor
 		CancelInvoke(nameof(ApplyDamage));
 
 		this.GetComponent<EquipmentController>().RefreshEquipment();
-
 		this.GetComponent<RePoolObject>().RePool();
 	}
 
@@ -148,7 +135,7 @@ public class MonsterActor : Actor
 	{
 		if (Scene.game.playerActor.isDead) return;
 
-		if (other.CompareTag(Define.PLAYER))
+		if (other.CompareTag(Define.PLAYER) && !isDead)
 		{
 			if (other.gameObject.GetComponent<PlayerActor>().isDead) return;
 
@@ -169,7 +156,7 @@ public class MonsterActor : Actor
 			}
 		}
 
-		else if (other.CompareTag(Define.COLLECTOR))
+		if (other.CompareTag(Define.COLLECTOR))
 		{
 			Refresh();
 		}
@@ -204,12 +191,12 @@ public class MonsterActor : Actor
 		//GainEquipment(EquipmentType.Hair, spumPrefabs._spriteOBj._hairListString);
 		//GainEquipment(EquipmentType.Weapons, spumPrefabs._spriteOBj._weaponListString);
 		
-		if(UnityEngine.Random.Range(0f, 1f) <= 1f)
-		{
-			GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
-			GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
-			GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
-		}
+		//if(UnityEngine.Random.Range(0f, 1f) <= 1f)
+		//{
+		//	GainEquipment(EquipmentType.Back, spumPrefabs._spriteOBj._backListString);
+		//	GainEquipment(EquipmentType.Cloth, spumPrefabs._spriteOBj._clothListString);
+		//	GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
+		//}
 
 		//GainEquipment(EquipmentType.Pant, spumPrefabs._spriteOBj._pantListString);
 	}

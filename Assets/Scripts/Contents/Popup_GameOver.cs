@@ -37,6 +37,8 @@ public class Popup_GameOver : Popup_Base
 		btn_Reward.interactable = false;
 
 		Scene.game.gold *= 2;
+
+		GameManager.Scene.ShowToastAndDisappear($"You recieved + {Scene.game.gold.ToString("N0")}");
 	}
 
 	private void OnClick_Retry()
@@ -67,6 +69,14 @@ public class Popup_GameOver : Popup_Base
 		Scene.game.AddExp(exp);
 		Scene.game.SaveGameData();
 
-		txtmp_Energy.text = $"{LocalData.gameData.energy}/{LocalData.gameData.energyTotal}";
+		string amount = string.Empty;
+
+		if (LocalData.gameData.energy > LocalData.gameData.energyTotal)
+		{
+			amount = $"<color=#FFC700>{LocalData.gameData.energy}</color>";
+		}
+		else amount = LocalData.gameData.energy.ToString("N0");
+
+		txtmp_Energy.text = $"{amount}/{LocalData.gameData.energyTotal}";
 	}
 }

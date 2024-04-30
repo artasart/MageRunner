@@ -196,6 +196,11 @@ public class PlayerActor : Actor
 		rgbd2d.velocity = new Vector2(rgbd2d.velocity.x, jumpValue);
 		isGrounded = false;
 
+		if(Scene.game.isRide)
+		{
+			Scene.game.ZoomCamera(4f, .2f);
+		}
+
 		CheckJump();
 	}
 
@@ -264,7 +269,9 @@ public class PlayerActor : Actor
 
 			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
 
-			this.transform.Search("Root").gameObject.SetActive(false);
+			var target = Scene.game.isRide ? "Pivot_Root" : "Root";
+
+			this.transform.Search(target).gameObject.SetActive(false);
 			particle_ElectricMode.Play();
 
 			Scene.game.levelController.moveSpeedMultiplier = Scene.game.moveMultiplier;
@@ -287,7 +294,9 @@ public class PlayerActor : Actor
 
 		Scene.game.levelController.moveSpeedMultiplier = 1;
 
-		this.transform.Search("Root").gameObject.SetActive(true);
+
+		var target = Scene.game.isRide ? "Pivot_Root" : "Root";
+		this.transform.Search(target).gameObject.SetActive(true);
 		particle_ElectricMode.Stop();
 
 		rgbd2d.gravityScale = 1.5f;
@@ -342,6 +351,12 @@ public class PlayerActor : Actor
 		animator.SetBool(Define.EDITCHK, true);
 		rgbd2d.velocity *= dieVelocity;
 
+		if (Scene.game.isRide)
+		{
+			boxCollider2D = this.GetComponent<BoxCollider2D>();
+			boxCollider2D.size = new Vector2(1.33f, .75f);
+		}
+
 		this.transform.localEulerAngles = Vector3.forward * 13f;
 
 		Scene.game.StopEnviroment();
@@ -357,15 +372,24 @@ public class PlayerActor : Actor
 	{
 		base.Refresh();
 
-		this.transform.position = Vector3.up * -0.2f;
+		this.GetComponent<Rigidbody2D>().simulated = false;
+
+		if (Scene.game.isRide)
+		{
+			boxCollider2D.size = new Vector2(1.33f, 1f);
+			boxCollider2D.enabled = false;
+		}
+
+		this.transform.position = Vector3.up;
 		this.transform.rotation = Quaternion.identity;
 
 		animator.Rebind();
 		health = healthOrigin;
 		moveSpeed = moveSpeedOrigin;
 
-		this.GetComponent<BoxCollider2D>().enabled = true;
 		hp.GetComponent<TMP_Text>().text = health.ToString();
+		boxCollider2D.enabled = true;
+		this.GetComponent<Rigidbody2D>().simulated = true;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
@@ -439,6 +463,8 @@ public class PlayerActor : Actor
 
 		else if (collision.gameObject.CompareTag(Define.OBSTACLE))
 		{
+			Debug.Log(collision.gameObject);
+
 			Die();
 
 			Scene.game.cameraShake.Shake();
@@ -532,7 +558,11 @@ public class PlayerActor : Actor
 
 	public void AddMana(int amount)
 	{
-		
+		Debug.Log("Add Mana");
+
+		mana = Mathf.Clamp(mana += amount, 0, manaTotal);
+
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(mana);
 	}
 
 	#endregion

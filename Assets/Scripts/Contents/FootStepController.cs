@@ -9,6 +9,8 @@ public class FootStepController : MonoBehaviour
 	Scene_Game game;
 	PlayerActor actor;
 
+	public float waitSeconds = .25f;
+
 	private void OnDestroy()
 	{
 		StopWalk();
@@ -40,7 +42,7 @@ public class FootStepController : MonoBehaviour
 
 			GameManager.Sound.PlaySound(sound, .5f);
 
-			yield return Timing.WaitForSeconds(.25f);
+			yield return Timing.WaitForSeconds(waitSeconds);
 		}
 	}
 }

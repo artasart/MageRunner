@@ -12,7 +12,7 @@ public class RowCellView_InvenItem : RowCellView
 	Button btn_Container;
 	Image img_Thumbnail;
 
-	public Color outlineColor { get; set; }
+	//public Color outlineColor { get; set; }
 
 
 	public bool isEmpty = false;
@@ -24,21 +24,21 @@ public class RowCellView_InvenItem : RowCellView
 		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_ChangeEquipment, true);
 		img_Thumbnail = Util.FindImage(this.gameObject, nameof(img_Thumbnail));
 
-		outlineColor = btn_Container.GetComponent<Outline>().effectColor;
+		//outlineColor = btn_Container.GetComponent<Outline>().effectColor;
 	}
 
-	public void UseOutline(bool turnOn)
-	{
-		if(turnOn)
-		{
-			btn_Container.GetComponent<Outline>().effectColor = new Color(outlineColor.r, outlineColor.g, outlineColor.b, 1f);
-		}
+	//public void UseOutline(bool turnOn)
+	//{
+	//	if(turnOn)
+	//	{
+	//		btn_Container.GetComponent<Outline>().effectColor = new Color(outlineColor.r, outlineColor.g, outlineColor.b, 1f);
+	//	}
 
-		else
-		{
-			btn_Container.GetComponent<Outline>().effectColor = new Color(outlineColor.r, outlineColor.g, outlineColor.b, 0f);
-		}
-	}
+	//	else
+	//	{
+	//		btn_Container.GetComponent<Outline>().effectColor = new Color(outlineColor.r, outlineColor.g, outlineColor.b, 0f);
+	//	}
+	//}
 
 	public override void SetData(EnhancedScrollerDemos.GridSimulation.Data data)
 	{
@@ -48,47 +48,48 @@ public class RowCellView_InvenItem : RowCellView
 
 		if (invenData != null)
 		{
-			isEmpty = invenData.name == "empty";
-
-			var path = isEmpty ? Define.PATH_ICON + "Hand/trash" : invenData.thumbnail;
-			img_Thumbnail.sprite = Resources.Load<Sprite>(path);
-
-			if(isEmpty)
+			if (invenData.isRide)
 			{
-				UseOutline(false);
+				img_Thumbnail.sprite = Resources.Load<Sprite>(invenData.thumbnail);
 			}
 
 			else
 			{
-				string playerEquipmnet = string.Empty;
+				isEmpty = invenData.name == "empty";
 
-				if (LocalData.gameData.equipment.ContainsKey(invenData.type))
+				var path = isEmpty ? Define.PATH_ICON + "Hand/trash" : invenData.thumbnail;
+				img_Thumbnail.sprite = Resources.Load<Sprite>(path);
+
+				if (isEmpty)
 				{
-					playerEquipmnet = LocalData.gameData.equipment[invenData.type].name + "_" + LocalData.gameData.equipment[invenData.type].index;
-				}
-
-				string thisEquipment = invenData.nameIndex + "_" + invenData.index;
-
-				Debug.Log(playerEquipmnet);
-				Debug.Log(thisEquipment);
-
-				if (playerEquipmnet == thisEquipment)
-				{
-					Debug.Log("Is equipped Item..!");
-
-					UseOutline(true);
-
-					if (!GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.ContainsKey(invenData.type.ToString()))
-					{
-						GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Add(invenData.type.ToString(), this);
-					}
+					//UseOutline(false);
 				}
 
 				else
 				{
-					Debug.Log("Not equippeded");
+					string playerEquipmnet = string.Empty;
 
-					UseOutline(false);
+					if (LocalData.gameData.equipment.ContainsKey(invenData.type))
+					{
+						playerEquipmnet = LocalData.gameData.equipment[invenData.type].name + "_" + LocalData.gameData.equipment[invenData.type].index;
+					}
+
+					string thisEquipment = invenData.nameIndex + "_" + invenData.index;
+
+					if (playerEquipmnet == thisEquipment)
+					{
+						//UseOutline(true);
+
+						//if (!GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.ContainsKey(invenData.type.ToString()))
+						//{
+						//	GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Add(invenData.type.ToString(), this);
+						//}
+					}
+
+					else
+					{
+						//UseOutline(false);
+					}
 				}
 			}
 		}
@@ -99,83 +100,56 @@ public class RowCellView_InvenItem : RowCellView
 
 	private void OnClick_ChangeEquipment()
 	{
-		if (invenItemData.name == "empty")
+		if (invenItemData.isRide)
 		{
-			if (GameManager.UI.FetchPanel<Panel_Equipment>().category == EquipmentCategoryType.All)
-			{
-				Scene.main.equipmentManager.ClearEquipmentAll();
+			Scene.main.rideManager.Ride();
+			Scene.main.rideManager.ChangeRide(invenItemData.name, invenItemData.index);
 
-				GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(true);
-			}
-
-			else
-			{
-				string category = GameManager.UI.FetchPanel<Panel_Equipment>().category.ToString();
-
-				Scene.main.equipmentManager.ClearEquipment(Util.String2Enum<EquipmentType>(category));
-
-				GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(false);
-			}
+			GameManager.UI.FetchPanel<Panel_Equipment>().SetPlayerEquipSlot("Horse", invenItemData.thumbnail);
 		}
 
 		else
 		{
-			if (GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.ContainsKey(invenItemData.type.ToString()))
+			if (invenItemData.name == "empty")
 			{
-				GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem[invenItemData.type.ToString()].UseOutline(false);
+				Scene.main.equipmentManager.spumPrefabs = Scene.main.playerActor.GetComponent<SPUM_Prefabs>();
 
-				GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Remove(invenItemData.type.ToString());
+				if (GameManager.UI.FetchPanel<Panel_Equipment>().category == EquipmentCategoryType.All)
+				{
+					Scene.main.equipmentManager.ClearEquipmentAll();
+
+					GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(true);
+
+					Scene.main.rideManager.ClearEquipmentAll();
+					Scene.main.rideManager.RideOff();
+				}
+
+				else
+				{
+					string category = GameManager.UI.FetchPanel<Panel_Equipment>().category.ToString();
+
+					Scene.main.equipmentManager.ClearEquipment(Util.String2Enum<EquipmentType>(category));
+
+					GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(false);
+				}
 			}
 
-			UseOutline(true);
+			Scene.main.equipmentManager.ChangeEquipment(new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index), true);
 
-			GameManager.UI.FetchPanel<Panel_Equipment>().selectedItem.Add(invenItemData.type.ToString(), this);
+			GameManager.UI.FetchPanel<Panel_Equipment>().SetPlayerEquipSlot(invenItemData.type.ToString(), invenItemData.thumbnail);
 		}
 
-		Scene.main.equipmentManager.ChangeEquipment(new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index), true);
 
-		GameManager.UI.FetchPanel<Panel_Equipment>().SetPlayerEquipSlot(invenItemData.type.ToString(), invenItemData.thumbnail);
+		if(Scene.main.rideManager.isRide)
+		{
+			Scene.main.equipmentManager.spumPrefabs = Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>();
+		}
 
+		else
+		{
+			Scene.main.equipmentManager.spumPrefabs = Scene.main.playerActor.GetComponent<SPUM_Prefabs>();
+		}
 
-		//if (invenItemData.isRide)
-		//{
-		//	Scene.main.rideController.Init(invenItemData.nameIndex, invenItemData.index);
-		//}
-
-		//else
-		//{
-		//	var equipment = new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index);
-
-		//	Scene.main.equipmentManager.PreviewEquipment(equipment, invenItemData.thumbnail);
-
-		//	GameManager.UI.FetchPanel<Panel_Equipment>().SetEquippedThumbnail(invenItemData.type, invenItemData.thumbnail);
-		//	GameManager.UI.FetchPanel<Panel_Equipment>().isChanged = true;
-
-		//	if (LocalData.gameData.equipment.ContainsKey(invenItemData.type))
-		//	{
-		//		var type = LocalData.gameData.equipment[invenItemData.type].type;
-		//		var nameIndex = LocalData.gameData.equipment[invenItemData.type].name;
-		//		var index = LocalData.gameData.equipment[invenItemData.type].index;
-		//		var thumbnail = LocalData.gameData.equipment[invenItemData.type].path.Replace("Assets/Resources/", "").Replace(".png", "");
-
-		//		LocalData.gameData.equipment[invenItemData.type].type = invenItemData.type;
-		//		LocalData.gameData.equipment[invenItemData.type].name = invenItemData.nameIndex;
-		//		LocalData.gameData.equipment[invenItemData.type].index = invenItemData.index;
-		//		LocalData.gameData.equipment[invenItemData.type].path = invenItemData.thumbnail;
-
-		//		invenItemData.type = type;
-		//		invenItemData.nameIndex = nameIndex;
-		//		invenItemData.index = index;
-		//		invenItemData.thumbnail = thumbnail;
-
-		//		img_Thumnail.sprite = Resources.Load<Sprite>(invenItemData.thumbnail);
-
-		//		Scene.main.equipmentManager.previewSprite.Remove((int)invenItemData.type);
-		//	}
-		//	else
-		//	{
-
-		//	}
-		//}
+		Scene.main.SaveData();
 	}
 }

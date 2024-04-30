@@ -14,6 +14,20 @@ public class Panel_Shop : Panel_Base
 	Button btn_Resource;
 
 	TMP_Text current;
+	TMP_Text txtmp_Message;
+
+	private void OnDisable()
+	{
+		if (!isInitialized) return;
+
+		var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
+
+		Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
+		Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+		Scene.main.navigator.transform.SetAsLastSibling();
+
+		isInitialized = true;
+	}
 
 	protected override void Awake()
 	{
@@ -25,11 +39,15 @@ public class Panel_Shop : Panel_Base
 
 		btn_Skin = GetUI_Button(nameof(btn_Skin), OnClick_BuySkin, useAnimation:true);
 		btn_Resource = GetUI_Button(nameof(btn_Resource), OnClick_BuyEquipment, useAnimation:true);
+		txtmp_Message = GetUI_TMPText(nameof(txtmp_Message), "hmm... how about purchasing some items for your character..?");
+		txtmp_Message.UsePingPong();
 	}
 
 	private void Start()
 	{
 		OnClick_BuySkin();
+
+		txtmp_Message.StartPingPong();
 	}
 
 	protected override void OnClick_Back()

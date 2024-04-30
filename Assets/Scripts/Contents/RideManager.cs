@@ -1,14 +1,13 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 public class RideManager : MonoBehaviour
 {
-	[Header("Horse")]
-	public string rideName = "Horse";
-	public int index = 2;
-
 	SPUM_SpriteList playerSpriteList;
 	SPUM_SpriteList rideSpriteList;
+
+	public bool isRide = false;
 
 	private void Start()
 	{
@@ -19,42 +18,20 @@ public class RideManager : MonoBehaviour
 		Scene.main.playerHorseActor.SetActive(false);
 	}
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.A))
-		{
-			Ride();
-		}
-
-		if (Input.GetKeyDown(KeyCode.S))
-		{
-			RideOff();
-		}
-
-		if (Input.GetKeyDown(KeyCode.D))
-		{
-			Debug.Log("Change Ride");
-
-			ChangeRide("Horse", 2);
-		}
-	}
-
-	public void ChangeRide(string name, int index)
+	public void ChangeRide(string rideName, int rideIndex)
 	{
 		Scene.main.playerActor.gameObject.SetActive(false);
 
-		var path = name + "" + index;
+		var path = rideName + "" + rideIndex;
 
 		SetRide($"Assets/SPUM/SPUM_Sprites/RideSource/{path}/{path}.png");
 		SetRideBody($"SPUM/SPUM_Sprites/RideSource/{path}");
 
-		LocalData.gameData.ride = new Ride { name = name, index = index, };
+		LocalData.gameData.ride = new Ride { name = rideName, index = rideIndex, };
 	}
 
 	public void Ride()
 	{
-		PoolManager.Spawn("Puff", Scene.main.playerActor.transform.position + Vector3.up * .5f, Quaternion.identity);
-
 		rideSpriteList._hairListString = playerSpriteList._hairListString;
 		rideSpriteList._clothListString = playerSpriteList._clothListString;
 		rideSpriteList._pantListString = playerSpriteList._pantListString;
@@ -67,7 +44,11 @@ public class RideManager : MonoBehaviour
 		Scene.main.playerHorseActor.SetActive(true);
 		Scene.main.CameraUp();
 
-		LocalData.gameData.ride = new Ride { name = name, index = index, };
+		LocalData.gameData.ride = new Ride { name = "Horse", index = 1, };
+
+		GameManager.UI.FetchPanel<Panel_Equipment>().SetRideAbility(51, 8);
+
+		isRide = true;
 	}
 
 	public void RideOff()
@@ -81,6 +62,10 @@ public class RideManager : MonoBehaviour
 		LocalData.gameData.ride.index = 0;
 
 		Scene.main.CameraDown();
+
+		GameManager.UI.FetchPanel<Panel_Equipment>().SetRideAbility(1, 5);
+
+		isRide = false;
 	}
 
 
@@ -100,6 +85,26 @@ public class RideManager : MonoBehaviour
 		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseString = name;
 
 		Scene.main.playerHorseActor.SetActive(true);
+	}
+
+	public void ClearEquipmentAll( )
+	{
+		ClearList(rideSpriteList._hairListString);
+		ClearList(rideSpriteList._clothListString);
+		ClearList(rideSpriteList._armorListString);
+		ClearList(rideSpriteList._pantListString);
+		ClearList(rideSpriteList._weaponListString);
+		ClearList(rideSpriteList._backListString);
+
+		rideSpriteList.ResyncData();
+	}
+
+	public static void ClearList(List<string> list)
+	{
+		for (int i = 0; i < list.Count; i++)
+		{
+			list[i] = string.Empty;
+		}
 	}
 
 	public void SetRideBody(string name)

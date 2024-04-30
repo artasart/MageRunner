@@ -10,6 +10,8 @@ public class EquipmentController : MonoBehaviour
 
 	bool isInit = false;
 
+	public Dictionary<string, int> monsters = new Dictionary<string, int>();
+
 	private void OnEnable()
 	{
 		if (isInit) return;
@@ -22,11 +24,37 @@ public class EquipmentController : MonoBehaviour
 	private void Awake()
 	{
 		spumPrefabs = this.GetComponent<SPUM_Prefabs>();
+
+		monsters = new Dictionary<string, int> { { "Orc", 4 }, { "Skeleton", 1 }, { "Devil", 1 } };
+	}
+
+	public void ChangeSkin(string name, int index)
+	{
+		Object[] sprites = Resources.LoadAll($"SPUM/SPUM_Sprites/BodySource/Species/{name}/{name + "_" + index}", typeof(Sprite));
+
+		spumPrefabs._spriteOBj._bodyList[0].sprite = (Sprite)sprites[5];
+		spumPrefabs._spriteOBj._bodyList[1].sprite = (Sprite)sprites[2];
+		spumPrefabs._spriteOBj._bodyList[2].sprite = (Sprite)sprites[0];
+		spumPrefabs._spriteOBj._bodyList[3].sprite = (Sprite)sprites[1];
+		spumPrefabs._spriteOBj._bodyList[4].sprite = (Sprite)sprites[3];
+		spumPrefabs._spriteOBj._bodyList[5].sprite = (Sprite)sprites[4];
+	}
+
+	public void ChangeRandomSkin()
+	{
+		var element = monsters.OrderBy(x => UnityEngine.Random.value).First();
+
+		var name = element.Key;
+		var index = UnityEngine.Random.Range(1, element.Value + 1);
+
+		ChangeSkin(name, index);
 	}
 
 	public void RefreshEquipment()
 	{
 		ClearEquipmentAll();
+
+		ChangeRandomSkin();
 
 		//GetRandomEquipmentType(EquipmentType.Hair);
 		//GetRandomEquipmentType(EquipmentType.FaceHair);

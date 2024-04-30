@@ -9,6 +9,7 @@ public class Actor : MonoBehaviour
 	public int damage = 100;
 	public int mana = 100;
 	public bool isDead = false;
+	public int manaTotal;
 
 	protected int healthOrigin;
 
@@ -20,6 +21,8 @@ public class Actor : MonoBehaviour
 		healthOrigin = health;
 
 		animator = this.transform.Search("UnitRoot").GetComponent<Animator>();
+
+		manaTotal = mana;
 	}
 
 	public virtual void Attack() { }

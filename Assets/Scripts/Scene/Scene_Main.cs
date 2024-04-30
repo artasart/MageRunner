@@ -34,10 +34,16 @@ public class Scene_Main : SceneLogic
 
 	protected override void OnDestroy()
 	{
-
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
 	}
 
 	private void OnDisable()
+	{
+		LocalData.gameData.equipment = equipmentManager.equipments;
+	}
+
+	public void SaveData()
 	{
 		LocalData.gameData.equipment = equipmentManager.equipments;
 
@@ -103,6 +109,7 @@ public class Scene_Main : SceneLogic
 		if (!string.IsNullOrEmpty(LocalData.gameData.ride.name))
 		{
 			rideManager.Ride();
+			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
 		}
 	}
 
@@ -197,6 +204,13 @@ public class Scene_Main : SceneLogic
 		{
 			LocalData.gameData.energy = LocalData.gameData.energyTotal;
 		}
+	}
+
+	public void AddGold(int amount)
+	{
+		LocalData.gameData.gold += amount;
+
+		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
 	}
 
 	#endregion

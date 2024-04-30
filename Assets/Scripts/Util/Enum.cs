@@ -26,6 +26,7 @@ public static class Enums
 		Horse = 5,
 		Ring = 6,
 		Pet = 7,
+		Cloth = 8,
 	}
 	public enum EquipmentCategoryType
 	{
@@ -38,6 +39,7 @@ public static class Enums
 		Horse = 5,
 		Ring = 6,
 		Pet = 7,
+		Cloth = 8,
 	}
 
 	public enum GameState

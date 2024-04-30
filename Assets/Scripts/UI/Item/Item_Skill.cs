@@ -52,7 +52,7 @@ public class Item_Skill : Item_Base
 
 		canvasGroup.alpha = 1f;
 
-		while (time >= 0 && img_CoolTime != null)
+		while (time >= 0)
 		{
 			yield return Timing.WaitUntilTrue(() => Scene.game.gameState == GameState.Playing);
 
@@ -62,6 +62,8 @@ public class Item_Skill : Item_Base
 			else txtmp_SkillTime.text = time.ToString("N0");
 
 			time -= Time.deltaTime;
+
+			Debug.Log(time);
 
 			yield return Timing.WaitForOneFrame;
 		}

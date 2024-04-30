@@ -39,9 +39,7 @@ public class ToastPopup : UI_Base
 	{
 		if (isClicked) return;
 
-		callback_Click?.Invoke();
-
-		Debug.Log("Toast CLicked");
+		GameManager.Scene.ClickToastPopup();
 
 		HideRewardAd();
 
@@ -63,7 +61,7 @@ public class ToastPopup : UI_Base
 
 		btn_CloseReward.gameObject.SetActive(isCancel);
 
-		GameManager.UI.Move(this.transform.gameObject, new Vector3(0f, -110f, 0f));
+		GameManager.UI.Move(this.transform.gameObject, new Vector3(0f, -80f, 0f));
 	}
 
 	public void HideRewardAd(bool isInstant = false)

@@ -32,6 +32,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public Action callback_ShowToast;
 	public Action callback_CloseToast;
+	public Action callback_ClickToast;
 
 	#endregion
 
@@ -332,6 +333,11 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 		ShowToastPopup($"{message}", false, () => CancelInvoke(nameof(CloseToastPopup)));
 
 		Invoke(nameof(CloseToastPopup), 2f);
+	}
+
+	public void ClickToastPopup()
+	{
+		callback_ClickToast?.Invoke();
 	}
 
 	#endregion

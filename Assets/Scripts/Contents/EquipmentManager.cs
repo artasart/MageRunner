@@ -8,7 +8,7 @@ public class EquipmentManager : MonoBehaviour
 
 	public SerializableDictionary<EquipmentType, Equipment> equipments { get; private set; }
 
-	SPUM_Prefabs spumPrefabs;
+	public SPUM_Prefabs spumPrefabs { get; set; }
 
 	#endregion
 
@@ -27,11 +27,9 @@ public class EquipmentManager : MonoBehaviour
 			spumPrefabs = Scene.game.playerActor.GetComponent<SPUM_Prefabs>();
 		}
 
-		equipments = new SerializableDictionary<EquipmentType, Equipment>();
+		equipments = LocalData.gameData.equipment;
 
-		ClearEquipmentAll(true);
-
-		foreach (var item in LocalData.gameData.equipment)
+		foreach (var item in equipments)
 		{
 			if (item.Value.name == string.Empty) continue;
 
@@ -152,8 +150,6 @@ public class EquipmentManager : MonoBehaviour
 
 	public void ClearEquipmentAll(bool resync = false)
 	{
-		DebugManager.Log("Clear Equipment All", DebugColor.Game);
-
 		equipments.Clear();
 
 		for (int i = 0; i < Util.GetEnumLength<EquipmentType>(); i++)

@@ -21,6 +21,12 @@ public class Scene_Game : SceneLogic
 	public int scoreMultiplier = 1;
 	public int moveMultiplier = 3;
 
+	[Header("Ride")]
+	public bool isRide = false;
+
+	public GameObject actor;
+	public GameObject rideActor;
+
 	[Header("Skill")]
 	public SerializableDictionary<string, ActorSkill> actorSkills = new SerializableDictionary<string, ActorSkill>();
 
@@ -73,18 +79,37 @@ public class Scene_Game : SceneLogic
 		LoadGameData();
 		MakePool();
 
-		footStepController = FindObjectOfType<FootStepController>();
 		levelController = FindObjectOfType<LevelController>();
 		parallexScrollController = FindObjectsOfType<ParallexScrollController>();
 		cameraShake = FindObjectOfType<CameraShake3D>();
 		equipmentManager = FindObjectOfType<EquipmentManager>();
-
 		virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
-		playerActor = FindObjectOfType<PlayerActor>();
-		playerModel = playerActor.transform.GetChild(0).gameObject;
-		playerModel.SetActive(false);
+		if (LocalData.gameData.ride.name != string.Empty)
+		{
+			actor.SetActive(false);
+			playerActor = rideActor.GetComponent<PlayerActor>();
+			playerModel = playerActor.transform.GetChild(0).gameObject;
+			playerModel.SetActive(false);
+			isRide = true;
+			levelController.moveSpeed = 6f;
+
+			footStepController = rideActor.GetComponent<FootStepController>();
+		}
+
+		else
+		{
+			rideActor.SetActive(false);
+			playerActor = actor.GetComponent<PlayerActor>();
+			playerModel = playerActor.transform.GetChild(0).gameObject;
+			playerModel.SetActive(false);
+			isRide = false;
+
+			footStepController = actor.GetComponent<FootStepController>();
+		}
+
+		SetCameraTarget(playerActor.transform);
 	}
 
 	private void Start()
@@ -108,11 +133,13 @@ public class Scene_Game : SceneLogic
 	{
 		DebugManager.Log("GameStart", DebugColor.Game);
 
-		Util.Zoom(virtualCamera, 3f, .025f);
+		var target = isRide ? 3.5f : 3f;
+
+		Util.Zoom(virtualCamera, target, .025f);
 
 		MoveEnviroment();
-		
-		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == 3f);
+
+		yield return Timing.WaitUntilTrue(() => virtualCamera.m_Lens.OrthographicSize == target);
 
 		equipmentManager.EquipAll(LocalData.gameData.equipment);
 
@@ -123,6 +150,7 @@ public class Scene_Game : SceneLogic
 		yield return Timing.WaitForSeconds(.1f);
 
 		playerModel.SetActive(true);
+		playerActor.GetComponent<RideController>().Ride();
 
 		footStepController.StartWalk();
 		playerActor.UpdateAnimator(1f);
@@ -131,6 +159,10 @@ public class Scene_Game : SceneLogic
 		StartDifficulty();
 
 		GameManager.UI.StartPanel<Panel_HUD>();
+
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(Scene.game.playerActor.manaTotal);
+
+		if (isRide) playerActor.AddDamage(50);
 	}
 
 	public void Replay()
@@ -148,6 +180,9 @@ public class Scene_Game : SceneLogic
 		expMultiplier = 1;
 		coolTimePercentage = 0;
 		playerActor.mana = 100;
+		playerActor.manaTotal = 100;
+
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(playerActor.mana);
 
 		actorSkills = new SerializableDictionary<string, ActorSkill>();
 
@@ -170,7 +205,9 @@ public class Scene_Game : SceneLogic
 		levelController.Refresh();
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
-		Util.Zoom(virtualCamera, 3f, .025f);
+
+		var target = isRide ? 3.5f : 3f;
+		Util.Zoom(virtualCamera, target, .025f);
 
 		MoveEnviroment();
 
@@ -187,12 +224,16 @@ public class Scene_Game : SceneLogic
 
 		playerActor.isDead = false;
 
+		if (isRide) playerActor.AddDamage(50);
+
 		GameManager.UI.FetchPanel<Panel_HUD>().Refresh();
 	}
 
 	public void GameOver()
 	{
 		DebugManager.Log("Game Over", DebugColor.Game);
+
+		Util.KillCoroutine(nameof(Co_UseThunder));
 
 		Invoke(nameof(ShowGameResult), .5f);
 	}
@@ -319,7 +360,7 @@ public class Scene_Game : SceneLogic
 		virtualCamera.LookAt = target;
 	}
 
-	public void ZoomCamera(float zoomValue) => Util.Zoom(virtualCamera, zoomValue, .05f);
+	public void ZoomCamera(float zoomValue, float zoomSpeed = .05f) => Util.Zoom(virtualCamera, zoomValue, zoomSpeed);
 
 	public void SetVirtualCamBody(Vector3 body) => Util.RunCoroutine(Co_SetVirtualCamBody(body), nameof(Co_SetVirtualCamBody), CoroutineTag.Content);
 
@@ -366,8 +407,6 @@ public class Scene_Game : SceneLogic
 
 		else
 		{
-			Debug.Log("Player Level Up !!! : " + LocalData.gameData.level);
-
 			LocalData.gameData.exp += exp;
 		}
 	}
@@ -485,19 +524,25 @@ public class Scene_Game : SceneLogic
 
 				else
 				{
-					if(!closestMonster.isDead)
+					if (!closestMonster.isDead)
 					{
-						Scene.game.playerActor.mana -= thunderMana;
+						playerActor.mana -= thunderMana;
 
-						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+						var isSkillUsed = false;
+
+						GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(playerActor.mana);
+
+						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, thunderCoolTime, action: () => isSkillUsed = true);
 
 						closestMonster.Die();
 
 						PoolManager.Spawn("Thunder", Vector3.zero, Quaternion.identity, closestMonster.transform);
-						
+
 						GameManager.Sound.PlaySound("Spawn", .5f);
 
-						yield return Timing.WaitForSeconds(thunderCoolTime - (thunderCoolTime * (Scene.game.coolTimePercentage * 0.01f)));
+						yield return Timing.WaitUntilTrue(() => isSkillUsed);
+
+						Debug.Log(isSkillUsed);
 					}
 				}
 
@@ -505,6 +550,7 @@ public class Scene_Game : SceneLogic
 			}
 		}
 	}
+
 
 	public int thunderCoolTime = 10;
 	public int thunderMana = 10;

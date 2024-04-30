@@ -17,6 +17,7 @@ public class Panel_HUD : Panel_Base
 
 	TMP_Text txtmp_Coin;
 	TMP_Text txtmp_Score;
+	TMP_Text txtmp_Mana;
 
 	Transform group_Skills;
 	Dictionary<Skills, Item_Skill> items_Skill = new Dictionary<Skills, Item_Skill>();
@@ -32,6 +33,7 @@ public class Panel_HUD : Panel_Base
 
 		txtmp_Coin = GetUI_TMPText(nameof(txtmp_Coin), "0");
 		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), "0");
+		txtmp_Mana = GetUI_TMPText(nameof(txtmp_Mana), "100/100");
 
 		btn_Left = GetUI_Button(nameof(btn_Left), OnClick_Left, useAnimation: true);
 		btn_Right = GetUI_Button(nameof(btn_Right), OnClick_Right, useAnimation: true);
@@ -155,6 +157,10 @@ public class Panel_HUD : Panel_Base
 
 			txtmp_Level.text = "Lv." + Scene.game.level.ToString();
 
+			Scene.game.playerActor.manaTotal += 10;
+			Scene.game.playerActor.mana = Scene.game.playerActor.manaTotal;
+			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(Scene.game.playerActor.mana);
+
 			if (Scene.game.level == 30) slider_Level.value = slider_Level.maxValue;
 
 			Scene.game.playerActor.AddDamage(5);
@@ -204,6 +210,13 @@ public class Panel_HUD : Panel_Base
 	List<Skills> slotSet = new List<Skills>();
 
 	public Dictionary<Skills, bool> isUsed = new Dictionary<Skills, bool>();
+
+	public void SetManaUI(int amount)
+	{
+		Debug.Log("Set Mana UI");
+
+		txtmp_Mana.text = $"<color=#DCDCDC>{amount}</color>/{Scene.game.playerActor.manaTotal}";
+	}
 }
 
 
