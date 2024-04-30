@@ -154,16 +154,19 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		openPanels.Clear();
 		openPopups.Clear();
 		ignorePanels.Clear();
+		splashs.Clear();
 
 		group_MasterCanvas = GameObject.Find("go_Canvas");
 
 		group_Panel = GameObject.Find(nameof(group_Panel));
 		group_Popup = GameObject.Find(nameof(group_Popup));
+		group_Splash = GameObject.Find(nameof(group_Splash));
 
 		popup_LastStack = null;
 
 		CacheUI(group_Panel, panels);
 		CacheUI(group_Popup, popups);
+		CacheUI(group_Splash, splashs);
 	}
 
 	public void StackLastPopup<T>()
@@ -421,8 +424,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	public T FetchSplash<T>() where T : Splash_Base
 	{
-		if (!splashs.ContainsKey(typeof(T).ToString())) return null;
-
+		if (!splashs.ContainsKey(typeof(T).ToString()))		return null;
+		
 		return splashs[typeof(T).ToString()].GetComponent<T>();
 	}
 

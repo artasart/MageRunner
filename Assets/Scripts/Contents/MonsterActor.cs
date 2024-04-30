@@ -211,8 +211,6 @@ public class MonsterActor : Actor
 			GainEquipment(EquipmentType.Armor, spumPrefabs._spriteOBj._armorListString);
 		}
 
-		DebugManager.ClearLog(Scene.game.bags.Count);
-
 		//GainEquipment(EquipmentType.Pant, spumPrefabs._spriteOBj._pantListString);
 	}
 

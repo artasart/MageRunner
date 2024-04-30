@@ -19,6 +19,6 @@ public class SceneLogic : MonoBehaviour
 
 		Screen.orientation = ScreenOrientation.LandscapeLeft;
 
-		//Screen.SetResolution(1792, 828, false);
+		Screen.SetResolution(1792, 828, false);
 	}
 }
