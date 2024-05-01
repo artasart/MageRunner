@@ -26,7 +26,7 @@ public class RowCellView_ShopItem : RowCellView
 
 	private void Awake()
 	{
-		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_Buy, true);
+		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_Buy, false, true);
 		img_Thumbnail = Util.FindImage(this.gameObject, nameof(img_Thumbnail));
 		img_Outline = Util.FindImage(this.gameObject, nameof(img_Outline));
 		img_Buy = Util.FindImage(this.gameObject, nameof(img_Buy));
@@ -45,15 +45,22 @@ public class RowCellView_ShopItem : RowCellView
 
 	private void OnClick_Buy()
 	{
-		if(shopItemData.name == "Energy")
+		if (shopItemData.name == "Energy")
 		{
-			if(LocalData.gameData.gold < shopItemData.price)
+			if (LocalData.gameData.gold < shopItemData.price)
 			{
 				this.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+				var rect = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.Search("btn_Coin").GetComponent<RectTransform>();
+				rect.DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+				GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
 				return;
 			}
 		}
+		
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 

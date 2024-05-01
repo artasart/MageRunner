@@ -21,7 +21,7 @@ public static class JsonManager<T>
 		// 데이터를 파일에 저장합니다.
 		File.WriteAllText(filePath, json);
 
-		Debug.Log($"{fileName} saved safely!");
+		DebugManager.Log($"{fileName} saved safely!", DebugColor.Data);
 	}
 
 	public static T LoadData(string fileName)

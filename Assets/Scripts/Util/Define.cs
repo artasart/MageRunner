@@ -53,6 +53,8 @@ public static class Define
 
 	public const string SOUND_CLOSE = "Warnning";
 	public const string SOUND_OPEN = "Warnning";
+	public const string SOUND_DENIED = "Denied";
+	public const string SOUND_TOAST = "Toast";
 
 	public const string	JSON_MASTERDATA = "MasterData.json";
 	public const string	JSON_LEVELDATA = "LevelData.json";

@@ -8,11 +8,6 @@ public class Panel_Main : Panel_Base
 	Button btn_PlayGame;
 	Button btn_Settings;
 	Button btn_Inventory;
-
-	//Button btn_Mail;
-	//Button btn_Rank;
-	//Button btn_DayCheck;
-
 	Button btn_Shop;
 
 	Image img_New;
@@ -23,7 +18,6 @@ public class Panel_Main : Panel_Base
 
 	TMP_Text txtmp_Energy;
 	TMP_Text txtmp_Message;
-
 
 	Button btn_BuyGold;
 	Button btn_BuyEnergy;
@@ -42,11 +36,10 @@ public class Panel_Main : Panel_Base
 		txtmp_Energy = GetUI_TMPText(nameof(txtmp_Energy), string.Empty);
 
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
+		btn_PlayGame.onClick.RemoveListener(OpenSound);
+
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
-		//btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
-		//btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
-		//btn_DayCheck = GetUI_Button(nameof(btn_DayCheck), OnClick_DayCheck, useAnimation: true);
 
 		btn_BuyGold = GetUI_Button(nameof(btn_BuyGold), OnClick_BuyGold, useAnimation: true);
 		btn_BuyEnergy = GetUI_Button(nameof(btn_BuyEnergy), OnClick_BuyEnergy, useAnimation: true);
@@ -162,8 +155,12 @@ public class Panel_Main : Panel_Base
 			btn_Energy.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 			btn_PlayGame.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
+			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
 			return;
 		}
+
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		btn_PlayGame.interactable = false;
 

@@ -28,6 +28,8 @@ public class Popup_GameOver : Popup_Base
 
 		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
 		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
+		btn_Retry.onClick.RemoveListener(OpenSound);
+
 		btn_Home = GetUI_Button(nameof(btn_Home), OnClick_Home, useAnimation: true);
 
 		group_Menu_Horizontal = this.transform.Search(nameof(group_Menu_Horizontal));
@@ -55,6 +57,8 @@ public class Popup_GameOver : Popup_Base
 	{
 		if (LocalData.gameData.energy <= 0)
 		{
+			GameManager.Sound.PlayBGM(Define.SOUND_DENIED);
+
 			btn_Retry.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
 			GameManager.Scene.ShowToastAndDisappear("Go home and get energy..!");
@@ -63,6 +67,8 @@ public class Popup_GameOver : Popup_Base
 
 			return;
 		}
+
+		GameManager.Sound.PlayBGM(Define.SOUND_OPEN);
 
 		Scene.game.Replay();
 	}

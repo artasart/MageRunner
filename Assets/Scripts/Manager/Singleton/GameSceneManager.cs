@@ -308,6 +308,8 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public void ShowToastPopup(string message, bool isCancel = false, Action click = null, Action close = null)
 	{
+		GameManager.Sound.PlaySound(Define.SOUND_TOAST);
+
 		go_Toast.GetComponent<RectTransform>().anchoredPosition = Vector2.up * 80f;
 		go_Toast.gameObject.SetActive(true);
 		go_Toast.GetComponent<CanvasGroup>().alpha = 1f;

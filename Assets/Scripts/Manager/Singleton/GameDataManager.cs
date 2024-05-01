@@ -26,7 +26,7 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 				if (Equals(server, localVersion))
 				{
-					DebugManager.Log("최신 버전 입니다.", DebugColor.Data);
+					DebugManager.Log("Latest Version..!", DebugColor.Data);
 					isLatestVersion = true;
 					break;
 				}

@@ -19,6 +19,12 @@ public class Panel_Inventory : Panel_Base
 		btn_Equipment = GetUI_Button(nameof(btn_Equipment), OnClick_Equipment, useAnimation:true);
 		btn_Resources = GetUI_Button(nameof(btn_Resources), OnClick_Resources, useAnimation: true);
 		btn_Craft = GetUI_Button(nameof(btn_Craft), OnClick_Craft, useAnimation: true);
+
+		btn_Resources.onClick.RemoveListener(OpenSound);
+		btn_Craft.onClick.RemoveListener(OpenSound);
+		
+		btn_Resources.onClick.AddListener(() => GameManager.Sound.PlaySound("Denied"));
+		btn_Craft.onClick.AddListener(() => GameManager.Sound.PlaySound("Denied"));
 	}
 
 	private void OnClick_Equipment()

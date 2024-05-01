@@ -631,9 +631,9 @@ public class GameUIManager : SingletonManager<GameUIManager>
 			yield return Timing.WaitForOneFrame;
 		}
 
-		_current.alpha = _target;
+		if (_current != null) _current.alpha = _target;
 
-		if (_target == 1f) _current.blocksRaycasts = true;
+		if (_target == 1f && _current == null) _current.blocksRaycasts = true;
 
 		_end?.Invoke();
 	}
