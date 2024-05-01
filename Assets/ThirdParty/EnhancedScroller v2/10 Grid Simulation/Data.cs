@@ -23,7 +23,9 @@ namespace EnhancedScrollerDemos.GridSimulation
 		public int price;
 
 		public int spaceCount;
+
 		public bool isRide;
+		public Ride ride = new Ride("", 0);
 
 		public InvenItemData(string name)
 		{

@@ -238,4 +238,11 @@ public class Panel_Main : Panel_Base
 
 		txtmp_Energy.text = $"{amount}/{LocalData.gameData.energyTotal}";
 	}
+
+	public void AddEnergy(int amount)
+	{
+		LocalData.gameData.energy += amount;
+
+		SetEnergy();
+	}
 }

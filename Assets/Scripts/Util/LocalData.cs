@@ -41,7 +41,7 @@ public static class LocalData
 	public static void InitGameData()
 	{
 		gameData = new GameData();
-		gameData.ride = new Ride();
+		gameData.ride = new Ride("", 0);
 		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
 		gameData.bags = new SerializableDictionary<string, int>();
 		gameData.gold = 1000;
@@ -183,7 +183,7 @@ public class SkillEntity
 {
 	public string name;
 	public string mana;
-	public string cooltime;
+	public float cooltime;
 }
 
 
@@ -213,6 +213,12 @@ public class Ride
 {
 	public string name;
 	public int index;
+
+	public Ride(string name, int index)
+	{
+		this.name = name;
+		this.index = index;
+	}
 }
 
 [Serializable]

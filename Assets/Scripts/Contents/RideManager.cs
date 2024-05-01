@@ -27,7 +27,7 @@ public class RideManager : MonoBehaviour
 		SetRide($"Assets/SPUM/SPUM_Sprites/RideSource/{path}/{path}.png");
 		SetRideBody($"SPUM/SPUM_Sprites/RideSource/{path}");
 
-		LocalData.gameData.ride = new Ride { name = rideName, index = rideIndex, };
+		LocalData.gameData.ride = new Ride(rideName, rideIndex);
 	}
 
 	public void Ride()
@@ -44,7 +44,7 @@ public class RideManager : MonoBehaviour
 		Scene.main.playerHorseActor.SetActive(true);
 		Scene.main.CameraUp();
 
-		LocalData.gameData.ride = new Ride { name = "Horse", index = 1, };
+		LocalData.gameData.ride = new Ride("Horse", 1);
 
 		GameManager.UI.FetchPanel<Panel_Equipment>().SetRideAbility(51, 8);
 

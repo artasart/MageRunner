@@ -166,9 +166,9 @@ public class Panel_HUD : Panel_Base
 
 			txtmp_Level.text = "Lv." + Scene.game.level.ToString();
 
-			Scene.game.playerActor.manaTotal += 10;
 			Scene.game.playerActor.mana = Scene.game.playerActor.manaTotal;
-			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(Scene.game.playerActor.mana);
+
+			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 			if (Scene.game.level == 30) slider_Level.value = slider_Level.maxValue;
 
@@ -220,9 +220,9 @@ public class Panel_HUD : Panel_Base
 
 	public Dictionary<Skills, bool> isUsed = new Dictionary<Skills, bool>();
 
-	public void SetManaUI(int amount)
+	public void SetManaUI()
 	{
-		txtmp_Mana.text = $"<color=#DCDCDC>{amount}</color>/{Scene.game.playerActor.manaTotal}";
+		txtmp_Mana.text = $"<color=#DCDCDC>{Scene.game.playerActor.mana}</color>/{Scene.game.playerActor.manaTotal}";
 	}
 }
 

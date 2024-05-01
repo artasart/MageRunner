@@ -50,6 +50,7 @@ public class Item_Skill : Item_Base
 
 		img_CoolTime.fillAmount = 1f;
 
+		Util.KillCoroutine(canvasGroup.GetHashCode().ToString());
 		canvasGroup.alpha = 1f;
 
 		while (time >= 0)
@@ -62,6 +63,8 @@ public class Item_Skill : Item_Base
 			else txtmp_SkillTime.text = time.ToString("N0");
 
 			time -= Time.deltaTime;
+
+			Debug.Log(time);
 
 			yield return Timing.WaitForOneFrame;
 		}

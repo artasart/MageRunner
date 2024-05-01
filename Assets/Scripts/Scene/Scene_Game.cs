@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using MEC;
-using static Enums;
 using System;
 using System.Linq;
+using static Enums;
 
 public class Scene_Game : SceneLogic
 {
@@ -164,7 +164,8 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 
-		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(Scene.game.playerActor.manaTotal);
+		playerActor.mana = 100;
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		if (isRide) playerActor.AddDamage(50);
 	}
@@ -182,11 +183,13 @@ public class Scene_Game : SceneLogic
 		level = 1;
 		goldMultiplier = 1;
 		expMultiplier = 1;
-		coolTimePercentage = 0;
+		cooltimeMultiplier = 0;
 		playerActor.mana = 100;
 		playerActor.manaTotal = 100;
+		isThunderRunning = false;
+		isSkillUsed = false;
 
-		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(playerActor.mana);
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		actorSkills = new SerializableDictionary<string, ActorSkill>();
 
@@ -327,7 +330,7 @@ public class Scene_Game : SceneLogic
 	}
 
 	private void StartDifficulty() => Util.RunCoroutine(Co_StartDifficulty(), nameof(Co_StartDifficulty), CoroutineTag.Content);
-	
+
 	private IEnumerator<float> Co_StartDifficulty()
 	{
 		while (true)
@@ -344,7 +347,7 @@ public class Scene_Game : SceneLogic
 	public void StopDifficulty() => Util.KillCoroutine(nameof(Co_StartDifficulty));
 
 	private void StartScoreCount() => Util.RunCoroutine(Co_StartScoreCount(), nameof(Co_StartScoreCount), CoroutineTag.Content);
-	
+
 	private IEnumerator<float> Co_StartScoreCount()
 	{
 		while (true)
@@ -395,7 +398,7 @@ public class Scene_Game : SceneLogic
 	}
 
 	public void AddScore(int amount) => GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score += amount);
-	public void AddGold(int amount) =>	GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold += (amount * goldMultiplier));
+	public void AddGold(int amount) => GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold += (amount * goldMultiplier));
 
 	public void AddExp(int exp)
 	{
@@ -472,9 +475,13 @@ public class Scene_Game : SceneLogic
 
 		if (skill.name == Skills.Mana.ToString())
 		{
-			DebugManager.Log($"Mana Added : {playerActor.mana} -> {playerActor.mana + Convert.ToInt32(actorSkills[skill.name].value)}", DebugColor.Game);
+			playerActor.manaTotal += Convert.ToInt32(actorSkills[skill.name].value);
 
-			playerActor.AddMana(Convert.ToInt32(actorSkills[skill.name].value));
+			playerActor.mana = playerActor.manaTotal;
+
+			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
+
+			DebugManager.Log($"Mana Added : {playerActor.manaTotal}", DebugColor.Game);
 		}
 
 		if (skill.name == Skills.Speed.ToString())
@@ -486,10 +493,12 @@ public class Scene_Game : SceneLogic
 			levelController.moveSpeed += value;
 		}
 
-		//if (skill.name == Skills.CoolTime.ToString())
-		//{
-		//	coolTimePercentage = actorSkills[skill.name].level + 1 * 10;
-		//}
+		if (skill.name == Skills.CoolTime.ToString())
+		{
+			var cooltime = Util.ParseStringToIntArray(skill.value);
+
+			cooltimeMultiplier = cooltime[actorSkills[skill.name].level - 1];
+		}
 
 		if (skill.name == Skills.Thunder.ToString())
 		{
@@ -505,9 +514,15 @@ public class Scene_Game : SceneLogic
 	{
 		isThunderRunning = true;
 
+		var element = LocalData.masterData.skillEntity
+			.Where(skill => skill.name == Skills.Thunder.ToString())
+			.FirstOrDefault();
+
+		var thudnerMana = Util.ParseStringToIntArray(element.mana);
+
 		while (true)
 		{
-			yield return Timing.WaitForOneFrame;
+			Debug.Log("Checking..");
 
 			MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
 			MonsterActor closestMonster = null;
@@ -528,22 +543,24 @@ public class Scene_Game : SceneLogic
 
 			if (closestMonster != null)
 			{
-				if (thunderMana > Scene.game.playerActor.mana)
+				if (thudnerMana[actorSkills[Skills.Thunder.ToString()].level - 1] > playerActor.mana)
 				{
+					DebugManager.Log("Not enough mana.", DebugColor.Game);
 
+					yield return Timing.WaitUntilFalse(() => thudnerMana[actorSkills[Skills.Thunder.ToString()].level - 1] > playerActor.mana);
 				}
 
 				else
 				{
 					if (!closestMonster.isDead)
 					{
-						playerActor.mana -= thunderMana;
+						playerActor.mana -= thudnerMana[actorSkills[Skills.Thunder.ToString()].level - 1];
 
-						var isSkillUsed = false;
+						GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
-						GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(playerActor.mana);
+						isSkillUsed = false;
 
-						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, thunderCoolTime, action: () => isSkillUsed = true);
+						GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.Thunder, (element.cooltime - (element.cooltime * (cooltimeMultiplier * 0.01f))), action: () => isSkillUsed = true);
 
 						closestMonster.Die();
 
@@ -554,18 +571,14 @@ public class Scene_Game : SceneLogic
 						yield return Timing.WaitUntilTrue(() => isSkillUsed);
 					}
 				}
-
-				yield return Timing.WaitUntilTrue(() => Scene.game.playerActor.mana - thunderMana >= 0);
 			}
+
+			yield return Timing.WaitForOneFrame;
 		}
 	}
 
-
-	public int thunderCoolTime = 10;
-	public int thunderMana = 10;
-
-
-	public int coolTimePercentage = 0;
+	public bool isSkillUsed;
+	public int cooltimeMultiplier = 0;
 	public int goldMultiplier = 1;
 	public int expMultiplier = 1;
 

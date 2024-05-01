@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
@@ -56,10 +57,12 @@ public class Popup_GameOver : Popup_Base
 		{
 			btn_Retry.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
+			GameManager.Scene.ShowToastAndDisappear("Go home and get energy..!");
+
+			btn_Retry.interactable = false;
+
 			return;
 		}
-
-		btn_Reward.interactable = true;
 
 		Scene.game.Replay();
 	}

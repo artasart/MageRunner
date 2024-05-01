@@ -22,6 +22,8 @@ public class Splash_Congrates : Splash_Base
 
 	public void SetScore(int score)
 	{
+		txtmp_Score.text = string.Empty;
+
 		Util.AnimateText(txtmp_Score, score, 1f, .25f);
 	}
 }

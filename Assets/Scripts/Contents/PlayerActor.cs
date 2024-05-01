@@ -279,7 +279,8 @@ public class PlayerActor : Actor
 			Scene.game.levelController.moveSpeedMultiplier = Scene.game.moveMultiplier;
 
 			mana -= 50;
-			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(mana);
+
+			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 		});
 
 		rgbd2d.gravityScale = 0;
@@ -558,13 +559,6 @@ public class PlayerActor : Actor
 		health += amount;
 
 		hp.GetComponent<TMP_Text>().text = health.ToString();
-	}
-
-	public void AddMana(int amount)
-	{
-		mana = Mathf.Clamp(mana += amount, 0, manaTotal);
-
-		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(mana);
 	}
 
 	#endregion

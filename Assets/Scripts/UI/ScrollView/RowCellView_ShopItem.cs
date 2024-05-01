@@ -1,3 +1,4 @@
+using DG.Tweening;
 using EnhancedScrollerDemos.GridSimulation;
 using TMPro;
 using Unity.VisualScripting;
@@ -20,10 +21,15 @@ public class RowCellView_ShopItem : RowCellView
 	Transform group_Normal;
 	Transform group_Quantity;
 
+	Image img_Outline;
+	Image img_Buy;
+
 	private void Awake()
 	{
 		btn_Container = Util.FindButton(this.gameObject, nameof(btn_Container), OnClick_Buy, true);
 		img_Thumbnail = Util.FindImage(this.gameObject, nameof(img_Thumbnail));
+		img_Outline = Util.FindImage(this.gameObject, nameof(img_Outline));
+		img_Buy = Util.FindImage(this.gameObject, nameof(img_Buy));
 
 		txtmp_Name = Util.FindTMPText(this.gameObject, nameof(txtmp_Name));
 		txtmp_Title = Util.FindTMPText(this.gameObject, nameof(txtmp_Title));
@@ -39,10 +45,36 @@ public class RowCellView_ShopItem : RowCellView
 
 	private void OnClick_Buy()
 	{
+		if(shopItemData.name == "Energy")
+		{
+			if(LocalData.gameData.gold < shopItemData.price)
+			{
+				this.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+				return;
+			}
+		}
+
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
 		bool isAd = shopItemData.type == "ad";
-		var message = isAd ? "Get Item after wathching AD?" : $"Do you want to purchase with ${shopItemData.price} ?";
+
+		var priceTag = string.Empty;
+
+		if(!isAd)
+		{
+			if (shopItemData.type == "cash")
+			{
+				priceTag = $"{shopItemData.price}";
+			}
+
+			else
+			{
+				priceTag = $"{shopItemData.price} Gold";
+			}
+		}
+
+		var message = isAd ? "Get Item after wathching AD?" : $"Do you want to purchase with {priceTag} ?";
 		var amount = shopItemData.amount == 0 ? string.Empty : " x " + shopItemData.amount;
 
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(
@@ -145,6 +177,7 @@ public class RowCellView_ShopItem : RowCellView
 			itemData.price = 0;
 			itemData.spaceCount = 5;
 			itemData.isRide = true;
+			itemData.ride = new Ride("Horse", 1);
 
 			LocalData.invenData.invenItemData.Add(itemData);
 
@@ -162,6 +195,7 @@ public class RowCellView_ShopItem : RowCellView
 			itemData.price = 0;
 			itemData.spaceCount = 5;
 			itemData.isRide = true;
+			itemData.ride = new Ride("Blue Horse", 1);
 
 			LocalData.invenData.invenItemData.Add(itemData);
 
@@ -179,6 +213,7 @@ public class RowCellView_ShopItem : RowCellView
 			itemData.price = 0;
 			itemData.spaceCount = 5;
 			itemData.isRide = true;
+			itemData.ride = new Ride("Red Horse", 1);
 
 			LocalData.invenData.invenItemData.Add(itemData);
 
@@ -196,6 +231,7 @@ public class RowCellView_ShopItem : RowCellView
 			itemData.price = 0;
 			itemData.spaceCount = 5;
 			itemData.isRide = true;
+			itemData.ride = new Ride("Dark Horse", 1);
 
 			LocalData.invenData.invenItemData.Add(itemData);
 
@@ -207,6 +243,17 @@ public class RowCellView_ShopItem : RowCellView
 			DebugManager.Log($"Gold is added {shopItemData.amount}", DebugColor.Data);
 			Scene.main.AddGold(shopItemData.amount);
 		}
+
+		else if (name == "Energy")
+		{
+			DebugManager.Log($"Energy is added {shopItemData.amount}", DebugColor.Data);
+
+			LocalData.gameData.gold -= shopItemData.price;
+
+			GameManager.UI.FetchPanel<Panel_Main>().AddEnergy(5);
+		}
+
+		GameManager.UI.FetchPanel<Panel_Shop>().Refresh();
 	}
 
 
@@ -223,6 +270,18 @@ public class RowCellView_ShopItem : RowCellView
 		txtmp_Name.text = itemData.name;
 		txtmp_Title.text = itemData.name;
 		txtmp_Price.text = itemData.type == "cash" ? $"${itemData.price}" : "Watch AD";
+
+		img_Outline.color = Util.HexToRGB("#FFC700");
+		img_Buy.color = Util.HexToRGB("#FFC700");
+
+		if (itemData.type == "gold")
+		{
+			txtmp_Price.text = $"{itemData.price} Gold";
+
+			img_Outline.color = Util.HexToRGB("#DCDCDC");
+			img_Buy.color = Util.HexToRGB("#DCDCDC");
+		}
+
 		txtmp_Quantity.text = itemData.amount.ToString("N0");
 
 		img_Thumbnail.sprite = Resources.Load<Sprite>(itemData.thumbnailPath);

@@ -47,4 +47,11 @@ public static class Enums
 		Playing,
 		Paused
 	}
+
+	public enum ShopMenu
+	{
+		Equipment,
+		Horse,
+		Resources
+	}
 }
