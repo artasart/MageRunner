@@ -144,7 +144,7 @@ public class Panel_Equipment : Panel_Base
 
 					txtmp_SpaceAmount.text = $"{LocalData.invenData.amount}/{LocalData.invenData.totalAmount}";
 
-					GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
+					GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 				}
 
 				else

@@ -9,7 +9,7 @@ public class GameDataManager : SingletonManager<GameDataManager>
 
 	public void GetVersion(Action callback)
 	{
-		DebugManager.ClearLog("Get Version", DebugColor.Data);
+		DebugManager.Log("Get Version", DebugColor.Data);
 
 		string localVersion = PlayerPrefs.GetString("Version");
 		bool isLatestVersion = false;

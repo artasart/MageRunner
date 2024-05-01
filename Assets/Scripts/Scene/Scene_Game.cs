@@ -398,7 +398,7 @@ public class Scene_Game : SceneLogic
 	}
 
 	public void AddScore(int amount) => GameManager.UI.FetchPanel<Panel_HUD>().SetScoreUI(score += amount);
-	public void AddGold(int amount) => GameManager.UI.FetchPanel<Panel_HUD>().SetCoinUI(gold += (amount * goldMultiplier));
+	public void AddGold(int amount) => GameManager.UI.FetchPanel<Panel_HUD>().SetGoldUI(gold += (amount * goldMultiplier));
 
 	public void AddExp(int exp)
 	{

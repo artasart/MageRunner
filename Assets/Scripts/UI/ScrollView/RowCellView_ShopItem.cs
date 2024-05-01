@@ -250,6 +250,8 @@ public class RowCellView_ShopItem : RowCellView
 
 			LocalData.gameData.gold -= shopItemData.price;
 
+			GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
+
 			GameManager.UI.FetchPanel<Panel_Main>().AddEnergy(5);
 		}
 

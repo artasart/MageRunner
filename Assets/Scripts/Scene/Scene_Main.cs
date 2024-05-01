@@ -86,7 +86,7 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("artasart", LocalData.gameData.runnerTag);
-		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
+		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
 	}
@@ -210,7 +210,7 @@ public class Scene_Main : SceneLogic
 	{
 		LocalData.gameData.gold += amount;
 
-		GameManager.UI.FetchPanel<Panel_Main>().SetGold(LocalData.gameData.gold);
+		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 	}
 
 	#endregion

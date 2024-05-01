@@ -36,6 +36,7 @@ public class Scene_Logo : SceneLogic
 		yield return Timing.WaitForSeconds(.75f);
 
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
+		DebugManager.ClearLog(LocalData.masterData);
 
 		if (LocalData.masterData == null)
 		{

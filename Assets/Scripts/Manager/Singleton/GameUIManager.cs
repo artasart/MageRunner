@@ -622,7 +622,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 		if (_target == 0f) _current.blocksRaycasts = false;
 
-		while (Mathf.Abs(_current.alpha - _target) >= 0.001f)
+		while (_current != null && Mathf.Abs(_current.alpha - _target) >= 0.001f)
 		{
 			if (_current == null) yield break;
 

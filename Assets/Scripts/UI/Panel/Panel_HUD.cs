@@ -140,7 +140,7 @@ public class Panel_HUD : Panel_Base
 		txtmp_Score.text = amount.ToString("N0");
 	}
 
-	public void SetCoinUI(int amount)
+	public void SetGoldUI(int amount)
 	{
 		txtmp_Coin.text = amount.ToString("N0");
 	}

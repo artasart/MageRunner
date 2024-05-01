@@ -117,7 +117,7 @@ public class Panel_Main : Panel_Base
 		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
 		GameManager.Scene.ShowToastAndDisappear($"You gained {100000} gold..!");
 
-		SetGold(LocalData.gameData.gold);
+		SetGoldUI(LocalData.gameData.gold);
 
 		GameManager.UI.PopPopup();
 
@@ -220,7 +220,7 @@ public class Panel_Main : Panel_Base
 		img_New.gameObject.SetActive(enable);
 	}
 
-	public void SetGold(int gold)
+	public void SetGoldUI(int gold)
 	{
 		txtmp_Gold.text = Util.FormatNumber(gold);
 	}
