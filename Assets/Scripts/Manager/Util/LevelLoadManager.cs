@@ -89,14 +89,10 @@ public class LevelLoadManager : MonoBehaviour
 				}
 
 				levelData.elements[i].isDefault = elements[i].GetComponent<Ground>().isDefault;
-
-				Debug.Log("Saved Ground");
 			}
 		}
 
 		JsonManager<LevelData>.SaveData(levelData, Define.JSON_LEVELDATA);
-
-		DebugManager.ClearLog("Levels Saved!");
 	}
 
 	#endregion
@@ -164,8 +160,6 @@ public class LevelLoadManager : MonoBehaviour
 		}
 
 		RandomizeGround();
-
-		Debug.Log($"Ground randomly genreated : {count}");
 	}
 
 	public void RandomizeGround()

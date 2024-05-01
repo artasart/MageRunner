@@ -8,7 +8,9 @@ public class Panel_Logo : Panel_Base
 	{
 		base.Awake();
 
-		txtmp_Download = GetUI_TMPText(nameof(txtmp_Download), string.Empty);
+		txtmp_Download = GetUI_TMPText(nameof(txtmp_Download), "loading...");
+		txtmp_Download.UsePingPong();
+		txtmp_Download.StartPingPong(.25f);
 	}
 
 	public void SetMessage(string message)

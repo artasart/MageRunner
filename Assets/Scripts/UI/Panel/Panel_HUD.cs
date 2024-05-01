@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -87,7 +88,15 @@ public class Panel_HUD : Panel_Base
 
 		if (isUsed.ContainsKey(Skills.PowerOverWhelming) && isUsed[Skills.PowerOverWhelming]) return;
 
-		FindObjectOfType<PlayerActor>().StartFly();
+		if(Scene.game.playerActor.mana >= 50)
+		{
+			FindObjectOfType<PlayerActor>().StartFly();
+		}
+
+		else
+		{
+			btn_Down.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+		}
 	}
 
 	private void OnClick_Up()
@@ -213,8 +222,6 @@ public class Panel_HUD : Panel_Base
 
 	public void SetManaUI(int amount)
 	{
-		Debug.Log("Set Mana UI");
-
 		txtmp_Mana.text = $"<color=#DCDCDC>{amount}</color>/{Scene.game.playerActor.manaTotal}";
 	}
 }

@@ -68,7 +68,7 @@ public class Panel_Main : Panel_Base
 	{
 		SetEnergy();
 
-		txtmp_Message.StartPingPong(.25f);
+		txtmp_Message.StartPingPong(1f);
 	}
 
 	private void OnClick_BuyGold()
@@ -78,6 +78,8 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Reward",
 		() =>
 		{
+			GameManager.Scene.Dim(true);
+
 			Invoke(nameof(GoldAd), 1f);
 		},
 
@@ -94,40 +96,50 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Reward",
 		() =>
 		{
-			Debug.Log("Watch AD!");
+			GameManager.Scene.Dim(true);
 
 			Invoke(nameof(EnergyAd), 1f);
 		},
 		() =>
 		{
-			Debug.Log("Canceled..");
+
 		});
 	}
 
 	public void GoldAd()
 	{
-		Debug.Log("Watched..!");
-
 		LocalData.gameData.gold += 10000;
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 
+		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
+		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+		GameManager.Scene.ShowToastAndDisappear($"You gained {100000} gold..!");
+
 		SetGold(LocalData.gameData.gold);
 
 		GameManager.UI.PopPopup();
+
+		GameManager.Scene.Dim(false);
 	}
 
 	public void EnergyAd()
 	{
-		Debug.Log("Watched..!");
-
 		LocalData.gameData.energy += 5;
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 
 		SetEnergy();
 
+		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
+		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+		GameManager.Scene.ShowToastAndDisappear($"You gained {5} energy..!");
+
 		GameManager.UI.PopPopup();
+
+		GameManager.Scene.Dim(false);
 	}
 
 	public void SetUserInfo(string username, int runnerTag)
@@ -179,14 +191,11 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_Mail()
 	{
-		Debug.Log("OnClick_Mail");
-
 		GameManager.UI.StackPopup<Popup_Mail>();
 	}
 
 	private void OnClick_Rank()
 	{
-		Debug.Log("OnClick_Rank");
 		GameManager.UI.StackPopup<Popup_Rank>();
 	}
 

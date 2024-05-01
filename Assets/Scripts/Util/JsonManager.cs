@@ -11,7 +11,7 @@ public static class JsonManager<T>
 
 		File.WriteAllText(filePath, json);
 
-		Debug.Log($"{fileName} saved safely!");
+		DebugManager.Log($"{fileName} saved safely!", DebugColor.Data);
 	}
 
 	public static T LoadData(string fileName)

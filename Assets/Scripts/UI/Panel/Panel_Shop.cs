@@ -18,15 +18,14 @@ public class Panel_Shop : Panel_Base
 
 	private void OnDisable()
 	{
-		if (!isInitialized) return;
+		if(GameManager.UI.FetchPanel<Panel_Main>() != null && Scene.main != null && Scene.main.navigator != null)
+		{
+			var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
 
-		var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
-
-		Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
-		Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
-		Scene.main.navigator.transform.SetAsLastSibling();
-
-		isInitialized = true;
+			Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
+			Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+			Scene.main.navigator.transform.SetAsLastSibling();
+		}
 	}
 
 	protected override void Awake()

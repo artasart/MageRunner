@@ -62,6 +62,8 @@ public class PlayerActor : Actor
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 
 		remainingJumps = maxJumps;
+
+		boxCollider2D = this.GetComponent<BoxCollider2D>();
 	}
 
 	private void Start()
@@ -275,6 +277,9 @@ public class PlayerActor : Actor
 			particle_ElectricMode.Play();
 
 			Scene.game.levelController.moveSpeedMultiplier = Scene.game.moveMultiplier;
+
+			mana -= 50;
+			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(mana);
 		});
 
 		rgbd2d.gravityScale = 0;
@@ -353,7 +358,6 @@ public class PlayerActor : Actor
 
 		if (Scene.game.isRide)
 		{
-			boxCollider2D = this.GetComponent<BoxCollider2D>();
 			boxCollider2D.size = new Vector2(1.33f, .75f);
 		}
 
@@ -389,6 +393,8 @@ public class PlayerActor : Actor
 
 		hp.GetComponent<TMP_Text>().text = health.ToString();
 		boxCollider2D.enabled = true;
+
+		this.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 		this.GetComponent<Rigidbody2D>().simulated = true;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
@@ -463,8 +469,6 @@ public class PlayerActor : Actor
 
 		else if (collision.gameObject.CompareTag(Define.OBSTACLE))
 		{
-			Debug.Log(collision.gameObject);
-
 			Die();
 
 			Scene.game.cameraShake.Shake();
@@ -558,8 +562,6 @@ public class PlayerActor : Actor
 
 	public void AddMana(int amount)
 	{
-		Debug.Log("Add Mana");
-
 		mana = Mathf.Clamp(mana += amount, 0, manaTotal);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI(mana);

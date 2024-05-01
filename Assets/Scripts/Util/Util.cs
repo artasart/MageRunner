@@ -742,8 +742,6 @@ public static class Util
 
 		float start = 0f;
 
-		Debug.Log(start + " " + target);
-
 		while (elapsedTime < _duration)
 		{
 			float time = Mathf.SmoothStep(0f, 1f, elapsedTime / _duration);

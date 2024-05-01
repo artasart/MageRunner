@@ -34,6 +34,15 @@ public class Popup_GameOver : Popup_Base
 
 	private void OnClick_Reward()
 	{
+		GameManager.Scene.Dim(true);
+
+		Invoke(nameof(DoubleGold), 1f);
+	}
+
+	private void DoubleGold()
+	{
+		GameManager.Scene.Dim(false);
+
 		btn_Reward.interactable = false;
 
 		Scene.game.gold *= 2;

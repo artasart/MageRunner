@@ -7,11 +7,17 @@ public class Scene_Logo : SceneLogic
 {
 	bool isFirst = true;
 
+	GameObject player;
+	Animator animator;
+
 	protected override void Awake()
 	{
 		base.Awake();
 
 		isFirst = PlayerPrefs.GetInt(nameof(isFirst)) == 1 ? true : false;
+
+		player = FindObjectOfType<SPUM_Prefabs>().gameObject;
+		animator = player.GetComponentInChildren<Animator>();
 	}
 
 	private void Start()
@@ -34,6 +40,9 @@ public class Scene_Logo : SceneLogic
 		if (LocalData.masterData == null)
 		{
 			GameManager.Data.GetSheet(EnterGame);
+
+			animator.SetBool(Define.RUN, true);
+			animator.SetFloat(Define.RUNSTATE, .5f);
 		}
 
 		else

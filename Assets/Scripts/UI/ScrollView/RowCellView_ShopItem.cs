@@ -49,18 +49,29 @@ public class RowCellView_ShopItem : RowCellView
 			ModalType.ConfirmCancel,
 			$"<color=#FFC700>{shopItemData.name}</color> {amount}\n\n{message}",
 			isAd ? "Reward" : "Purchase",
-			() => { Invoke(nameof(WatchedAD), 1f); }, () => { });
+			() =>
+			{
+				GameManager.Scene.Dim(true);
+
+				Invoke(nameof(WatchedAD), 1f);
+			},
+			() =>
+			{
+
+			});
 	}
 
 	private void WatchedAD()
 	{
-		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>().ShowTopMenu(false);
-		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>().ShowTopMenu(true);
-		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>().ShowTopMenu(true);
+		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
+		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
 
 		GameManager.Scene.ShowToastAndDisappear($"You recevied {shopItemData.name}!!");
 
 		BuyMethods(shopItemData.name);
+
+		GameManager.Scene.Dim(false);
 	}
 
 

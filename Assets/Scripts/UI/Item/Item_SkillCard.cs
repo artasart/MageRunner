@@ -3,13 +3,12 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using Unity.VisualScripting;
-using System.Linq;
-
 public class Item_SkillCard : Item_Base
 {
 	TMP_Text txtmp_Name;
 	TMP_Text txtmp_Description;
 	Image img_Thumbnail;
+	Image img_Outline;
 
 	Button btn_ItemCard;
 
@@ -44,6 +43,7 @@ public class Item_SkillCard : Item_Base
 		txtmp_Name = GetUI_TMPText(nameof(txtmp_Name), string.Empty);
 		txtmp_Description = GetUI_TMPText(nameof(txtmp_Description), string.Empty);
 		img_Thumbnail = GetUI_Image(nameof(img_Thumbnail), null);
+		img_Outline = GetUI_Image(nameof(img_Outline));
 
 		group_Upgrade = this.transform.Search(nameof(group_Upgrade));
 
@@ -57,6 +57,8 @@ public class Item_SkillCard : Item_Base
 		txtmp_Name.text = skill.name;
 
 		img_Thumbnail.sprite = Resources.Load<Sprite>(Define.PATH_ICON + skill.thumbnailPath);
+		txtmp_Name.color = Util.HexToRGB("#DCDCDC");
+		img_Outline.color = Util.HexToRGB("#B4B4B4");
 
 		if (skill.maxLevel == 0)
 		{
@@ -69,7 +71,7 @@ public class Item_SkillCard : Item_Base
 
 			if (Scene.game.actorSkills.ContainsKey(skill.name)) { level = Scene.game.actorSkills[skill.name].level; }
 
-			if(skill.type == "passive")
+			if (skill.type == "passive")
 			{
 				txtmp_Description.text = skill.description + " " + Util.ParseStringToIntArray(skill.value)[level].ToString();
 			}
@@ -77,6 +79,9 @@ public class Item_SkillCard : Item_Base
 			else
 			{
 				txtmp_Description.text = skill.description;
+
+				txtmp_Name.color = Util.HexToRGB("#339CD2");
+				img_Outline.color = Util.HexToRGB("#339CD2");
 			}
 		}
 

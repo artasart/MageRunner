@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
-using static UnityEditor.Progress;
 
 public class Panel_Equipment : Panel_Base
 {

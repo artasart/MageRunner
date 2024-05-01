@@ -63,8 +63,6 @@ public class Item_Skill : Item_Base
 
 			time -= Time.deltaTime;
 
-			Debug.Log(time);
-
 			yield return Timing.WaitForOneFrame;
 		}
 

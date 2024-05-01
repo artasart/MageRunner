@@ -114,7 +114,7 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		GameManager.Scene.Fade(false, .1f);
+		GameManager.Scene.Fade(false, .075f);
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Pause>();
 
@@ -150,7 +150,11 @@ public class Scene_Game : SceneLogic
 		yield return Timing.WaitForSeconds(.1f);
 
 		playerModel.SetActive(true);
-		playerActor.GetComponent<RideController>().Ride();
+
+		if (isRide)
+		{
+			playerActor.GetComponent<RideController>().Ride();
+		}
 
 		footStepController.StartWalk();
 		playerActor.UpdateAnimator(1f);
@@ -201,8 +205,9 @@ public class Scene_Game : SceneLogic
 
 		SetCameraTarget(playerActor.transform);
 
-		playerActor.Refresh();
 		levelController.Refresh();
+		levelController.gameObject.SetActive(false);
+		playerActor.Refresh();
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
@@ -213,6 +218,7 @@ public class Scene_Game : SceneLogic
 
 		footStepController.StartWalk();
 		playerActor.UpdateAnimator(1f);
+		levelController.gameObject.SetActive(true);
 
 		GameManager.Scene.Fade(false);
 		GameManager.UI.StartPanel<Panel_HUD>();
@@ -252,7 +258,7 @@ public class Scene_Game : SceneLogic
 						Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
 				);
 
-				GameManager.UI.StartPopup<Popup_GameOver>(true);
+				Invoke(nameof(ShowGameOverUI), .15f);
 			});
 
 			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(Scene.game.score);
@@ -266,8 +272,15 @@ public class Scene_Game : SceneLogic
 			Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
 			);
 
+			GameManager.UI.PopPopupAll();
 			GameManager.UI.StartPopup<Popup_GameOver>();
 		}
+	}
+
+	private void ShowGameOverUI()
+	{
+		GameManager.UI.PopPopupAll();
+		GameManager.UI.StartPopup<Popup_GameOver>();
 	}
 
 
@@ -388,8 +401,6 @@ public class Scene_Game : SceneLogic
 	{
 		if (LocalData.gameData.level == LocalData.masterData.levelData[LocalData.masterData.levelData.Count - 1].level)
 		{
-			Debug.Log("Max Level : " + LocalData.gameData.level);
-
 			return;
 		}
 
@@ -519,7 +530,7 @@ public class Scene_Game : SceneLogic
 			{
 				if (thunderMana > Scene.game.playerActor.mana)
 				{
-					Debug.Log("Not enough mana");
+
 				}
 
 				else
@@ -541,8 +552,6 @@ public class Scene_Game : SceneLogic
 						GameManager.Sound.PlaySound("Spawn", .5f);
 
 						yield return Timing.WaitUntilTrue(() => isSkillUsed);
-
-						Debug.Log(isSkillUsed);
 					}
 				}
 

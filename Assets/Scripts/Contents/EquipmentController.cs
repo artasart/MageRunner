@@ -76,8 +76,6 @@ public class EquipmentController : MonoBehaviour
 
 		if (filteredItems.Count == 0)
 		{
-			Debug.Log("No items found matching.");
-
 			return;
 		}
 
