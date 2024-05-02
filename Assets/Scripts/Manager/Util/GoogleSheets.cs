@@ -38,7 +38,7 @@ public static class GoogleSheets
 			var message = messages.Dequeue();
 			DebugManager.Log(message, DebugColor.Data);
 
-			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(message);
+			GameManager.UI.FetchPanel<Panel_Logo>().SetDownload(message);
 
 			actionQueue.Dequeue()?.Invoke();
 

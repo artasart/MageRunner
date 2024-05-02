@@ -45,7 +45,7 @@ public class RowCellView_ShopItem : RowCellView
 
 	private void OnClick_Buy()
 	{
-		if (shopItemData.name == "Energy")
+		if (shopItemData.type == "gold")
 		{
 			if (LocalData.gameData.gold < shopItemData.price)
 			{
@@ -255,11 +255,14 @@ public class RowCellView_ShopItem : RowCellView
 		{
 			DebugManager.Log($"Energy is added {shopItemData.amount}", DebugColor.Data);
 
+			GameManager.UI.FetchPanel<Panel_Main>().AddEnergy(5);
+		}
+
+		if(shopItemData.type == "gold")
+		{
 			LocalData.gameData.gold -= shopItemData.price;
 
 			GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
-
-			GameManager.UI.FetchPanel<Panel_Main>().AddEnergy(5);
 		}
 
 		GameManager.UI.FetchPanel<Panel_Shop>().Refresh();

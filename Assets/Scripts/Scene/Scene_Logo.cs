@@ -28,6 +28,13 @@ public class Scene_Logo : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_Logo>(true);
 
+		GetGameData();
+
+		//FindObjectOfType<GPGSManager>().GetGPS();
+	}
+
+	public void GetGameData()
+	{
 		Util.RunCoroutine(Co_LogoStart(), nameof(Co_LogoStart));
 	}
 
