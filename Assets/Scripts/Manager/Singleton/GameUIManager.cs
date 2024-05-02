@@ -1,8 +1,6 @@
 using MEC;
 using System;
 using System.Collections.Generic;
-using TMPro;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 using static EasingFunction;
