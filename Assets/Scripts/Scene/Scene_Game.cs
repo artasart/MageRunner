@@ -594,6 +594,9 @@ public class Scene_Game : SceneLogic
 		if (replayCount >= replayRandomCount)
 		{
 			replayCount = 0;
+
+			GameManager.AdMob.ShowInterstitialAd();
+
 			DebugManager.Log("Showing Interstitial Ad.", DebugColor.AD);
 		}
 	}

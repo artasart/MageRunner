@@ -73,7 +73,7 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			Invoke(nameof(GoldAd), 1f);
+			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), 1f));
 		},
 
 		() =>
@@ -91,7 +91,7 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			Invoke(nameof(EnergyAd), 1f);
+			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), 1f));
 		},
 		() =>
 		{

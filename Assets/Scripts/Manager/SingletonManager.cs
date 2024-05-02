@@ -8,6 +8,7 @@ public static class GameManager
     public static GameSoundManager Sound { get { return GameSoundManager.Instance; } }
     public static GameWebManager Web { get { return GameWebManager.Instance; } }
     public static GameDataManager Data { get { return GameDataManager.Instance; } }
+    public static GoogleAdMobManager AdMob { get { return GoogleAdMobManager.Instance; } }
 }
 
 public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour

@@ -59,7 +59,7 @@ public class RowCellView_ShopItem : RowCellView
 				return;
 			}
 		}
-		
+
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
@@ -68,7 +68,7 @@ public class RowCellView_ShopItem : RowCellView
 
 		var priceTag = string.Empty;
 
-		if(!isAd)
+		if (!isAd)
 		{
 			if (shopItemData.type == "cash")
 			{
@@ -92,7 +92,7 @@ public class RowCellView_ShopItem : RowCellView
 			{
 				GameManager.Scene.Dim(true);
 
-				Invoke(nameof(WatchedAD), 1f);
+				GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(WatchedAD), 1f));
 			},
 			() =>
 			{
@@ -135,7 +135,7 @@ public class RowCellView_ShopItem : RowCellView
 			GameManager.UI.FetchPanel<Panel_Inventory>().ShowNewIcon(true);
 		}
 
-		else if(name == "Bunny Cloth")
+		else if (name == "Bunny Cloth")
 		{
 			var itemData = new InvenItemData(name);
 			itemData.type = EquipmentType.Cloth;
@@ -154,7 +154,7 @@ public class RowCellView_ShopItem : RowCellView
 			GameManager.UI.FetchPanel<Panel_Inventory>().ShowNewIcon(true);
 		}
 
-		else if(name == "Hammer")
+		else if (name == "Hammer")
 		{
 			var itemData = new InvenItemData(name);
 			itemData.type = EquipmentType.Weapons;
@@ -173,7 +173,7 @@ public class RowCellView_ShopItem : RowCellView
 			GameManager.UI.FetchPanel<Panel_Inventory>().ShowNewIcon(true);
 		}
 
-		else if(name == "Horse")
+		else if (name == "Horse")
 		{
 			var itemData = new InvenItemData(name);
 			itemData.name = "Horse";
@@ -258,7 +258,7 @@ public class RowCellView_ShopItem : RowCellView
 			GameManager.UI.FetchPanel<Panel_Main>().AddEnergy(5);
 		}
 
-		if(shopItemData.type == "gold")
+		if (shopItemData.type == "gold")
 		{
 			LocalData.gameData.gold -= shopItemData.price;
 
