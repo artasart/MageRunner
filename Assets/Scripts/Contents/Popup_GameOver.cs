@@ -24,6 +24,7 @@ public class Popup_GameOver : Popup_Base
 		txtmp_Energy = GetUI_TMPText(nameof(txtmp_Energy), string.Empty);
 
 		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
+
 		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
 		btn_Retry.onClick.RemoveListener(OpenSound);
 
@@ -54,7 +55,7 @@ public class Popup_GameOver : Popup_Base
 	{
 		if (LocalData.gameData.energy <= 0)
 		{
-			GameManager.Sound.PlayBGM(Define.SOUND_DENIED);
+			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
 			btn_Retry.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
@@ -65,7 +66,7 @@ public class Popup_GameOver : Popup_Base
 			return;
 		}
 
-		GameManager.Sound.PlayBGM(Define.SOUND_OPEN);
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		Scene.game.Replay();
 	}

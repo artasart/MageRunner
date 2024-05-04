@@ -50,6 +50,7 @@ public class Popup_Pause : Popup_Base
 		btn_BGM = GetUI_Button(nameof(btn_BGM), OnClick_BGM, useAnimation: true);
 		btn_SFX = GetUI_Button(nameof(btn_SFX), OnClick_SFX, useAnimation: true);
 		btn_NoAds = GetUI_Button(nameof(btn_NoAds), OnClick_NoAds, useAnimation: true);
+		btn_NoAds.onClick.RemoveListener(OpenSound);
 		btn_Language = GetUI_Button(nameof(btn_Language), OnClick_Language, useAnimation: true);
 		btn_Language.onClick.RemoveListener(OpenSound);
 
@@ -107,7 +108,9 @@ public class Popup_Pause : Popup_Base
 
 	private void OnClick_NoAds()
 	{
+		GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
+		btn_NoAds.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 	}
 
 	private void OnClick_Language()
