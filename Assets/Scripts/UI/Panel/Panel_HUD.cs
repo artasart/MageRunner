@@ -72,12 +72,12 @@ public class Panel_HUD : Panel_Base
 
 	private void OnClick_Left()
 	{
-		Debug.Log("OnClick_Left");
+
 	}
 
 	private void OnClick_Right()
 	{
-		Debug.Log("OnClick_Right");
+
 	}
 
 	public void OnClick_Down()
@@ -101,8 +101,6 @@ public class Panel_HUD : Panel_Base
 
 	private void OnClick_Up()
 	{
-		Debug.Log("OnClick_Up");
-
 		FindObjectOfType<PlayerActor>().Jump();
 	}
 

@@ -119,8 +119,6 @@ public class Scene_Main : SceneLogic
 	{
 		if (LocalData.gameData.isAdWatched)
 		{
-			Debug.Log("잔여 시간이 남았습니다.");
-
 			var ads = FindObjectsOfType<BlockAds>();
 
 			foreach (var item in ads)
@@ -131,8 +129,6 @@ public class Scene_Main : SceneLogic
 
 		else
 		{
-			Debug.Log("광고를 볼 수 있습니다.");
-
 			LocalData.gameData.isAdWatched = false;
 		}
 

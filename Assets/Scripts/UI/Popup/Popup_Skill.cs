@@ -26,7 +26,7 @@ public class Popup_Skill : Popup_Base
 
 		game.playerActor.ToggleSimulation(true);
 
-		GameManager.UI.FetchPanel<Panel_HUD>().Show();
+		GameManager.UI.FetchPanel<Panel_HUD>().Show(start: () => GameManager.UI.FetchPanel<Panel_HUD>().GetComponent<CanvasGroup>().blocksRaycasts = true);
 
 		btn_Refresh.interactable = true;
 

@@ -522,8 +522,6 @@ public class Scene_Game : SceneLogic
 
 		while (true)
 		{
-			Debug.Log("Checking..");
-
 			MonsterActor[] monsters = FindObjectsOfType<MonsterActor>();
 			MonsterActor closestMonster = null;
 			float closestDistance = Mathf.Infinity;

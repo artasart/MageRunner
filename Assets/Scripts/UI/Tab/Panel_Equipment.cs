@@ -149,10 +149,9 @@ public class Panel_Equipment : Panel_Base
 
 				else
 				{
-					Debug.Log("Not Enough Money..!");
 				}
 			},
-			() => { Debug.Log("Canceled.."); }
+			() => { }
 		);
 	}
 

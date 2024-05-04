@@ -55,8 +55,6 @@ public class TextAnimation : MonoBehaviour
 
 	public void StopPingPong()
 	{
-		Debug.Log("Stop Pingpong");
-
 		Util.KillCoroutine(nameof(Co_PingPong) + this.GetHashCode());
 
 		Util.FadeCanvasGroup(canvasGroup, 1f);

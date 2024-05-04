@@ -209,7 +209,6 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_DayCheck()
 	{
-		Debug.Log("OnClick_DayCheck");
 		GameManager.UI.StackPopup<Popup_DailyCheck>();
 	}
 

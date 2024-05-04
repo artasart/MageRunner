@@ -22,8 +22,6 @@ public class BlockAds : MonoBehaviour
 
 	public void WatchAd(bool init = true)
 	{
-		Debug.Log("Watch AD");
-
 		if(init)
 		{
 			LocalData.gameData.adWatchTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
