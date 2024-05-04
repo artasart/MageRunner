@@ -88,6 +88,6 @@ public class Panel_Base : UI_Base
 	{
 		var canvasGroup = this.GetComponent<CanvasGroup>();
 
-		GameManager.UI.FadeCanvasGroup(canvasGroup, 1f, .75f, _start: start, _end: end);
+		GameManager.UI.FadeCanvasGroup(canvasGroup, 1f, .75f, _start: start, _end: () => { canvasGroup.blocksRaycasts = true; end?.Invoke(); });
 	}
 }
