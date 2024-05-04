@@ -24,8 +24,9 @@ public class Panel_Main : Panel_Base
 	Button btn_BuyEnergy;
 
 	public Transform group_TopMenu { get; private set; }
-	Transform btn_Energy;
-	Transform btn_Coin;
+
+	Button btn_Energy;
+	Button btn_Coin;
 
 
 	protected override void Awake()
@@ -43,16 +44,21 @@ public class Panel_Main : Panel_Base
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
 
+		btn_Coin = GetUI_Button(nameof(btn_Coin), OnClick_BuyGold, useAnimation: true);
+		btn_Coin.onClick.RemoveListener(OpenSound);
+		btn_Energy = GetUI_Button(nameof(btn_Energy), OnClick_BuyEnergy, useAnimation: true);
+		btn_Energy.onClick.RemoveListener(OpenSound);
+
 		btn_BuyGold = GetUI_Button(nameof(btn_BuyGold), OnClick_BuyGold, useAnimation: true);
+		btn_BuyGold.onClick.RemoveListener(OpenSound);
 		btn_BuyEnergy = GetUI_Button(nameof(btn_BuyEnergy), OnClick_BuyEnergy, useAnimation: true);
+		btn_BuyEnergy.onClick.RemoveListener(OpenSound);
 
 		btn_Shop = GetUI_Button(nameof(btn_Shop), OnClick_Shop, useAnimation: true);
 
 		txtmp_RunnerTag = GetUI_TMPText(nameof(txtmp_RunnerTag), string.Empty);
 		txtmp_UserName = GetUI_TMPText(nameof(txtmp_UserName), string.Empty);
 
-		btn_Energy = this.transform.Search(nameof(btn_Energy));
-		btn_Coin = this.transform.Search(nameof(btn_Coin));
 
 		group_TopMenu = this.transform.Search(nameof(group_TopMenu));
 
@@ -69,6 +75,17 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_BuyGold()
 	{
+		if(LocalData.gameData.isAdWatched)
+		{
+			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+			btn_Coin.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			return;
+		}
+		
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
+
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Reward",
@@ -88,6 +105,17 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_BuyEnergy()
 	{
+		if (LocalData.gameData.isAdWatched)
+		{
+			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+			btn_Energy.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			return;
+		}
+		
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
+
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Reward",
