@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +25,7 @@ public class Panel_Main : Panel_Base
 
 	public Transform group_TopMenu { get; private set; }
 	Transform btn_Energy;
+	Transform btn_Coin;
 
 
 	protected override void Awake()
@@ -50,6 +52,7 @@ public class Panel_Main : Panel_Base
 		txtmp_UserName = GetUI_TMPText(nameof(txtmp_UserName), string.Empty);
 
 		btn_Energy = this.transform.Search(nameof(btn_Energy));
+		btn_Coin = this.transform.Search(nameof(btn_Coin));
 
 		group_TopMenu = this.transform.Search(nameof(group_TopMenu));
 
@@ -73,7 +76,8 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), 1f));
+			Invoke(nameof(GoldAd), .75f);
+			// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), 1f));
 		},
 
 		() =>
@@ -91,7 +95,8 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), 1f));
+			Invoke(nameof(EnergyAd), .75f);
+			// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), 1f));
 		},
 		() =>
 		{
@@ -103,8 +108,6 @@ public class Panel_Main : Panel_Base
 	{
 		LocalData.gameData.gold += 10000;
 
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
-
 		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
 		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
 		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
@@ -115,13 +118,16 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.PopPopup();
 
 		GameManager.Scene.Dim(false);
+
+		//Scene.main.BlockAd(Scene.main.adWaitTime);
+		BlockUI();
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	public void EnergyAd()
 	{
 		LocalData.gameData.energy += 5;
-
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 
 		SetEnergy();
 
@@ -133,6 +139,11 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.PopPopup();
 
 		GameManager.Scene.Dim(false);
+
+		//Scene.main.BlockAd(Scene.main.adWaitTime);
+		BlockUI();
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	public void SetUserInfo(string username, int runnerTag)
@@ -206,7 +217,7 @@ public class Panel_Main : Panel_Base
 	{
 		if (isShow)
 		{
-			GameManager.UI.FadeCanvasGroup(group_TopMenu.GetComponent<CanvasGroup>(), 1f);
+			GameManager.UI.FadeCanvasGroup(group_TopMenu.GetComponent<CanvasGroup>(), 1f, _end: () => group_TopMenu.GetComponent<CanvasGroup>().blocksRaycasts = true);
 		}
 
 		else GameManager.UI.FadeCanvasGroup(group_TopMenu.GetComponent<CanvasGroup>(), .25f, _start: () => group_TopMenu.GetComponent<CanvasGroup>().blocksRaycasts = false);
@@ -241,5 +252,11 @@ public class Panel_Main : Panel_Base
 		LocalData.gameData.energy += amount;
 
 		SetEnergy();
+	}
+
+	public void BlockUI()
+	{
+		btn_Energy.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
+		btn_Coin.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
 	}
 }

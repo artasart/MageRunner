@@ -1,5 +1,6 @@
 using DG.Tweening;
 using EnhancedScrollerDemos.GridSimulation;
+using System;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -45,6 +46,19 @@ public class RowCellView_ShopItem : RowCellView
 
 	private void OnClick_Buy()
 	{
+		if (shopItemData.type == "ad")
+		{
+			if (LocalData.gameData.isAdWatched)
+			{
+				GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+				this.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+				return;
+			}
+		}
+
+
 		if (shopItemData.type == "gold")
 		{
 			if (LocalData.gameData.gold < shopItemData.price)
@@ -84,6 +98,7 @@ public class RowCellView_ShopItem : RowCellView
 		var message = isAd ? "Get Item after wathching AD?" : $"Do you want to purchase with {priceTag} ?";
 		var amount = shopItemData.amount == 0 ? string.Empty : " x " + shopItemData.amount;
 
+
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(
 			ModalType.ConfirmCancel,
 			$"<color=#FFC700>{shopItemData.name}</color> {amount}\n\n{message}",
@@ -92,7 +107,9 @@ public class RowCellView_ShopItem : RowCellView
 			{
 				GameManager.Scene.Dim(true);
 
-				GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(WatchedAD), 1f));
+				Invoke(nameof(WatchedAD), 1f);
+
+				// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(WatchedAD), 1f));
 			},
 			() =>
 			{
@@ -111,6 +128,13 @@ public class RowCellView_ShopItem : RowCellView
 		BuyMethods(shopItemData.name);
 
 		GameManager.Scene.Dim(false);
+
+		if (shopItemData.type == "ad")
+		{
+			this.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
+
+			GameManager.UI.FetchPanel<Panel_Main>().BlockUI();
+		}
 	}
 
 
@@ -299,5 +323,20 @@ public class RowCellView_ShopItem : RowCellView
 		img_Thumbnail.sprite = Resources.Load<Sprite>(itemData.thumbnailPath);
 
 		shopItemData = itemData;
+
+		if (itemData.type == "ad")
+		{
+			this.transform.Search("img_BlockAds").gameObject.SetActive(true);
+
+			if (LocalData.gameData.isAdWatched)
+			{
+				this.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd(false);
+			}
+		}
+
+		else
+		{
+			this.transform.Search("img_BlockAds").gameObject.SetActive(false);
+		}
 	}
 }

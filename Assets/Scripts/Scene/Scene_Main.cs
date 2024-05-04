@@ -113,9 +113,29 @@ public class Scene_Main : SceneLogic
 		}
 	}
 
+	public float adWaitTime = 90;
 
 	private void CheckLogin()
 	{
+		if (LocalData.gameData.isAdWatched)
+		{
+			Debug.Log("잔여 시간이 남았습니다.");
+
+			var ads = FindObjectsOfType<BlockAds>();
+
+			foreach (var item in ads)
+			{
+				item.WatchAd(init: false);
+			}
+		}
+
+		else
+		{
+			Debug.Log("광고를 볼 수 있습니다.");
+
+			LocalData.gameData.isAdWatched = false;
+		}
+
 		LocalData.gameData.lastLogin = DateTime.Now;
 
 		DateTime nextMidnight = DateTime.Today.AddDays(1);

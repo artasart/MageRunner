@@ -331,18 +331,10 @@ public static class Util
 		}
 	}
 
-	public static DateTime String2DateTime(string dateString)
+	public static DateTime StringToDateTime(string dateTimeString)
 	{
-		DateTime result;
-
-		if (DateTime.TryParseExact(dateString, "yyyy-MM-ddTHH:mm:ss.fffZ", null, System.Globalization.DateTimeStyles.AssumeUniversal, out result))
-		{
-			return result;
-		}
-		else
-		{
-			throw new Exception("???? ?? ???? ???????? ?????????? ????????????.");
-		}
+		// ISO 8601 형식의 문자열을 DateTime으로 변환합니다.
+		return DateTime.ParseExact(dateTimeString, "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 	}
 
 	public static GameObject Instantiate(string _path, Vector3 _position, Quaternion _rotation, Transform _parent = null)

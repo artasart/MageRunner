@@ -1,3 +1,5 @@
+using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
 
@@ -49,6 +51,7 @@ public class Popup_Pause : Popup_Base
 		btn_SFX = GetUI_Button(nameof(btn_SFX), OnClick_SFX, useAnimation: true);
 		btn_NoAds = GetUI_Button(nameof(btn_NoAds), OnClick_NoAds, useAnimation: true);
 		btn_Language = GetUI_Button(nameof(btn_Language), OnClick_Language, useAnimation: true);
+		btn_Language.onClick.RemoveListener(OpenSound);
 
 		btn_BGM.transform.Search("img_Icon_Block").gameObject.SetActive(false);
 		btn_SFX.transform.Search("img_Icon_Block").gameObject.SetActive(false);
@@ -109,6 +112,8 @@ public class Popup_Pause : Popup_Base
 
 	private void OnClick_Language()
 	{
+		GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
+		btn_Language.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 	}
 }

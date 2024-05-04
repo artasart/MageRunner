@@ -48,6 +48,7 @@ public static class LocalData
 		gameData.energy = 5;
 		gameData.energyTotal = 5;
 		gameData.isPremium = false;
+		gameData.adWatchTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
 
 		if (masterData == null) return;
 
@@ -140,6 +141,8 @@ public class GameData
 	public int runnerTag = 1;
 
 	public DateTime lastLogin;
+	public string adWatchTime;
+	public bool isAdWatched;
 
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
 	public Ride ride;
