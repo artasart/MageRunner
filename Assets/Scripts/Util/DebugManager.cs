@@ -14,7 +14,8 @@ public enum DebugColor
     UI,
     Scene,
     Data,
-    Game,
+	Login,
+	Game,
     AD,
 }
 

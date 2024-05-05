@@ -7,7 +7,7 @@ public class Scene_Logo : SceneLogic
 {
 	bool isFirst = true;
 
-	GameObject player;
+	public GameObject player { get; private set; }
 	Animator animator;
 
 	protected override void Awake()
@@ -18,18 +18,23 @@ public class Scene_Logo : SceneLogic
 
 		player = FindObjectOfType<SPUM_Prefabs>().gameObject;
 		animator = player.GetComponentInChildren<Animator>();
+
+		player.gameObject.SetActive(false);
 	}
 
 	private void Start()
 	{
+		GameManager.Scene.FadeInstant(true);
+
 		GameManager.Scene.Fade(false, .1f);
 
 		GameManager.UI.Restart();
 
 		GameManager.UI.StartPanel<Panel_Logo>(true);
 
-		GetGameData();
-
+#if UNITY_EDITOR
+		GameManager.UI.FetchPanel<Panel_Logo>().HideLogin(true, GetGameData);
+#endif
 		//FindObjectOfType<GPGSManager>().GetGPS();
 	}
 
