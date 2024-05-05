@@ -23,8 +23,8 @@ public class Panel_Logo : Panel_Base
 		txtmp_Download.UsePingPong();
 		txtmp_Download.StartPingPong(.25f);
 
-		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin);
-		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin);
+		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation:true);
+		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
 
 		group_Login = this.transform.Search(nameof(group_Login));
 		loginCanvasGroup = group_Login.GetComponent<CanvasGroup>();
