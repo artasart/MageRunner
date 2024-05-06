@@ -21,16 +21,23 @@ public class AppleLoginManager : MonoBehaviour
 
 			this._appleAuthManager = new AppleAuthManager(deserializer);
 		}
+	}
+
+    private void Start()
+    {
+		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.HasKey(AppleUserIdKey).ToString());
 
 		if (PlayerPrefs.HasKey(AppleUserIdKey))
 		{
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.GetString(AppleUserIdKey));
+
 			var storedAppleUserId = PlayerPrefs.GetString(AppleUserIdKey);
 
 			this.CheckCredentialStatusForUserId(storedAppleUserId);
 		}
 	}
 
-	private void CheckCredentialStatusForUserId(string appleUserId)
+    private void CheckCredentialStatusForUserId(string appleUserId)
 	{
 		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Has Key");
 
@@ -44,8 +51,8 @@ public class AppleLoginManager : MonoBehaviour
 					// If it's authorized, login with that user id
 					case CredentialState.Authorized:
 						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Authorized");
-						GameManager.Scene.Dim(false);
-						GameManager.Backend.LoginToBackEnd(appleUserId, FindObjectOfType<Scene_Logo>().StartLogin);
+
+						GameManager.Backend.LoginASAP(FindObjectOfType<Scene_Logo>().StartLogin);
 						return;
 
 					// If it was revoked, or not found, we need a new sign in with apple attempt

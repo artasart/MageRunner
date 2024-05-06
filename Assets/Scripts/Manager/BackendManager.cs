@@ -38,6 +38,24 @@ public class BackendManager : SingletonManager<BackendManager>
 		}
 	}
 
+	public void LoginASAP(Action success)
+	{
+		BackendReturnObject bro = Backend.BMember.AuthorizeFederation(PlayerPrefs.GetString("token"), FederationType.Apple, "Apple");
+
+		if (bro.IsSuccess())
+		{
+			DebugManager.Log("Apple Login Success.", DebugColor.Login);
+
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Success.");
+			success?.Invoke();
+		}
+		else
+		{
+			DebugManager.Log("Apple Login Failed.", DebugColor.Login);
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Failed.");
+		}
+	}
+
 	public void SetNickname(string nickname, Action success, Action fail)
 	{
 		var bro = Backend.BMember.UpdateNickname(nickname);
