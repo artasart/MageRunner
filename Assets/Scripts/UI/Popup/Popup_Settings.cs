@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Popup_Settings : Popup_Base
 {
@@ -15,6 +14,13 @@ public class Popup_Settings : Popup_Base
 
 	Color onColor;
 	Color offColor;
+
+	Button btn_LogOut;
+	Button btn_Sound;
+	Button btn_License;
+
+	Transform group_Sound;
+	Transform group_License;
 
 	protected override void Awake()
 	{
@@ -30,6 +36,13 @@ public class Popup_Settings : Popup_Base
 
 		onColor = Util.HexToRGB("#03AC97");
 		offColor = Util.HexToRGB("#6F604E");
+
+		btn_LogOut = GetUI_Button(nameof(btn_LogOut), OnClick_LogOut, useAnimation: true);
+		btn_License = GetUI_Button(nameof(btn_License), OnClick_License, useAnimation: true);
+		btn_Sound = GetUI_Button(nameof(btn_Sound), OnClick_Sound, useAnimation: true);
+
+		group_Sound = this.transform.Search(nameof(group_Sound));
+		group_License = this.transform.Search(nameof(group_License));
 	}
 
 	private void Start()
@@ -39,7 +52,29 @@ public class Popup_Settings : Popup_Base
 
 		txtmp_BGMVolume.text = (GameManager.Sound.bgmVolume * 100).ToString("N0");
 		txtmp_SFXVolume.text = (GameManager.Sound.sfxVolume * 100).ToString("N0");
+
+		OnClick_Sound();
 	}
+
+	private void OnClick_LogOut()
+	{
+		PlayerPrefs.DeleteKey("AppleUserId");
+
+		GameManager.Scene.LoadScene(SceneName.Logo);
+	}
+
+	private void OnClick_License()
+	{
+		group_Sound.gameObject.SetActive(false);
+		group_License.gameObject.SetActive(true);
+	}
+
+	private void OnClick_Sound()
+	{
+		group_Sound.gameObject.SetActive(true);
+		group_License.gameObject.SetActive(false);
+	}
+
 	private void OnValueChanged_BGM(float value)
 	{
 		GameManager.Sound.bgmVolume = value;

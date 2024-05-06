@@ -26,8 +26,6 @@ public class Scene_Main : SceneLogic
 
 	public int payAmount = 10000;
 
-	string nickname;
-
 	#endregion
 
 
@@ -82,24 +80,19 @@ public class Scene_Main : SceneLogic
 
 	private void Start()
 	{
-		if (!string.IsNullOrEmpty(LocalData.gameData.nickname))
-		{
-			if (string.IsNullOrEmpty(PlayerPrefs.GetString("token")))
-			{
-				nickname = "username-test-account";
-			}
-
-			else nickname = "username-" + PlayerPrefs.GetString("token");
-		}
-
-		else nickname = LocalData.gameData.nickname;
-
 		GameManager.Scene.Fade(false, .1f);
 
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
+
+#if UNITY_EDITOR
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", UnityEngine.Random.Range(100000, 999999).ToString());
+#elif UNITY_IOS
+		var nickname = GameManager.Backend.GetNickname();
+
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, Util.Generate6DigitNumberFromUUID(PlayerPrefs.GetString("token")));
+#endif
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));

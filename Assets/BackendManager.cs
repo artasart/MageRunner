@@ -28,7 +28,7 @@ public class BackendManager : SingletonManager<BackendManager>
 		{
 			DebugManager.Log("Apple Login Success.", DebugColor.Login);
 
-			PlayerPrefs.SetString("token", idToken.ToString().Substring(0, 20));
+			PlayerPrefs.SetString("token", idToken.ToString());
 
 			success?.Invoke();
 		}
@@ -38,13 +38,15 @@ public class BackendManager : SingletonManager<BackendManager>
 		}
 	}
 
-	public void UpdateNickname(string nickname)
+	public void SetNickname(string nickname, Action success, Action fail)
 	{
 		var bro = Backend.BMember.UpdateNickname(nickname);
 
 		if (bro.IsSuccess())
 		{
 			Debug.Log($"nickname changed to {nickname}");
+
+			success?.Invoke();
 		}
 
 		else
@@ -54,7 +56,17 @@ public class BackendManager : SingletonManager<BackendManager>
 			if (bro.GetStatusCode() == "409")
 			{
 				Debug.Log("nickname already exist.");
+
+				fail.Invoke();
 			}
 		}
+	}
+
+	public string GetNickname()
+	{
+		BackendReturnObject bro = Backend.BMember.GetUserInfo();
+		string nickname = bro.GetReturnValuetoJSON()["row"]["nickname"].ToString();
+
+		return nickname;
 	}
 }

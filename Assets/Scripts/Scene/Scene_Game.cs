@@ -133,7 +133,7 @@ public class Scene_Game : SceneLogic
 	{
 		DebugManager.Log("GameStart", DebugColor.Game);
 
-		var target = isRide ? 3.5f : 3f;
+		var target = isRide ? 3.5f : 3.2f;
 
 		Util.Zoom(virtualCamera, target, .025f);
 
@@ -214,7 +214,7 @@ public class Scene_Game : SceneLogic
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
-		var target = isRide ? 3.5f : 3f;
+		var target = isRide ? 3.5f : 3.2f;
 		Util.Zoom(virtualCamera, target, .025f);
 
 		MoveEnviroment();

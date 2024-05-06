@@ -48,6 +48,10 @@ public class Panel_Main : Panel_Base
 
 		btn_ChangeNickname = GetUI_Button(nameof(btn_ChangeNickname), OnClick_ChangeNickname, useAnimation: true);
 
+#if UNITY_EDITOR
+		btn_ChangeNickname.interactable = false;
+#endif
+
 		btn_Coin = GetUI_Button(nameof(btn_Coin), OnClick_BuyGold, useAnimation: true);
 		btn_Coin.onClick.RemoveListener(OpenSound);
 		btn_Energy = GetUI_Button(nameof(btn_Energy), OnClick_BuyEnergy, useAnimation: true);
@@ -74,6 +78,7 @@ public class Panel_Main : Panel_Base
 	{
 		SetEnergy();
 
+		txtmp_Gold.text = LocalData.gameData.gold.ToString("N0");
 		txtmp_Message.StartPingPong(1f);
 	}
 
@@ -187,6 +192,11 @@ public class Panel_Main : Panel_Base
 	{
 		txtmp_UserName.text = username;
 		txtmp_RunnerTag.text = $"<color=#FFC700>RUNNER #{runnerTag}</color>";
+	}
+
+	public void SetUserNickname(string nickname)
+	{
+		txtmp_UserName.text = nickname;
 	}
 
 	private void OnClick_Shop()

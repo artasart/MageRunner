@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
+using DG.Tweening;
 
 public class Popup_InputField : Popup_Base
 {
@@ -30,6 +28,8 @@ public class Popup_InputField : Popup_Base
 
 		txtmp_Alert = GetUI_TMPText(nameof(txtmp_Alert), "Input");
 		txtmp_Message = GetUI_TMPText(nameof(txtmp_Message), "nickname already exist.");
+		txtmp_Message.gameObject.SetActive(false);
+
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
 
 		inputField_Nickname = GetUI_TMPInputField(nameof(inputField_Nickname), OnValueChanged);
@@ -41,12 +41,27 @@ public class Popup_InputField : Popup_Base
 	private void OnValueChanged(string value)
 	{
 		nickname = value;
-
-		Debug.Log(nickname);
 	}
 
 	private void OnClick_Check()
 	{
-		GameManager.Backend.UpdateNickname(nickname);
+		GameManager.Backend.SetNickname(nickname, () =>
+		{
+			GameManager.UI.PopPopup();
+
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserNickname(nickname);
+		},
+		() =>
+		{
+			this.transform.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+			txtmp_Message.gameObject.SetActive(true);
+
+			Invoke(nameof(Hide), 2f);
+		});
+	}
+
+	private void Hide()
+	{
+		txtmp_Message.gameObject.SetActive(false);
 	}
 }
