@@ -88,10 +88,11 @@ public class Scene_Main : SceneLogic
 
 #if UNITY_EDITOR
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", UnityEngine.Random.Range(100000, 999999).ToString());
+
 #elif UNITY_IOS
 		var nickname = GameManager.Backend.GetNickname();
 
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, Util.Generate6DigitNumberFromUUID(PlayerPrefs.GetString("token")));
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, UnityEngine.Random.Range(100000, 999999).ToString());
 #endif
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
@@ -103,6 +104,7 @@ public class Scene_Main : SceneLogic
 		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
 		{
 			GameManager.Sound.PlayBGM("Dawn");
+
 			PlayerPrefs.SetInt("isBGMPlayed", 1);
 		}
 

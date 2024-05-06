@@ -36,6 +36,7 @@ public class Panel_Logo : Panel_Base
 	private void Start()
 	{
 		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation: true);
+		btn_AppleLogin.onClick.RemoveListener(OpenSound);
 		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
 
 #if UNITY_IOS
@@ -52,8 +53,6 @@ public class Panel_Logo : Panel_Base
 
 	private void Onclick_AppleLogin()
 	{
-		GameManager.Scene.Dim(true);
-
 		FindObjectOfType<AppleLoginManager>().SignInWithApple();
 
 		DebugManager.Log("Apple Login", DebugColor.Login);
@@ -69,8 +68,10 @@ public class Panel_Logo : Panel_Base
 
 	public void StartLogin(bool isInstant = false, Action _action = null)
 	{
-		if(isInstant)
+		if (isInstant)
 		{
+			GameManager.Scene.Dim(false);
+
 			loginCanvasGroup.alpha = 0f;
 			loginCanvasGroup.blocksRaycasts = false;
 

@@ -17,18 +17,10 @@ public class AppleLoginManager : MonoBehaviour
 	{
 		if (AppleAuthManager.IsCurrentPlatformSupported)
 		{
-
 			var deserializer = new PayloadDeserializer();
 
 			this._appleAuthManager = new AppleAuthManager(deserializer);
 		}
-
-		this._appleAuthManager.SetCredentialsRevokedCallback(result =>
-		{
-			Debug.Log("Received revoked callback " + result);
-
-			PlayerPrefs.DeleteKey(AppleUserIdKey);
-		});
 
 		if (PlayerPrefs.HasKey(AppleUserIdKey))
 		{
@@ -50,7 +42,6 @@ public class AppleLoginManager : MonoBehaviour
 					// If it's authorized, login with that user id
 					case CredentialState.Authorized:
 						GameManager.Scene.Dim(false);
-
 						GameManager.Backend.LoginToBackEnd(appleUserId, FindObjectOfType<Scene_Logo>().StartLogin);
 						return;
 
@@ -58,7 +49,6 @@ public class AppleLoginManager : MonoBehaviour
 					// Discard previous apple user id
 					case CredentialState.Revoked:
 					case CredentialState.NotFound:
-	
 						PlayerPrefs.DeleteKey(AppleUserIdKey);
 						return;
 				}
@@ -87,13 +77,13 @@ public class AppleLoginManager : MonoBehaviour
 			loginArgs,
 			credential =>
 			{
+				GameManager.Scene.Dim(true);
+
 				PlayerPrefs.SetString(AppleUserIdKey, credential.User);
 
 				var appleIdCredential = credential as IAppleIDCredential;
 				var identityToken = Encoding.UTF8.GetString(appleIdCredential.IdentityToken, 0, appleIdCredential.IdentityToken.Length);
-
-				GameManager.Scene.Dim(false);
-
+				
 				GameManager.Backend.LoginToBackEnd(identityToken, FindObjectOfType<Scene_Logo>().StartLogin);
 			},
 			error =>
