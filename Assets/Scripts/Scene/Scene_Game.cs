@@ -57,6 +57,8 @@ public class Scene_Game : SceneLogic
 		base.OnDestroy();
 
 		SaveGameData();
+
+		Util.KillCoroutine(nameof(Co_CheckTimeForAd));
 	}
 
 	private void OnDisable()
@@ -114,6 +116,8 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
+		GameManager.AdMob.initialClosed += () => isWatched = false;
+
 		GameManager.Scene.Fade(false, .075f);
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Pause>();
@@ -168,13 +172,13 @@ public class Scene_Game : SceneLogic
 		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		if (isRide) playerActor.AddDamage(50);
+
+		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
 	}
 
 	public void Replay()
 	{
 		DebugManager.Log("Retry", DebugColor.Game);
-
-		ShowInterstitialAd();
 
 		LocalData.InitSkill();
 		LocalData.gameData.energy -= 1;
@@ -200,6 +204,10 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_Replay()
 	{
+		ShowInterstitialAd();
+
+		yield return Timing.WaitUntilFalse(() => isWatched);
+
 		GameManager.Scene.Fade(true);
 
 		yield return Timing.WaitUntilTrue(GameManager.Scene.IsFaded);
@@ -582,21 +590,11 @@ public class Scene_Game : SceneLogic
 
 	private void ShowInterstitialAd()
 	{
-		if (replayCount == 0)
-		{
-			replayRandomCount = UnityEngine.Random.Range(3, 5);
-		}
+		if (!isWatched) return;
 
-		replayCount++;
+		GameManager.AdMob.ShowInterstitialAd();
 
-		if (replayCount >= replayRandomCount)
-		{
-			replayCount = 0;
-
-			// GameManager.AdMob.ShowInterstitialAd();
-
-			DebugManager.Log("Showing Interstitial Ad.", DebugColor.AD);
-		}
+		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
 	}
 
 	public void AddGameExp()
@@ -606,6 +604,19 @@ public class Scene_Game : SceneLogic
 		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp * expMultiplier;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(amount);
+	}
+
+	bool isWatched = false;
+
+	IEnumerator<float> Co_CheckTimeForAd()
+	{
+		isWatched = false;
+
+		yield return Timing.WaitForSeconds(120f);
+
+		isWatched = true;
+
+		Debug.Log("Can Show Initial AD");
 	}
 
 	#endregion

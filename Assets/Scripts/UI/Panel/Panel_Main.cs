@@ -107,8 +107,8 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			Invoke(nameof(GoldAd), .75f);
-			// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), 1f));
+			// Invoke(nameof(GoldAd), .75f);
+			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), .75f));
 		},
 
 		() =>
@@ -137,8 +137,8 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			Invoke(nameof(EnergyAd), .75f);
-			// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), 1f));
+			// Invoke(nameof(EnergyAd), .75f);
+			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), .75f));
 		},
 		() =>
 		{

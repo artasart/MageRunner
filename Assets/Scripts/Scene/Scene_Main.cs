@@ -115,7 +115,7 @@ public class Scene_Main : SceneLogic
 		}
 	}
 
-	public float adWaitTime = 90;
+	public float adWaitTime = 120f;
 
 	private void CheckLogin()
 	{

@@ -11,6 +11,11 @@ public class BlockAds : MonoBehaviour
 
 	CanvasGroup canvasGroup;
 
+	private void OnDestroy()
+	{
+		Util.KillCoroutine(nameof(Co_WatchAD) + this.transform.parent.gameObject.GetHashCode());
+	}
+
 	private void Awake()
 	{
 		canvasGroup = GetComponent<CanvasGroup>();
