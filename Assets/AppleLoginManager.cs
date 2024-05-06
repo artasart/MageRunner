@@ -23,11 +23,16 @@ public class AppleLoginManager : MonoBehaviour
 		}
 	}
 
+	private void Update()
+	{
+		if (this._appleAuthManager != null)
+		{
+			this._appleAuthManager.Update();
+		}
+	}
+
 	public void SignInWithApple()
 	{
-		Debug.Log("sign in with apple");
-		Debug.Log(_appleAuthManager);
-
 		var loginArgs = new AppleAuthLoginArgs(LoginOptions.IncludeEmail | LoginOptions.IncludeFullName);
 
 		this._appleAuthManager.LoginWithAppleId(
@@ -39,9 +44,9 @@ public class AppleLoginManager : MonoBehaviour
 				var appleIdCredential = credential as IAppleIDCredential;
 				var identityToken = Encoding.UTF8.GetString(appleIdCredential.IdentityToken, 0, appleIdCredential.IdentityToken.Length);
 
-				Debug.Log(identityToken);
+				GameManager.Scene.Dim(false);
 
-				GameManager.Backend.LoginToBackEnd(identityToken);
+				GameManager.Backend.LoginToBackEnd(identityToken, FindObjectOfType<Scene_Logo>().StartLogin);
 			},
 			error =>
 			{

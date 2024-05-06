@@ -33,8 +33,13 @@ public class Scene_Logo : SceneLogic
 		GameManager.UI.StartPanel<Panel_Logo>(true);
 
 #if UNITY_EDITOR
-		GameManager.UI.FetchPanel<Panel_Logo>().StartLogin(true, GetGameData);
+		StartLogin();
 #endif
+	}
+
+	public void StartLogin()
+	{
+		GameManager.UI.FetchPanel<Panel_Logo>().StartLogin(true, GetGameData);
 	}
 
 	public void GetGameData()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BackEnd;
+using System;
 
 public class BackendManager : SingletonManager<BackendManager>
 {
@@ -19,7 +20,7 @@ public class BackendManager : SingletonManager<BackendManager>
 		}
 	}
 
-	public void LoginToBackEnd(string idToken)
+	public void LoginToBackEnd(string idToken, Action success)
 	{
 		BackendReturnObject bro = Backend.BMember.AuthorizeFederation(idToken, FederationType.Apple, "Apple");
 
@@ -28,6 +29,8 @@ public class BackendManager : SingletonManager<BackendManager>
 			DebugManager.Log("Apple Login Success.", DebugColor.Login);
 
 			PlayerPrefs.SetString("token", idToken.ToString().Substring(0, 20));
+
+			success?.Invoke();
 		}
 		else
 		{

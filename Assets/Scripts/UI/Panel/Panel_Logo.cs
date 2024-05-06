@@ -52,11 +52,11 @@ public class Panel_Logo : Panel_Base
 
 	private void Onclick_AppleLogin()
 	{
-		//GameManager.Scene.Dim(true);
-
-		DebugManager.Log("Apple Login", DebugColor.Login);
+		GameManager.Scene.Dim(true);
 
 		FindObjectOfType<AppleLoginManager>().SignInWithApple();
+
+		DebugManager.Log("Apple Login", DebugColor.Login);
 	}
 
 
@@ -65,15 +65,6 @@ public class Panel_Logo : Panel_Base
 		GameManager.Scene.Dim(true);
 
 		DebugManager.Log("Google Login", DebugColor.Login);
-	}
-
-	public void Message(string message)
-	{
-		txtmp_LoginMessage.text = message;
-
-		//HideLogin();
-
-		GameManager.Scene.Dim(false);
 	}
 
 	public void StartLogin(bool isInstant = false, Action _action = null)
