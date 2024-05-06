@@ -35,6 +35,13 @@ public class Scene_Logo : SceneLogic
 #if UNITY_EDITOR
 		StartLogin();
 #endif
+
+		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
+		{
+			GameManager.Sound.PlayBGM("Dawn");
+
+			PlayerPrefs.SetInt("isBGMPlayed", 1);
+		}
 	}
 
 	public void StartLogin()

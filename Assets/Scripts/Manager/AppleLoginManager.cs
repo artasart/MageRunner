@@ -32,6 +32,8 @@ public class AppleLoginManager : MonoBehaviour
 
 	private void CheckCredentialStatusForUserId(string appleUserId)
 	{
+		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Has Key");
+
 		// If there is an apple ID available, we should check the credential state
 		this._appleAuthManager.GetCredentialState(
 			appleUserId,
@@ -41,6 +43,7 @@ public class AppleLoginManager : MonoBehaviour
 				{
 					// If it's authorized, login with that user id
 					case CredentialState.Authorized:
+						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Authorized");
 						GameManager.Scene.Dim(false);
 						GameManager.Backend.LoginToBackEnd(appleUserId, FindObjectOfType<Scene_Logo>().StartLogin);
 						return;
@@ -49,6 +52,7 @@ public class AppleLoginManager : MonoBehaviour
 					// Discard previous apple user id
 					case CredentialState.Revoked:
 					case CredentialState.NotFound:
+						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("NotFound");
 						PlayerPrefs.DeleteKey(AppleUserIdKey);
 						return;
 				}
@@ -56,6 +60,9 @@ public class AppleLoginManager : MonoBehaviour
 			error =>
 			{
 				var authorizationErrorCode = error.GetAuthorizationErrorCode();
+
+				GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
+
 				Debug.LogWarning("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
 
 			});

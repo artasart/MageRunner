@@ -11,6 +11,7 @@ public class Popup_InputField : Popup_Base
 	TMP_InputField inputField_Nickname;
 
 	Button btn_Confirm;
+	Transform group_Modal;
 
 	string nickname;
 
@@ -36,6 +37,8 @@ public class Popup_InputField : Popup_Base
 
 		btn_Confirm = GetUI_Button(nameof(btn_Confirm), OnClick_Check, useAnimation: true);
 		btn_Back = GetUI_Button(nameof(btn_Back), OnClick_Close, useAnimation: true);
+
+		group_Modal = this.transform.Search(nameof(group_Modal));
 	}
 
 	private void OnValueChanged(string value)
@@ -53,7 +56,7 @@ public class Popup_InputField : Popup_Base
 		},
 		() =>
 		{
-			this.transform.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 			txtmp_Message.gameObject.SetActive(true);
 
 			Invoke(nameof(Hide), 2f);

@@ -747,7 +747,7 @@ public static class Util
 			yield return Timing.WaitForOneFrame;
 		}
 
-		txtmp.text = target.ToString();
+		txtmp.text = target.ToString() + addon;
 	}
 
 	public static string FormatNumber(int number)

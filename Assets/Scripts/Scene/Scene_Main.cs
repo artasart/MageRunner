@@ -101,13 +101,6 @@ public class Scene_Main : SceneLogic
 
 	private IEnumerator<float> Co_MainStart()
 	{
-		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
-		{
-			GameManager.Sound.PlayBGM("Dawn");
-
-			PlayerPrefs.SetInt("isBGMPlayed", 1);
-		}
-
 		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
 		GetFarmedItem();

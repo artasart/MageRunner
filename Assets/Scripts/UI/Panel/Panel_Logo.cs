@@ -50,6 +50,10 @@ public class Panel_Logo : Panel_Base
 	{
 		txtmp_Download.text = message;
 	}
+	public void SetMessage(string message)
+	{
+		txtmp_LoginMessage.text = message;
+	}
 
 	private void Onclick_AppleLogin()
 	{
