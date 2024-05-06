@@ -5,7 +5,7 @@ using BackEnd;
 
 public class BackendManager : SingletonManager<BackendManager>
 {
-	private void Start()
+	private void Awake()
 	{
 		var bro = Backend.Initialize(true);
 

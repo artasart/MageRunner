@@ -33,7 +33,7 @@ public class Scene_Logo : SceneLogic
 		GameManager.UI.StartPanel<Panel_Logo>(true);
 
 #if UNITY_EDITOR
-		GameManager.UI.FetchPanel<Panel_Logo>().HideLogin(true, GetGameData);
+		GameManager.UI.FetchPanel<Panel_Logo>().StartLogin(true, GetGameData);
 #endif
 	}
 
@@ -47,7 +47,6 @@ public class Scene_Logo : SceneLogic
 		yield return Timing.WaitForSeconds(.75f);
 
 		LocalData.masterData = JsonManager<MasterData>.LoadData(Define.JSON_MASTERDATA);
-		DebugManager.ClearLog(LocalData.masterData);
 
 		if (LocalData.masterData == null)
 		{

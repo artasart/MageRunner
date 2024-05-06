@@ -23,6 +23,8 @@ public class Panel_Main : Panel_Base
 	Button btn_BuyGold;
 	Button btn_BuyEnergy;
 
+	Button btn_ChangeNickname;
+
 	public Transform group_TopMenu { get; private set; }
 
 	Button btn_Energy;
@@ -43,6 +45,8 @@ public class Panel_Main : Panel_Base
 
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
+
+		btn_ChangeNickname = GetUI_Button(nameof(btn_ChangeNickname), OnClick_ChangeNickname, useAnimation: true);
 
 		btn_Coin = GetUI_Button(nameof(btn_Coin), OnClick_BuyGold, useAnimation: true);
 		btn_Coin.onClick.RemoveListener(OpenSound);
@@ -71,6 +75,11 @@ public class Panel_Main : Panel_Base
 		SetEnergy();
 
 		txtmp_Message.StartPingPong(1f);
+	}
+
+	private void OnClick_ChangeNickname()
+	{
+		GameManager.UI.StackPopup<Popup_InputField>();
 	}
 
 	private void OnClick_BuyGold()

@@ -26,14 +26,17 @@ public class Panel_Logo : Panel_Base
 		txtmp_Download.UsePingPong();
 		txtmp_Download.StartPingPong(.25f);
 
-		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation:true);
-		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
-
 		group_Login = this.transform.Search(nameof(group_Login));
 		loginCanvasGroup = group_Login.GetComponent<CanvasGroup>();
 		group_Login.gameObject.SetActive(true);
 
 		txtmp_Download.gameObject.SetActive(false);
+	}
+
+	private void Start()
+	{
+		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation: true);
+		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
 
 #if UNITY_IOS
 		btn_GoogleLogin.gameObject.SetActive(false);
@@ -49,7 +52,7 @@ public class Panel_Logo : Panel_Base
 
 	private void Onclick_AppleLogin()
 	{
-		GameManager.Scene.Dim(true);
+		//GameManager.Scene.Dim(true);
 
 		DebugManager.Log("Apple Login", DebugColor.Login);
 
@@ -68,12 +71,12 @@ public class Panel_Logo : Panel_Base
 	{
 		txtmp_LoginMessage.text = message;
 
-		HideLogin();
+		//HideLogin();
 
 		GameManager.Scene.Dim(false);
 	}
 
-	public void HideLogin(bool isInstant = false, Action _action = null)
+	public void StartLogin(bool isInstant = false, Action _action = null)
 	{
 		if(isInstant)
 		{
