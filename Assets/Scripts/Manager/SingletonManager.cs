@@ -9,6 +9,7 @@ public static class GameManager
     public static GameWebManager Web { get { return GameWebManager.Instance; } }
     public static GameDataManager Data { get { return GameDataManager.Instance; } }
     public static GoogleAdMobManager AdMob { get { return GoogleAdMobManager.Instance; } }
+    public static BackendManager Backend { get { return BackendManager.Instance; } }
 }
 
 public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour

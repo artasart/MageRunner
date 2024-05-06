@@ -61108,6 +61108,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Popup_Pause
       objectReference: {fileID: 0}
+    - target: {fileID: 957564457840482674, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1636340367125454842, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1636340367125454842, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1636340367125454842, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1636340367125454842, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 1636340367125454842, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 2336009127313267098, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -61187,6 +61211,10 @@ PrefabInstance:
     - target: {fileID: 2336009127313267098, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5165654566136369185, guid: 742591721aa16b7439d2401a3811bae3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -510
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

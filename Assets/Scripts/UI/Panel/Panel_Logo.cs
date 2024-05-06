@@ -1,7 +1,10 @@
+using AppleAuth.Enums;
+using AppleAuth;
 using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using AppleAuth.Extensions;
 
 public class Panel_Logo : Panel_Base
 {
@@ -31,6 +34,12 @@ public class Panel_Logo : Panel_Base
 		group_Login.gameObject.SetActive(true);
 
 		txtmp_Download.gameObject.SetActive(false);
+
+#if UNITY_IOS
+		btn_GoogleLogin.gameObject.SetActive(false);
+#elif UNITY_ANDROID
+		btn_AppleLogin.gameObject.SetActive(false);
+#endif
 	}
 
 	public void SetDownload(string message)
@@ -44,7 +53,7 @@ public class Panel_Logo : Panel_Base
 
 		DebugManager.Log("Apple Login", DebugColor.Login);
 
-		FindObjectOfType<AppleLoginManager>().Login();
+		FindObjectOfType<AppleLoginManager>().SignInWithApple();
 	}
 
 
@@ -76,6 +85,7 @@ public class Panel_Logo : Panel_Base
 
 			_action?.Invoke();
 		}
+
 		else
 		{
 			GameManager.UI.FadeCanvasGroup(loginCanvasGroup, 0f, _end: () =>

@@ -174,7 +174,7 @@ public class Panel_Main : Panel_Base
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
-	public void SetUserInfo(string username, int runnerTag)
+	public void SetUserInfo(string username, string runnerTag)
 	{
 		txtmp_UserName.text = username;
 		txtmp_RunnerTag.text = $"<color=#FFC700>RUNNER #{runnerTag}</color>";

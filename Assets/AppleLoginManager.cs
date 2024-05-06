@@ -1,15 +1,10 @@
-using System.Collections.Generic;
-using System;
-using System.Text;
 using AppleAuth;
 using AppleAuth.Enums;
 using AppleAuth.Extensions;
 using AppleAuth.Interfaces;
 using AppleAuth.Native;
-using Unity.VisualScripting;
+using System.Text;
 using UnityEngine;
-using System.Security.Cryptography;
-using Firebase.Auth;
 
 public class AppleLoginManager : MonoBehaviour
 {
@@ -21,185 +16,125 @@ public class AppleLoginManager : MonoBehaviour
 	{
 		if (AppleAuthManager.IsCurrentPlatformSupported)
 		{
+
 			var deserializer = new PayloadDeserializer();
+
 			this._appleAuthManager = new AppleAuthManager(deserializer);
 		}
 
-		this.InitializeLogin();
+		InitializeLoginMenu();
 	}
 
-	private void Update()
+	private void InitializeLoginMenu()
 	{
-		if (this._appleAuthManager != null)
-		{
-			this._appleAuthManager.Update();
-		}
-	}
+		if (this._appleAuthManager == null) return;
 
-	private void InitializeLogin()
-	{
-		if (this._appleAuthManager == null)
-		{
-			return;
-		}
 
 		this._appleAuthManager.SetCredentialsRevokedCallback(result =>
 		{
+			Debug.Log("Received revoked callback " + result);
+
 			PlayerPrefs.DeleteKey(AppleUserIdKey);
 		});
-	}
 
-	public void Login()
-	{
-		PerformLoginWithAppleIdAndFirebase((res) => { 
-			Debug.Log(res.Email); 
-			Debug.Log(res.IsValid());
-
-			GameManager.UI.FetchPanel<Panel_Logo>().Message(res.Email);
-		});
-
-		//var loginArgs = new AppleAuthLoginArgs(LoginOptions.None);
-
-		//this._appleAuthManager.LoginWithAppleId(
-		//	loginArgs,
-		//	credential =>
-		//	{
-		//		var appleIdCredential = credential as IAppleIDCredential;
-		//		var passwordCredential = credential as IPasswordCredential;
-
-		//		if (appleIdCredential.State != null) GameManager.UI.FetchPanel<Panel_Logo>().Message("Credential state is empty.");
-
-		//		if (appleIdCredential.IdentityToken != null)
-		//		{
-		//			var identityToken = Encoding.UTF8.GetString(appleIdCredential.IdentityToken, 0, appleIdCredential.IdentityToken.Length);
-
-		//			GameManager.UI.FetchPanel<Panel_Logo>().Message("Token : " + identityToken + " FullName : " + appleIdCredential.FullName.ToString());
-		//		}
-
-		//		if (appleIdCredential.AuthorizationCode != null)
-		//		{
-		//			var authorizationCode = Encoding.UTF8.GetString(appleIdCredential.AuthorizationCode, 0, appleIdCredential.AuthorizationCode.Length);
-
-		//			GameManager.UI.FetchPanel<Panel_Logo>().Message(authorizationCode);
-		//		}
-
-		//	},
-		//	error =>
-		//	{
-		//		var authorizationErrorCode = error.GetAuthorizationErrorCode();
-
-		//		GameManager.UI.FetchPanel<Panel_Logo>().Message("Sign in with Apple failed " + authorizationErrorCode.ToString() + " " + error.ToString());
-		//	});
-	}
-
-	public void LogOut()
-	{
-		DebugManager.Log("Apple Logout.", DebugColor.Login);
-	}
-
-	private static string GenerateRandomString(int length)
-	{
-		if (length <= 0)
+		// If we have an Apple User Id available, get the credential status for it
+		if (PlayerPrefs.HasKey(AppleUserIdKey))
 		{
-			throw new Exception("Expected nonce to have positive length");
+			var storedAppleUserId = PlayerPrefs.GetString(AppleUserIdKey);
+
+			this.CheckCredentialStatusForUserId(storedAppleUserId);
 		}
 
-		const string charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._";
-		var cryptographicallySecureRandomNumberGenerator = new RNGCryptoServiceProvider();
-		var result = string.Empty;
-		var remainingLength = length;
-
-		var randomNumberHolder = new byte[1];
-		while (remainingLength > 0)
+		// If we do not have an stored Apple User Id, attempt a quick login
+		else
 		{
-			var randomNumbers = new List<int>(16);
-			for (var randomNumberCount = 0; randomNumberCount < 16; randomNumberCount++)
-			{
-				cryptographicallySecureRandomNumberGenerator.GetBytes(randomNumberHolder);
-				randomNumbers.Add(randomNumberHolder[0]);
-			}
-
-			for (var randomNumberIndex = 0; randomNumberIndex < randomNumbers.Count; randomNumberIndex++)
-			{
-				if (remainingLength == 0)
-				{
-					break;
-				}
-
-				var randomNumber = randomNumbers[randomNumberIndex];
-				if (randomNumber < charset.Length)
-				{
-					result += charset[randomNumber];
-					remainingLength--;
-				}
-			}
+			this.AttemptQuickLogin();
 		}
-
-		return result;
 	}
 
-	private static string GenerateSHA256NonceFromRawNonce(string rawNonce)
+	public void SignInWithApple()
 	{
-		var sha = new SHA256Managed();
-		var utf8RawNonce = Encoding.UTF8.GetBytes(rawNonce);
-		var hash = sha.ComputeHash(utf8RawNonce);
+		Debug.Log("SignInWithApple");
 
-		var result = string.Empty;
-		for (var i = 0; i < hash.Length; i++)
-		{
-			result += hash[i].ToString("x2");
-		}
-
-		return result;
-	}
-
-	public void PerformLoginWithAppleIdAndFirebase(Action<FirebaseUser> firebaseAuthCallback)
-	{
-		var rawNonce = GenerateRandomString(32);
-		var nonce = GenerateSHA256NonceFromRawNonce(rawNonce);
-
-		var loginArgs = new AppleAuthLoginArgs(
-			LoginOptions.IncludeEmail | LoginOptions.IncludeFullName,
-			nonce);
+		var loginArgs = new AppleAuthLoginArgs(LoginOptions.IncludeEmail | LoginOptions.IncludeFullName);
 
 		this._appleAuthManager.LoginWithAppleId(
 			loginArgs,
 			credential =>
 			{
+				PlayerPrefs.SetString(AppleUserIdKey, credential.User);
+
 				var appleIdCredential = credential as IAppleIDCredential;
-				if (appleIdCredential != null)
+				var identityToken = Encoding.UTF8.GetString(appleIdCredential.IdentityToken, 0, appleIdCredential.IdentityToken.Length);
+
+				GameManager.Backend.LoginToBackEnd(identityToken);
+			},
+			error =>
+			{
+				var authorizationErrorCode = error.GetAuthorizationErrorCode();
+
+				Debug.LogWarning("Sign in with Apple failed " + authorizationErrorCode.ToString() + " " + error.ToString());
+			});
+	}
+
+	private void CheckCredentialStatusForUserId(string appleUserId)
+	{
+		Debug.Log("CheckCredentialStatusForUserId");
+
+		// If there is an apple ID available, we should check the credential state
+		this._appleAuthManager.GetCredentialState(
+			appleUserId,
+			state =>
+			{
+				switch (state)
 				{
-					FindObjectOfType<FirebaseAppleLogin>().PerformFirebaseAuthentication(appleIdCredential, rawNonce, firebaseAuthCallback);
+					// If it's authorized, login with that user id
+					case CredentialState.Authorized:
+						return;
+
+					// If it was revoked, or not found, we need a new sign in with apple attempt
+					// Discard previous apple user id
+					case CredentialState.Revoked:
+					case CredentialState.NotFound:
+						PlayerPrefs.DeleteKey(AppleUserIdKey);
+						return;
 				}
 			},
 			error =>
 			{
-				// Something went wrong
-				GameManager.UI.FetchPanel<Panel_Logo>().Message("Something went wrong..");
+				var authorizationErrorCode = error.GetAuthorizationErrorCode();
+				Debug.LogWarning("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
 			});
 	}
 
-	public void PerformQuickLoginWithFirebase(Action<FirebaseUser> firebaseAuthCallback)
+	private void AttemptQuickLogin()
 	{
-		var rawNonce = GenerateRandomString(32);
-		var nonce = GenerateSHA256NonceFromRawNonce(rawNonce);
+		Debug.Log("AttemptQuickLogin");
 
-		var quickLoginArgs = new AppleAuthQuickLoginArgs(nonce);
+		var quickLoginArgs = new AppleAuthQuickLoginArgs();
 
+		// Quick login should succeed if the credential was authorized before and not revoked
 		this._appleAuthManager.QuickLogin(
 			quickLoginArgs,
 			credential =>
 			{
+				// If it's an Apple credential, save the user ID, for later logins
 				var appleIdCredential = credential as IAppleIDCredential;
 				if (appleIdCredential != null)
 				{
-					FindObjectOfType<FirebaseAppleLogin>().PerformFirebaseAuthentication(appleIdCredential, rawNonce, firebaseAuthCallback);
+					PlayerPrefs.SetString(AppleUserIdKey, credential.User);
 				}
+
+				var quickCredential = appleIdCredential as IAppleIDCredential;
+				var identityToken = Encoding.UTF8.GetString(quickCredential.IdentityToken, 0, quickCredential.IdentityToken.Length);
+
+				GameManager.Backend.LoginToBackEnd(identityToken);
 			},
 			error =>
 			{
-				// Something went wrong
-				GameManager.UI.FetchPanel<Panel_Logo>().Message("Something went wrong..");
+				// If Quick Login fails, we should show the normal sign in with apple menu, to allow for a normal Sign In with apple
+				var authorizationErrorCode = error.GetAuthorizationErrorCode();
+				Debug.LogWarning("Quick Login Failed " + authorizationErrorCode.ToString() + " " + error.ToString());
 			});
 	}
 }

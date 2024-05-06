@@ -129,6 +129,7 @@ public class MasterData
 [Serializable]
 public class GameData
 {
+	public string nickname;
 	public int level = 1;
 	public int exp;
 

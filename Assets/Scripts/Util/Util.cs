@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -827,6 +828,26 @@ public static class Util
 
 		RectTransform rectTransform = img.rectTransform;
 		rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectTransform.rect.height * spriteAspectRatio);
+	}
+
+	public static string Generate6DigitNumberFromUUID(string uuidString)
+	{
+		if (string.IsNullOrEmpty(uuidString)) return "Test";
+
+		// UUID 문자열을 바이트 배열로 변환합니다.
+		byte[] uuidBytes = Guid.Parse(uuidString).ToByteArray();
+
+		// 바이트 배열을 SHA256 해시합니다.
+		using (SHA256 sha256 = SHA256.Create())
+		{
+			byte[] hashedBytes = sha256.ComputeHash(uuidBytes);
+
+			// 해시된 값을 6자리 숫자로 변환합니다.
+			int hashedInt = BitConverter.ToInt32(hashedBytes, 0);
+			int sixDigitNumber = Math.Abs(hashedInt % 1000000);
+
+			return sixDigitNumber.ToString("D6"); // 6자리로 포맷팅
+		}
 	}
 }
 

@@ -35,7 +35,6 @@ public class Scene_Logo : SceneLogic
 #if UNITY_EDITOR
 		GameManager.UI.FetchPanel<Panel_Logo>().HideLogin(true, GetGameData);
 #endif
-		//FindObjectOfType<GPGSManager>().GetGPS();
 	}
 
 	public void GetGameData()

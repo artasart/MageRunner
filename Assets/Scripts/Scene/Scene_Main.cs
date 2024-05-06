@@ -26,6 +26,8 @@ public class Scene_Main : SceneLogic
 
 	public int payAmount = 10000;
 
+	string nickname;
+
 	#endregion
 
 
@@ -80,12 +82,24 @@ public class Scene_Main : SceneLogic
 
 	private void Start()
 	{
+		if (!string.IsNullOrEmpty(LocalData.gameData.nickname))
+		{
+			if (string.IsNullOrEmpty(PlayerPrefs.GetString("token")))
+			{
+				nickname = "username-test-account";
+			}
+
+			else nickname = "username-" + PlayerPrefs.GetString("token");
+		}
+
+		else nickname = LocalData.gameData.nickname;
+
 		GameManager.Scene.Fade(false, .1f);
 
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("artasart", LocalData.gameData.runnerTag);
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, Util.Generate6DigitNumberFromUUID(PlayerPrefs.GetString("token")));
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
