@@ -68,6 +68,8 @@ public class Popup_GameOver : Popup_Base
 
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
+		// Ad here..
+
 		Scene.game.Replay();
 	}
 
@@ -80,7 +82,7 @@ public class Popup_GameOver : Popup_Base
 
 	public void SetResult(int score, int gold, int exp)
 	{
-		txtmp_Score.text = $"You ran {score}m, gaiend {gold} Golds & {exp} exp!";
+		txtmp_Score.text = $"You ran {score}m, gaiend {gold} golds & {exp} exp!";
 
 		Scene.game.AddExp(exp);
 		Scene.game.SaveGameData();

@@ -727,9 +727,9 @@ public static class Util
 		}
 	}
 
-	public static void AnimateText(TMP_Text text, int target, float _duration = .25f, float delay = 0f) => RunCoroutine(Co_AnimateText(text, target, _duration).Delay(delay), nameof(Co_AnimateText), CoroutineTag.Content);
+	public static void AnimateText(TMP_Text text, int target, float _duration = .25f, float delay = 0f, string addon = "") => RunCoroutine(Co_AnimateText(text, target, _duration, addon).Delay(delay), nameof(Co_AnimateText), CoroutineTag.Content);
 
-	private static IEnumerator<float> Co_AnimateText(TMP_Text txtmp, int target, float _duration = .25f)
+	private static IEnumerator<float> Co_AnimateText(TMP_Text txtmp, int target, float _duration = .25f, string addon = "")
 	{
 		float elapsedTime = 0f;
 
@@ -740,7 +740,7 @@ public static class Util
 			float time = Mathf.SmoothStep(0f, 1f, elapsedTime / _duration);
 			int value = Mathf.RoundToInt(Mathf.Lerp(start, target, time));
 
-			txtmp.text = value.ToString();
+			txtmp.text = value.ToString() + addon;
 
 			elapsedTime += Time.deltaTime;
 
