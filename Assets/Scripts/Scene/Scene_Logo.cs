@@ -26,25 +26,13 @@ public class Scene_Logo : SceneLogic
 	{
 		GameManager.Scene.FadeInstant(true);
 
+		GameManager.Scene.Fade(false, .1f);
+
+		GameManager.UI.Restart();
+
+		GameManager.UI.StartPanel<Panel_Logo>(true);
+
 		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.HasKey(Define.APPLEUSERID).ToString());
-
-		if (PlayerPrefs.HasKey(Define.APPLEUSERID))
-		{
-			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.GetString(Define.APPLEUSERID));
-
-			var storedAppleUserId = PlayerPrefs.GetString(Define.APPLEUSERID);
-
-			FindObjectOfType<AppleLoginManager>().CheckCredentialStatusForUserId(storedAppleUserId);
-		}
-
-		else
-		{
-			GameManager.Scene.Fade(false, .1f);
-
-			GameManager.UI.Restart();
-
-			GameManager.UI.StartPanel<Panel_Logo>(true);
-		}
 
 #if UNITY_EDITOR
 		StartLogin();

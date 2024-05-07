@@ -61,7 +61,7 @@ public class Popup_Settings : Popup_Base
 
 	private void OnClick_LogOut()
 	{
-		PlayerPrefs.DeleteKey("AppleUserId");
+		PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
 		GameManager.Scene.LoadScene(SceneName.Logo);
 	}

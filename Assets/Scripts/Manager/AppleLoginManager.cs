@@ -21,6 +21,18 @@ public class AppleLoginManager : MonoBehaviour
 		}
 	}
 
+	private void Start()
+	{
+		if (PlayerPrefs.HasKey(Define.APPLEUSERID))
+		{
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.GetString(Define.APPLEUSERID));
+
+			var storedAppleUserId = PlayerPrefs.GetString(Define.APPLEUSERID);
+
+			CheckCredentialStatusForUserId(storedAppleUserId);
+		}
+	}
+
 	public void CheckCredentialStatusForUserId(string appleUserId)
 	{
 		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Has Key");
@@ -33,7 +45,6 @@ public class AppleLoginManager : MonoBehaviour
 				{
 					case CredentialState.Authorized:
 						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Authorized");
-						GameManager.Scene.Fade(false, .1f);
 						GameManager.Backend.LoginASAP(FindObjectOfType<Scene_Logo>().StartLogin);
 						return;
 
