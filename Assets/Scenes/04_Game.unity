@@ -40709,6 +40709,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 569660077971302316, guid: 861cf87aeba22f340b842381947b00f7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5699131748577469032, guid: 861cf87aeba22f340b842381947b00f7, type: 3}
       propertyPath: orthographic size
       value: 3.2
@@ -77452,6 +77456,14 @@ PrefabInstance:
     - target: {fileID: 4123325747638326621, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
       propertyPath: m_Name
       value: PlayerActor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682956352979546831, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682956352979546831, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
