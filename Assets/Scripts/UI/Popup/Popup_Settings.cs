@@ -22,6 +22,11 @@ public class Popup_Settings : Popup_Base
 	Transform group_Sound;
 	Transform group_License;
 
+	private void OnEnable()
+	{
+		OnClick_Sound();
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -52,8 +57,6 @@ public class Popup_Settings : Popup_Base
 
 		txtmp_BGMVolume.text = (GameManager.Sound.bgmVolume * 100).ToString("N0");
 		txtmp_SFXVolume.text = (GameManager.Sound.sfxVolume * 100).ToString("N0");
-
-		OnClick_Sound();
 	}
 
 	private void OnClick_LogOut()

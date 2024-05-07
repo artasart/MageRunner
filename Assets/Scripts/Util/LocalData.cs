@@ -49,6 +49,12 @@ public static class LocalData
 		gameData.energyTotal = 5;
 		gameData.isPremium = false;
 		gameData.adWatchTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+		gameData.damage = 1;
+		gameData.mana = 100;
+		gameData.speed = 5;
+		gameData.damageLevel = 1;
+		gameData.manaLevel = 1;
+		gameData.speedLevel = 1;
 
 		if (masterData == null) return;
 
@@ -124,6 +130,7 @@ public class MasterData
 	public List<InGameLevel> inGameLevel;
 	public List<SkillEntity> skillEntity;
 	public List<ShopItem> shopItem;
+	public List<Upgrade> upgradeData;
 }
 
 [Serializable]
@@ -140,6 +147,14 @@ public class GameData
 	public int energyTotal;
 	public bool isPremium;
 	public int runnerTag = 1;
+
+	public int damage = 1;
+	public int mana = 100;
+	public float speed = 5;
+
+	public int damageLevel = 1;
+	public int manaLevel = 1;
+	public int speedLevel = 1;
 
 	public DateTime lastLogin;
 	public string adWatchTime;
@@ -343,4 +358,13 @@ public class ShopItem
 	public int amount;
 	public int price;
 	public string thumbnailPath;
+}
+
+[Serializable]
+public class Upgrade
+{
+	public int gold;
+	public int damage;
+	public int mana;
+	public int speed;
 }

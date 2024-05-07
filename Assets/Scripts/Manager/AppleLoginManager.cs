@@ -9,8 +9,6 @@ using UnityEngine;
 
 public class AppleLoginManager : MonoBehaviour
 {
-	private const string AppleUserIdKey = "AppleUserId";
-
 	private IAppleAuthManager _appleAuthManager;
 
 	private void Awake()
@@ -23,44 +21,26 @@ public class AppleLoginManager : MonoBehaviour
 		}
 	}
 
-    private void Start()
-    {
-		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.HasKey(AppleUserIdKey).ToString());
-
-		if (PlayerPrefs.HasKey(AppleUserIdKey))
-		{
-			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.GetString(AppleUserIdKey));
-
-			var storedAppleUserId = PlayerPrefs.GetString(AppleUserIdKey);
-
-			this.CheckCredentialStatusForUserId(storedAppleUserId);
-		}
-	}
-
-    private void CheckCredentialStatusForUserId(string appleUserId)
+	public void CheckCredentialStatusForUserId(string appleUserId)
 	{
 		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Has Key");
 
-		// If there is an apple ID available, we should check the credential state
 		this._appleAuthManager.GetCredentialState(
 			appleUserId,
 			state =>
 			{
 				switch (state)
 				{
-					// If it's authorized, login with that user id
 					case CredentialState.Authorized:
 						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Authorized");
-
+						GameManager.Scene.Fade(false, .1f);
 						GameManager.Backend.LoginASAP(FindObjectOfType<Scene_Logo>().StartLogin);
 						return;
 
-					// If it was revoked, or not found, we need a new sign in with apple attempt
-					// Discard previous apple user id
 					case CredentialState.Revoked:
 					case CredentialState.NotFound:
 						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("NotFound");
-						PlayerPrefs.DeleteKey(AppleUserIdKey);
+						PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 						return;
 				}
 			},
@@ -93,11 +73,11 @@ public class AppleLoginManager : MonoBehaviour
 			{
 				GameManager.Scene.Dim(true);
 
-				PlayerPrefs.SetString(AppleUserIdKey, credential.User);
+				PlayerPrefs.SetString(Define.APPLEUSERID, credential.User);
 
 				var appleIdCredential = credential as IAppleIDCredential;
 				var identityToken = Encoding.UTF8.GetString(appleIdCredential.IdentityToken, 0, appleIdCredential.IdentityToken.Length);
-				
+
 				GameManager.Backend.LoginToBackEnd(identityToken, FindObjectOfType<Scene_Logo>().StartLogin);
 			},
 			error =>

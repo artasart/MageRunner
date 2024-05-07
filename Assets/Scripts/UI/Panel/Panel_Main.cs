@@ -24,6 +24,7 @@ public class Panel_Main : Panel_Base
 	Button btn_BuyEnergy;
 
 	Button btn_ChangeNickname;
+	Button btn_Stat;
 
 	public Transform group_TopMenu { get; private set; }
 
@@ -45,6 +46,7 @@ public class Panel_Main : Panel_Base
 
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
+		btn_Stat = GetUI_Button(nameof(btn_Stat), OnClick_Stat, useAnimation: true);
 
 		btn_ChangeNickname = GetUI_Button(nameof(btn_ChangeNickname), OnClick_ChangeNickname, useAnimation: true);
 
@@ -242,6 +244,12 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.FetchPanel<Panel_Inventory>().ShowNewIcon(img_New.gameObject.activeSelf);
 
 		ShowNewIcon(false);
+	}
+
+	private void OnClick_Stat()
+	{
+		GameManager.UI.SwitchPanel<Panel_Stat>(true);
+		GameManager.UI.FetchPanel<Panel_Stat>().Init();
 	}
 
 	private void OnClick_Mail()

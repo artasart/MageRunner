@@ -286,7 +286,7 @@ public class PlayerActor : Actor
 		rgbd2d.gravityScale = 0;
 		rgbd2d.velocity = Vector3.zero;
 
-		Scene.game.SetVirtualCamBody(new Vector3(4.5f, -1.25f, -10f));
+		Scene.game.SetVirtualCamBody(new Vector3(3.5f, -1.25f, -10f));
 		Scene.game.ZoomCamera(4f);
 
 		Invoke(nameof(EndFly), 4.5f);
@@ -307,7 +307,7 @@ public class PlayerActor : Actor
 
 		rgbd2d.gravityScale = 1.5f;
 
-		Scene.game.SetVirtualCamBody(new Vector3(4f, 1.25f, -10f));
+		Scene.game.SetVirtualCamBody(new Vector3(3.25f, 1.25f, -10f));
 		Scene.game.ZoomCamera(3f);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.PowerOverWhelming, 10f);

@@ -77,4 +77,6 @@ public static class Define
 	public const string SOUND_THUNDER = "Spawn";
 	public const string SOUND_DAWN = "Dawn";
 	public const string SOUND_DIE = "BodyFall_1";
+
+	public const string APPLEUSERID = "AppleUserId";
 }

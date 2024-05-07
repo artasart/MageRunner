@@ -168,7 +168,14 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 
-		playerActor.mana = 100;
+		playerActor.AddDamage(LocalData.gameData.damage);
+
+		playerActor.mana = LocalData.gameData.mana;
+		playerActor.manaTotal = LocalData.gameData.mana;
+
+		levelController.moveSpeedOrigin = LocalData.gameData.speed;
+		levelController.moveSpeed = LocalData.gameData.speed;
+
 		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		if (isRide) playerActor.AddDamage(50);
@@ -188,12 +195,8 @@ public class Scene_Game : SceneLogic
 		goldMultiplier = 1;
 		expMultiplier = 1;
 		cooltimeMultiplier = 0;
-		playerActor.mana = 100;
-		playerActor.manaTotal = 100;
 		isThunderRunning = false;
 		isSkillUsed = false;
-
-		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		actorSkills = new SerializableDictionary<string, ActorSkill>();
 
@@ -240,6 +243,16 @@ public class Scene_Game : SceneLogic
 		StartScoreCount();
 
 		playerActor.isDead = false;
+
+		playerActor.AddDamage(LocalData.gameData.damage);
+
+		playerActor.mana = LocalData.gameData.mana;
+		playerActor.manaTotal = LocalData.gameData.mana;
+
+		levelController.moveSpeedOrigin = LocalData.gameData.speed;
+		levelController.moveSpeed = LocalData.gameData.speed;
+
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		if (isRide) playerActor.AddDamage(50);
 
@@ -341,12 +354,16 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_StartDifficulty()
 	{
+		var seconds = 10f;
+
 		while (true)
 		{
-			yield return Timing.WaitForSeconds(10);
+			yield return Timing.WaitForSeconds(seconds);
 
 			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .01f), 0f, 8.5f);
 			levelController.groundProbability += (levelController.groundProbability * .05f);
+
+			if (score > 7000) seconds = 5f;
 
 			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
 		}

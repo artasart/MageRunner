@@ -115,7 +115,7 @@ public class Panel_HUD : Panel_Base
 
 	public void Refresh()
 	{
-		txtmp_Score.text = 0.ToString("N0");
+		txtmp_Score.text = 0.ToString("N0") + " m";
 		txtmp_Coin.text = 0.ToString("N0");
 
 		foreach (var item in items_Skill)
@@ -135,7 +135,7 @@ public class Panel_HUD : Panel_Base
 
 	public void SetScoreUI(int amount)
 	{
-		txtmp_Score.text = amount.ToString("N0");
+		txtmp_Score.text = amount.ToString("N0") + "m";
 	}
 
 	public void SetGoldUI(int amount)

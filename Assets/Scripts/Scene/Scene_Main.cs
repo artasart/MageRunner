@@ -24,7 +24,8 @@ public class Scene_Main : SceneLogic
 	public Transform renderTextureCam { get; private set; }
 	public GameObject navigator { get; private set; }
 
-	public int payAmount = 10000;
+	[HideInInspector] public int payAmount = 10000;
+	[HideInInspector] public float adWaitTime = 120f;
 
 	#endregion
 
@@ -114,8 +115,6 @@ public class Scene_Main : SceneLogic
 			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
 		}
 	}
-
-	public float adWaitTime = 120f;
 
 	private void CheckLogin()
 	{

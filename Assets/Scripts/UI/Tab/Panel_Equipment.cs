@@ -17,6 +17,7 @@ public class Panel_Equipment : Panel_Base
 	TMP_Text txtmp_Menu;
 	TMP_Text txtmp_SpaceAmount;
 	TMP_Text txtmp_DamageRate;
+	TMP_Text txtmp_ManaRate;
 	TMP_Text txtmp_SpeedRate;
 
 	Button btn_BuyStash;
@@ -47,8 +48,6 @@ public class Panel_Equipment : Panel_Base
 
 		txtmp_Menu = GetUI_TMPText(nameof(txtmp_Menu), "All");
 		txtmp_SpaceAmount = GetUI_TMPText(nameof(txtmp_SpaceAmount), $"{0}/{100}");
-		txtmp_DamageRate = GetUI_TMPText(nameof(txtmp_DamageRate), "1");
-		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), "5");
 
 		btn_Weapon = GetUI_Button(nameof(btn_Weapon), OnClick_Weapons, useAnimation: true);
 		btn_Armor = GetUI_Button(nameof(btn_Armor), OnClick_Armor, useAnimation: true);
@@ -126,6 +125,10 @@ public class Panel_Equipment : Panel_Base
 		}
 
 		OnClick_All();
+
+		txtmp_DamageRate = GetUI_TMPText(nameof(txtmp_DamageRate), LocalData.gameData.damage.ToString());
+		txtmp_ManaRate = GetUI_TMPText(nameof(txtmp_ManaRate), LocalData.gameData.mana.ToString());
+		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), LocalData.gameData.speed.ToString());
 	}
 
 	private void OnClick_BuyStash()
@@ -286,7 +289,7 @@ public class Panel_Equipment : Panel_Base
 
 	public void SetRideAbility(int damage, int speed)
 	{
-		txtmp_DamageRate.text = damage.ToString();
+		txtmp_DamageRate.text = (LocalData.gameData.damage + damage).ToString();
 		txtmp_SpeedRate.text = speed.ToString();
 	}
 }
