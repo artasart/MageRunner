@@ -116,6 +116,15 @@ public class Scene_Main : SceneLogic
 		}
 	}
 
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Space))
+		{
+			GameManager.UI.StackSplash<Splash_Gold>();
+			GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();
+		}
+	}
+
 	private void CheckLogin()
 	{
 		if (LocalData.gameData.isAdWatched)

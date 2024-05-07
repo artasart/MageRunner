@@ -849,6 +849,16 @@ public static class Util
 			return sixDigitNumber.ToString("D6"); // 6자리로 포맷팅
 		}
 	}
+
+
+	public static void ResizeImage(Image image, Sprite sprite)
+	{
+		float spriteWidth = sprite.bounds.size.x * sprite.pixelsPerUnit;
+		float spriteHeight = sprite.bounds.size.y * sprite.pixelsPerUnit;
+
+		RectTransform rectTransform = image.GetComponent<RectTransform>();
+		rectTransform.sizeDelta = new Vector2(spriteWidth, spriteHeight);
+	}
 }
 
 

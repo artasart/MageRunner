@@ -91,7 +91,7 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_BuyGold()
 	{
-		if(LocalData.gameData.isAdWatched)
+		if (LocalData.gameData.isAdWatched)
 		{
 			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
@@ -99,12 +99,12 @@ public class Panel_Main : Panel_Base
 
 			return;
 		}
-		
+
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Reward",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>Gold Box</color> after wathching AD?", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
@@ -129,7 +129,7 @@ public class Panel_Main : Panel_Base
 
 			return;
 		}
-		
+
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
@@ -150,23 +150,8 @@ public class Panel_Main : Panel_Base
 
 	public void GoldAd()
 	{
-		LocalData.gameData.gold += 10000;
-
-		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
-		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
-		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
-		GameManager.Scene.ShowToastAndDisappear($"You gained {100000} gold..!");
-
-		SetGoldUI(LocalData.gameData.gold);
-
-		GameManager.UI.PopPopup();
-
-		GameManager.Scene.Dim(false);
-
-		//Scene.main.BlockAd(Scene.main.adWaitTime);
-		BlockUI();
-
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		GameManager.UI.StackSplash<Splash_Gold>();
+		GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();
 	}
 
 	public void EnergyAd()
@@ -184,7 +169,6 @@ public class Panel_Main : Panel_Base
 
 		GameManager.Scene.Dim(false);
 
-		//Scene.main.BlockAd(Scene.main.adWaitTime);
 		BlockUI();
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);

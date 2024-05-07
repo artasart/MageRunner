@@ -9,17 +9,28 @@ public class Splash_Base : UI_Base
 	protected bool isInitialized = false;
 
 	public float timeout = 1f;
+	public bool useAutoTimeOut = true;
 
 	protected Action endAction;
 
 	protected virtual void OnEnable()
 	{
-		if(isInitialized)
+		if (isInitialized)
 		{
+			if (!useAutoTimeOut)
+			{
+				return;
+			}
+
 			Util.RunCoroutine(Co_DisableAfterSeconds(timeout), nameof(Co_DisableAfterSeconds) + this.GetHashCode(), CoroutineTag.UI);
 		}
 
 		isInitialized = true;
+	}
+
+	private void OnDisable()
+	{
+		Util.KillCoroutine(nameof(Co_DisableAfterSeconds) + this.GetHashCode());
 	}
 
 	private IEnumerator<float> Co_DisableAfterSeconds(float _timeout)

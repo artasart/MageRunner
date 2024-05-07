@@ -14,7 +14,11 @@ public class Item_StatUpgrade : Item_Base
 	TMP_Text txtmp_Level;
 	TMP_Text txtmp_Upgrade;
 
+	Image img_Coin;
+
 	public UpgradeType upgradeType;
+
+	int level;
 
 	protected override void Awake()
 	{
@@ -28,6 +32,8 @@ public class Item_StatUpgrade : Item_Base
 		txtmp_Name = GetUI_TMPText(nameof(txtmp_Name), upgradeType.ToString());
 		txtmp_Level = GetUI_TMPText(nameof(txtmp_Level), "Lv.1");
 		txtmp_Upgrade = GetUI_TMPText(nameof(txtmp_Upgrade), "1,000");
+
+		img_Coin = GetUI_Image(nameof(img_Coin));
 	}
 
 	private void Start()
@@ -42,20 +48,35 @@ public class Item_StatUpgrade : Item_Base
 		{
 			case UpgradeType.Damage:
 				txtmp_Level.text = "Lv." + LocalData.gameData.damageLevel;
+				level = LocalData.gameData.damageLevel;
 				break;
 			case UpgradeType.Mana:
 				txtmp_Level.text = "Lv." + LocalData.gameData.manaLevel;
+				level = LocalData.gameData.manaLevel;
 				break;
 			case UpgradeType.Speed:
 				txtmp_Level.text = "Lv." + LocalData.gameData.speedLevel;
+				level = LocalData.gameData.speedLevel;
 				break;
 		}
 
-		txtmp_Upgrade.text = GetUpgradeGold().ToString("N0");
+		if (level == 10)
+		{
+			img_Coin.gameObject.SetActive(false);
+			txtmp_Upgrade.text = "Max level";
+			btn_Upgrade.interactable = false;
+		}
+
+		else
+		{
+			txtmp_Upgrade.text = GetUpgradeGold().ToString("N0");
+		}
 	}
 
 	private void OnClick_Upgarde()
 	{
+		if (level == 10) return;
+
 		if (LocalData.gameData.gold < GetUpgradeGold())
 		{
 			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
@@ -132,6 +153,10 @@ public class Item_StatUpgrade : Item_Base
 
 		GameManager.Scene.Dim(false);
 
+		LocalData.gameData.gold -= GetUpgradeGold();
+
+		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
+
 		switch (upgradeType)
 		{
 			case UpgradeType.Damage:
@@ -139,25 +164,35 @@ public class Item_StatUpgrade : Item_Base
 				LocalData.gameData.damageLevel++;
 				txtmp_Rate.text = LocalData.gameData.damage.ToString("N0");
 				txtmp_Level.text = "Lv." + LocalData.gameData.damageLevel.ToString();
+				level = LocalData.gameData.damageLevel;
 				break;
 			case UpgradeType.Mana:
 				LocalData.gameData.mana += GetUpgradeAmount();
 				LocalData.gameData.manaLevel++;
 				txtmp_Rate.text = LocalData.gameData.mana.ToString("N0");
 				txtmp_Level.text = "Lv." + LocalData.gameData.manaLevel.ToString();
+				level = LocalData.gameData.manaLevel;
 				break;
 			case UpgradeType.Speed:
 				LocalData.gameData.speed += GetUpgradeAmount() * 0.01f;
 				LocalData.gameData.speedLevel++;
 				txtmp_Rate.text = LocalData.gameData.speed.ToString("N0");
 				txtmp_Level.text = "Lv." + LocalData.gameData.speedLevel.ToString();
+				level = LocalData.gameData.speedLevel;
 				break;
 			default: break;
 		}
 
 		Scene.main.SaveData();
 
-		txtmp_Upgrade.text = GetUpgradeGold().ToString("N0");
+
+		if (level != 10) txtmp_Upgrade.text = GetUpgradeGold().ToString("N0");
+		else
+		{
+			img_Coin.gameObject.SetActive(false);
+			txtmp_Upgrade.text = "Max level";
+			btn_Upgrade.interactable = false;
+		}
 	}
 
 	public float GetCurrentValue()

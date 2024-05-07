@@ -1,3 +1,4 @@
+using DG.Tweening;
 using EnhancedScrollerDemos.GridSimulation;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,7 @@ public class Panel_Equipment : Panel_Base
 		btn_All = GetUI_Button(nameof(btn_All), OnClick_All, useAnimation: true);
 
 		btn_BuyStash = GetUI_Button(nameof(btn_BuyStash), OnClick_BuyStash, useAnimation: true);
+		btn_BuyStash.onClick.RemoveListener(OpenSound);
 
 		group_Normal = this.transform.Search(nameof(group_Normal));
 		group_Special = this.transform.Search(nameof(group_Special));
@@ -133,6 +135,17 @@ public class Panel_Equipment : Panel_Base
 
 	private void OnClick_BuyStash()
 	{
+		if (LocalData.gameData.gold < Scene.main.payAmount)
+		{
+			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+			btn_BuyStash.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			return;
+		}
+
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
+
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to buy stash?\n\ncost : <color=orange>{Scene.main.payAmount}</color>", "Purchase",
 			() =>
