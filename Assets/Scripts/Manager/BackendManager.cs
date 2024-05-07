@@ -87,4 +87,9 @@ public class BackendManager : SingletonManager<BackendManager>
 
 		return nickname;
 	}
+
+	public void WithDrawAccount()
+	{
+		Backend.BMember.WithdrawAccount();
+	}
 }

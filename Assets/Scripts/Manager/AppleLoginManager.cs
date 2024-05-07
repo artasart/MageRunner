@@ -31,6 +31,15 @@ public class AppleLoginManager : MonoBehaviour
 
 			CheckCredentialStatusForUserId(storedAppleUserId);
 		}
+
+		this._appleAuthManager.SetCredentialsRevokedCallback(result =>
+		{
+			Debug.Log("Received revoked callback " + result);
+
+			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
+
+			GameManager.Scene.LoadScene(SceneName.Logo);
+		});
 	}
 
 	public void CheckCredentialStatusForUserId(string appleUserId)

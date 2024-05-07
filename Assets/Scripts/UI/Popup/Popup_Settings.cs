@@ -64,6 +64,8 @@ public class Popup_Settings : Popup_Base
 		PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
 		GameManager.Scene.LoadScene(SceneName.Logo);
+
+		GameManager.Backend.WithDrawAccount();
 	}
 
 	private void OnClick_License()
