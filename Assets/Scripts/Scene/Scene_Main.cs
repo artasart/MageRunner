@@ -91,18 +91,28 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", UnityEngine.Random.Range(100000, 999999).ToString());
 
 #elif UNITY_IOS
-		var nickname = GameManager.Backend.GetNickname();
-
-		if(string.IsNullOrEmpty(nickname))
-        {
-			nickname = "username-" + UnityEngine.Random.Range(100000, 999999) + "-" + UnityEngine.Random.Range(100000, 999999);
-        }
-
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, UnityEngine.Random.Range(100000, 999999).ToString());
+		Test();
 #endif
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
+	}
+
+	public void IOSNicknameSetting()
+	{
+		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
+		{
+			GameManager.UI.StackPopup<Popup_InputField>();
+
+			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
+		
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, LocalData.gameData.runnerTag.ToString());
+		}
+
+		else
+		{
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, LocalData.gameData.runnerTag.ToString());
+		}
 	}
 
 	private IEnumerator<float> Co_MainStart()

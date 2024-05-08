@@ -183,6 +183,10 @@ public class Panel_Main : Panel_Base
 	public void SetUserNickname(string nickname)
 	{
 		txtmp_UserName.text = nickname;
+
+		LocalData.gameData.nickname = nickname;
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	private void OnClick_Shop()
