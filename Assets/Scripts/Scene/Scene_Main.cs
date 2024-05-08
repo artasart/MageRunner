@@ -87,36 +87,61 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
 
-#if UNITY_EDITOR
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", UnityEngine.Random.Range(100000, 999999).ToString());
-
-#elif UNITY_IOS
-		IOSNicknameSetting();
-#endif
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
 	}
 
-	public void IOSNicknameSetting()
+	private IEnumerator<float> Co_MainStart()
 	{
+		yield return Timing.WaitUntilTrue(() => GameManager.Scene.IsFaded());
+
+#if UNITY_EDITOR
+
 		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
 		{
-			GameManager.UI.StackPopup<Popup_InputField>();
+			yield return Timing.WaitForSeconds(.5f);
 
-			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
-		
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, LocalData.gameData.runnerTag.ToString());
+			GameManager.UI.StackSplash<Splash_Notice>();
+			GameManager.UI.FetchSplash<Splash_Notice>().SetTimer();
+		}
+
+		var tag = UnityEngine.Random.Range(100000, 999999);
+
+		LocalData.gameData.nickname = "test nickname for editor";
+		LocalData.gameData.runnerTag = tag;
+
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", tag.ToString());
+
+#elif UNITY_IOS
+
+		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
+		{
+			yield return Timing.WaitForSeconds(.5f);
+
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("usernickname-empty", "THE RUNNER #empty");
+
+			GameManager.UI.StackSplash<Splash_Notice>();
+			GameManager.UI.FetchSplash<Splash_Notice>().SetTimer();
+
+			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
+			{
+
+				GameManager.UI.StackPopup<Popup_InputField>();
+
+				LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
+
+				GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, LocalData.gameData.runnerTag.ToString());
+			});
 		}
 
 		else
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, LocalData.gameData.runnerTag.ToString());
 		}
-	}
 
-	private IEnumerator<float> Co_MainStart()
-	{
+#endif
+
 		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
 		GetFarmedItem();
@@ -133,7 +158,7 @@ public class Scene_Main : SceneLogic
 
 	private void Update()
 	{
-		if(Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			GameManager.UI.StackSplash<Splash_Gold>();
 			GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();

@@ -5452,6 +5452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isInstant: 0
   timeout: 1
+  useAutoTimeOut: 1
 --- !u!1 &7687498653103943823
 GameObject:
   m_ObjectHideFlags: 0

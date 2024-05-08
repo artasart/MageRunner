@@ -35132,28 +35132,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1713720764}
     m_Modifications:
-    - target: {fileID: 1642132379835438729, guid: 9e8378ab6871810449c716689462d816, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1642132379835438729, guid: 9e8378ab6871810449c716689462d816, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3082757308459884370, guid: 9e8378ab6871810449c716689462d816, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4825556631762883848, guid: 9e8378ab6871810449c716689462d816, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4825556631762883848, guid: 9e8378ab6871810449c716689462d816, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5353788158468558679, guid: 9e8378ab6871810449c716689462d816, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5737198675034154408, guid: 9e8378ab6871810449c716689462d816, type: 3}
@@ -35243,10 +35227,6 @@ PrefabInstance:
     - target: {fileID: 6174769900352059440, guid: 9e8378ab6871810449c716689462d816, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527905596631121631, guid: 9e8378ab6871810449c716689462d816, type: 3}
-      propertyPath: m_PixelsPerUnitMultiplier
-      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7661580984565023314, guid: 9e8378ab6871810449c716689462d816, type: 3}
       propertyPath: m_AnchorMax.y

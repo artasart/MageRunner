@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSound
   m_EditorClassIdentifier: 
   bgm:
-  - {fileID: 8300000, guid: 1f7df1ba9f1fe974c88dfb65643b1b65, type: 3}
+  - {fileID: 8300000, guid: 9e2a42b286e69b249a82b26472bfb504, type: 3}
   soundEffects:
   - {fileID: 8300000, guid: 1aff8da7c9bd5a04194426e287c94018, type: 3}
   - {fileID: 8300000, guid: 3473484a7c7713a4cb10824ab502236f, type: 3}

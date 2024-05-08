@@ -72,12 +72,19 @@ public class Popup_Settings : Popup_Base
 	{
 		group_Sound.gameObject.SetActive(false);
 		group_License.gameObject.SetActive(true);
+
+		btn_License.transform.GetChild(0).GetComponent<Image>().color = Util.HexToRGB("#FFC700");
+		btn_Sound.transform.GetChild(0).GetComponent<Image>().color = Util.HexToRGB("#DCDCDC");
 	}
 
 	private void OnClick_Sound()
 	{
 		group_Sound.gameObject.SetActive(true);
 		group_License.gameObject.SetActive(false);
+
+
+		btn_License.transform.GetChild(0).GetComponent<Image>().color = Util.HexToRGB("#DCDCDC");
+		btn_Sound.transform.GetChild(0).GetComponent<Image>().color = Util.HexToRGB("#FFC700");
 	}
 
 	private void OnValueChanged_BGM(float value)

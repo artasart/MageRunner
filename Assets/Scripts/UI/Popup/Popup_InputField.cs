@@ -21,6 +21,22 @@ public class Popup_InputField : Popup_Base
 		nickname = LocalData.gameData.nickname;
 	}
 
+	protected override void OnClick_Close()
+	{
+		if (nickname == string.Empty)
+		{
+			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			txtmp_Message.gameObject.SetActive(true);
+			txtmp_Message.text = "must enter nickname";
+			Invoke(nameof(Hide), 2f);
+
+			return;
+		}
+
+		base.OnClick_Close();
+	}
+
 	protected override void Awake()
 	{
 		isDefault = false;
@@ -28,7 +44,7 @@ public class Popup_InputField : Popup_Base
 		base.Awake();
 
 		txtmp_Alert = GetUI_TMPText(nameof(txtmp_Alert), "Input");
-		txtmp_Message = GetUI_TMPText(nameof(txtmp_Message), "nickname already exist.");
+		txtmp_Message = GetUI_TMPText(nameof(txtmp_Message), "nickname already exist");
 		txtmp_Message.gameObject.SetActive(false);
 
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close);
@@ -58,6 +74,7 @@ public class Popup_InputField : Popup_Base
 		{
 			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 			txtmp_Message.gameObject.SetActive(true);
+			txtmp_Message.text = "nickname already exist";
 
 			Invoke(nameof(Hide), 2f);
 		});
