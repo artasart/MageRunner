@@ -210,11 +210,11 @@ public class Scene_Game : SceneLogic
 		// Scene.game.ShowInterstitialAd();
 
 		// if(initialClosed== false && isWatched)
-        // {
-			// yield return Timing.WaitUntilTrue(() => initialClosed);
+		// {
+		// yield return Timing.WaitUntilTrue(() => initialClosed);
 
-//			initialClosed = false;
-//		}
+		//			initialClosed = false;
+		//		}
 
 		GameManager.Scene.Fade(true);
 

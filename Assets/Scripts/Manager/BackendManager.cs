@@ -92,6 +92,6 @@ public class BackendManager : SingletonManager<BackendManager>
 
 	public void WithDrawAccount()
 	{
-		// Backend.BMember.WithdrawAccount();
+		Backend.BMember.WithdrawAccount();
 	}
 }

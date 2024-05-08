@@ -63,28 +63,51 @@ public class Popup_Settings : Popup_Base
 	{
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you really want to <color=#FFC700>delete account</color>?", "Alert",
-() =>
-{
-	PlayerPrefs.DeleteKey(Define.APPLEUSERID);
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you really want to <color=#FFC700>delete account</color>?\n\n" +
+			$"<size=30><color=#A90000>your account and personal data will be deleted.</size></color>", "Alert",
+		() =>
+		{
+			GameManager.Scene.Dim(true);
+			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
-	LocalData.gameData.nickname = string.Empty;
-	LocalData.gameData.runnerTag = 1;
-	LocalData.InitGameData();
-	LocalData.InitInvenData();
+			LocalData.gameData.nickname = string.Empty;
+			LocalData.gameData.runnerTag = 1;
+			LocalData.InitGameData();
+			LocalData.InitInvenData();
 
-	Scene.main.SaveData();
+			Scene.main.SaveData();
 
-	GameManager.Scene.LoadScene(SceneName.Logo);
+#if UNITY_IOS
+			GameManager.Backend.WithDrawAccount();
+#endif
+			Invoke(nameof(QuitApp), .75f);
+		},
 
-	GameManager.Backend.WithDrawAccount();
-},
+		() =>
+		{
 
-() =>
-{
-
-});
+		});
 	}
+
+	private void QuitApp()
+	{
+		GameManager.UI.PopPopup(true);
+		GameManager.Scene.Dim(false);
+
+		GameManager.UI.StackPopup<Popup_Basic>();
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"Application need to be restarted.", "Alert",
+		() =>
+		{
+			Application.Quit();
+		},
+
+		() =>
+		{
+
+		});
+	}
+
+
 
 	private void OnClick_License()
 	{
