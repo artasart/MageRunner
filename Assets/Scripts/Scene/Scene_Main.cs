@@ -91,7 +91,7 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", UnityEngine.Random.Range(100000, 999999).ToString());
 
 #elif UNITY_IOS
-		Test();
+		IOSNicknameSetting();
 #endif
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 

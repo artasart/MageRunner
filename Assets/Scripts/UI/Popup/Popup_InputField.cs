@@ -17,7 +17,7 @@ public class Popup_InputField : Popup_Base
 
 	private void OnEnable()
 	{
-		inputField_Nickname.text = string.Empty;
+		inputField_Nickname.text = LocalData.gameData.nickname;
 		nickname = string.Empty;
 	}
 
