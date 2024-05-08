@@ -1,6 +1,9 @@
 using DG.Tweening;
 using EnhancedScrollerDemos.GridSimulation;
+using MEC;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -107,7 +110,15 @@ public class RowCellView_ShopItem : RowCellView
 			{
 				GameManager.Scene.Dim(true);
 
-				GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(WatchedAD), 1f));
+				if (shopItemData.type == "ad")
+				{
+					GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD)));
+				}
+
+				else
+				{
+					Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD));
+				}
 			},
 			() =>
 			{
@@ -115,11 +126,15 @@ public class RowCellView_ShopItem : RowCellView
 			});
 	}
 
-	private void WatchedAD()
+	private IEnumerator<float> Co_WatchedAD(string name)
 	{
-		BuyMethods(shopItemData.name);
+		yield return Timing.WaitForOneFrame;
+
+		DebugManager.ClearLog(name);
 
 		GameManager.Scene.Dim(false);
+
+		BuyMethods(name);
 
 		if (shopItemData.type == "ad")
 		{
@@ -129,6 +144,14 @@ public class RowCellView_ShopItem : RowCellView
 			this.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
 
 			GameManager.UI.FetchPanel<Panel_Main>().BlockUI();
+		}
+
+		else
+		{
+			GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
+			GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+			GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
+			GameManager.Scene.ShowToastAndDisappear($"You owned {name}!");
 		}
 	}
 

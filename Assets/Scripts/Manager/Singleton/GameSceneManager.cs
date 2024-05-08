@@ -342,5 +342,18 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 		callback_ClickToast?.Invoke();
 	}
 
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Q))
+		{
+			Time.timeScale = 0f;
+		}
+
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			Time.timeScale = 1f;
+		}
+	}
+
 	#endregion
 }
