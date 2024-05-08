@@ -35,21 +35,28 @@ public class Popup_GameOver : Popup_Base
 
 	private void OnClick_Reward()
 	{
-		GameManager.Scene.Dim(true);
-
-		Invoke(nameof(DoubleGold), 1f);
-	}
-
-	private void DoubleGold()
-	{
-		GameManager.Scene.Dim(false);
-
 		btn_Reward.interactable = false;
 
-		Scene.game.gold *= 2;
+		GameManager.Scene.Dim(true);
 
-		GameManager.Scene.ShowToastAndDisappear($"You recieved + {Scene.game.gold.ToString("N0")}");
+		Invoke(nameof(StackSplash), .5f);
 	}
+
+	private void StackSplash()
+    {
+		GameManager.Scene.Dim(true);
+		
+		GameManager.UI.StackSplash<Splash_Gold>();
+		GameManager.UI.FetchSplash<Splash_Gold>().OpenBox(10);
+
+		Invoke(nameof(PopSplash), 3f);
+	}
+
+	private void PopSplash()
+    {
+		GameManager.UI.FetchSplash<Splash_Gold>().ShowMessage();
+		GameManager.UI.PopSplash();
+    }
 
 	private void OnClick_Retry()
 	{
@@ -86,6 +93,9 @@ public class Popup_GameOver : Popup_Base
 
 		Scene.game.AddExp(exp);
 		Scene.game.SaveGameData();
+
+		btn_Reward.interactable = true;
+		btn_Reward.gameObject.SetActive(UnityEngine.Random.Range(0f, 1f) < .5f);
 
 		string amount = string.Empty;
 

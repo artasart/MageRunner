@@ -107,9 +107,7 @@ public class RowCellView_ShopItem : RowCellView
 			{
 				GameManager.Scene.Dim(true);
 
-				Invoke(nameof(WatchedAD), 1f);
-
-				// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(WatchedAD), 1f));
+				GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(WatchedAD), 1f));
 			},
 			() =>
 			{
@@ -119,18 +117,15 @@ public class RowCellView_ShopItem : RowCellView
 
 	private void WatchedAD()
 	{
-		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
-		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
-		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
-
-		GameManager.Scene.ShowToastAndDisappear($"You recevied {shopItemData.name}!!");
-
 		BuyMethods(shopItemData.name);
 
 		GameManager.Scene.Dim(false);
 
 		if (shopItemData.type == "ad")
 		{
+			GameManager.UI.StackSplash<Splash_Gold>();
+			GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();
+
 			this.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
 
 			GameManager.UI.FetchPanel<Panel_Main>().BlockUI();

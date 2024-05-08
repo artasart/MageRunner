@@ -93,6 +93,11 @@ public class Scene_Main : SceneLogic
 #elif UNITY_IOS
 		var nickname = GameManager.Backend.GetNickname();
 
+		if(string.IsNullOrEmpty(nickname))
+        {
+			nickname = "username-" + UnityEngine.Random.Range(100000, 999999) + "-" + UnityEngine.Random.Range(100000, 999999);
+        }
+
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, UnityEngine.Random.Range(100000, 999999).ToString());
 #endif
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);

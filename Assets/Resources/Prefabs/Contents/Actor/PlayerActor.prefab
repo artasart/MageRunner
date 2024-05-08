@@ -26755,7 +26755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8bcda2e24363b44886af9b81466f767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1
+  health: 0
   damage: 100
   mana: 100
   isDead: 0

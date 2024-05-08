@@ -26,6 +26,8 @@ public class BackendManager : SingletonManager<BackendManager>
 
 		if (bro.IsSuccess())
 		{
+			GameManager.Scene.Dim(false);
+
 			DebugManager.Log("Apple Login Success.", DebugColor.Login);
 
 			PlayerPrefs.SetString("token", idToken.ToString());
@@ -90,6 +92,6 @@ public class BackendManager : SingletonManager<BackendManager>
 
 	public void WithDrawAccount()
 	{
-		Backend.BMember.WithdrawAccount();
+		// Backend.BMember.WithdrawAccount();
 	}
 }

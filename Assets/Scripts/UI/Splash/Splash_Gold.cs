@@ -27,7 +27,6 @@ public class Splash_Gold : Splash_Base
 	private void OnDisable()
 	{
 		ResetThumbnail();
-		CancelInvoke(nameof(PopSplash));
 	}
 
 	protected override void Awake()
@@ -46,7 +45,7 @@ public class Splash_Gold : Splash_Base
 		group_Golds.gameObject.SetActive(false);
 	}
 
-	public void OpenBox()
+	public void OpenBox(int max = 21)
 	{
 		GameManager.Sound.PlaySound("BoxOpen");
 
@@ -61,7 +60,7 @@ public class Splash_Gold : Splash_Base
 
 			PlayFireworks();
 
-			int gold = CalculateGold();
+			int gold = CalculateGold(max);
 			ShowGold(gold);
 
 			Invoke(nameof(PopSplash), 2f);
@@ -73,9 +72,10 @@ public class Splash_Gold : Splash_Base
 		particle_Fireworks.Play();
 	}
 
-	private int CalculateGold()
+	private int CalculateGold(int max)
 	{
-		int gold = Random.Range(1, 21);
+		int gold = Random.Range(1, max);
+
 		return gold;
 	}
 
@@ -150,6 +150,10 @@ public class Splash_Gold : Splash_Base
 		ShowToast($"You gained {amount} gold..!");
 	}
 
+	public void ShowMessage()
+    {
+		ShowToast($"You gained {amount} gold..!");
+	}
 
 	private IEnumerator<float> Co_Emission(float duration)
 	{

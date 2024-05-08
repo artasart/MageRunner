@@ -44,7 +44,7 @@ public class Panel_Logo : Panel_Base
 #elif UNITY_ANDROID
 		btn_AppleLogin.gameObject.SetActive(false);
 #endif
-	}
+		}
 
 	public void SetDownload(string message)
 	{

@@ -21,8 +21,8 @@ public class AppleLoginManager : MonoBehaviour
 		}
 	}
 
-	private void Start()
-	{
+	public void Init()
+    {
 		if (PlayerPrefs.HasKey(Define.APPLEUSERID))
 		{
 			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.GetString(Define.APPLEUSERID));
@@ -32,7 +32,7 @@ public class AppleLoginManager : MonoBehaviour
 			CheckCredentialStatusForUserId(storedAppleUserId);
 		}
 
-		this._appleAuthManager.SetCredentialsRevokedCallback(result =>
+		this._appleAuthManager?.SetCredentialsRevokedCallback(result =>
 		{
 			Debug.Log("Received revoked callback " + result);
 
@@ -44,8 +44,6 @@ public class AppleLoginManager : MonoBehaviour
 
 	public void CheckCredentialStatusForUserId(string appleUserId)
 	{
-		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Has Key");
-
 		this._appleAuthManager.GetCredentialState(
 			appleUserId,
 			state =>

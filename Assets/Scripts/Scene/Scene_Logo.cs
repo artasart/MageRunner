@@ -26,7 +26,7 @@ public class Scene_Logo : SceneLogic
 	{
 		GameManager.Scene.FadeInstant(true);
 
-		GameManager.Scene.Fade(false, .1f);
+		GameManager.Scene.Fade(false, .5f);
 
 		GameManager.UI.Restart();
 
@@ -34,16 +34,18 @@ public class Scene_Logo : SceneLogic
 
 		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.HasKey(Define.APPLEUSERID).ToString());
 
-#if UNITY_EDITOR
-		StartLogin();
-#endif
-
 		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
 		{
 			GameManager.Sound.PlayBGM("Dawn");
 
 			PlayerPrefs.SetInt("isBGMPlayed", 1);
 		}
+
+#if UNITY_EDITOR
+		StartLogin();
+#elif UNITY_IOS
+		FindObjectOfType<AppleLoginManager>().Init();
+#endif
 	}
 
 	public void StartLogin()
