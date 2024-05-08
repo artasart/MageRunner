@@ -1,5 +1,6 @@
 using DG.Tweening;
 using EnhancedScrollerDemos.GridSimulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -130,7 +131,7 @@ public class Panel_Equipment : Panel_Base
 
 		txtmp_DamageRate = GetUI_TMPText(nameof(txtmp_DamageRate), LocalData.gameData.damage.ToString());
 		txtmp_ManaRate = GetUI_TMPText(nameof(txtmp_ManaRate), LocalData.gameData.mana.ToString());
-		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), LocalData.gameData.speed.ToString());
+		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), LocalData.gameData.speed.ToString("N2"));
 	}
 
 	private void OnClick_BuyStash()
@@ -302,7 +303,9 @@ public class Panel_Equipment : Panel_Base
 
 	public void SetRideAbility(int damage, int speed)
 	{
+		if (txtmp_DamageRate == null || txtmp_SpeedRate == null) return;
+
 		txtmp_DamageRate.text = (LocalData.gameData.damage + damage).ToString();
-		txtmp_SpeedRate.text = speed.ToString();
+		txtmp_SpeedRate.text = speed.ToString("N2");
 	}
 }
