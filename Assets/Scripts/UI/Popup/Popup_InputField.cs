@@ -65,14 +65,16 @@ public class Popup_InputField : Popup_Base
 
 	private void OnClick_Check()
 	{
-		if(string.IsNullOrEmpty( nickname))
-        {
+		if (string.IsNullOrEmpty(nickname))
+		{
 			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
 			txtmp_Message.gameObject.SetActive(true);
 			txtmp_Message.text = "must enter nickname";
 			CancelInvoke(nameof(Hide));
 			Invoke(nameof(Hide), 2f);
+
+			return;
 		}
 
 		GameManager.Backend.SetNickname(nickname, () =>
@@ -83,6 +85,15 @@ public class Popup_InputField : Popup_Base
 		},
 		() =>
 		{
+			if (nickname == GameManager.Backend.GetNickname())
+			{
+				GameManager.UI.PopPopup();
+
+				GameManager.UI.FetchPanel<Panel_Main>().SetUserNickname(nickname);
+
+				return;
+			}
+
 			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 			txtmp_Message.gameObject.SetActive(true);
 			txtmp_Message.text = "nickname already exist";

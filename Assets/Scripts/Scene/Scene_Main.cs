@@ -137,7 +137,7 @@ public class Scene_Main : SceneLogic
 
 			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
 			{
-				GameManager.UI.StackPopup<Popup_InputField>();
+				GameManager.UI.StackPopup<Popup_InputField>(true);
 
 				LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
 
