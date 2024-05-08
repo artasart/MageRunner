@@ -55,7 +55,7 @@ public class MonsterActor : Actor
 
 	#endregion
 
-	
+
 
 	#region Entity
 

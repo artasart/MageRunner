@@ -607,6 +607,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	public void FadeCanvasGroup(CanvasGroup _current, float _target, float _lerpspeed = 1f, float _delay = 0f, Action _start = null, Action _end = null)
 	{
+		if (_current == null) return;
+
 		Util.RunCoroutine(Co_FadeCanvasGroup(_current, _target, _lerpspeed, _start, _end).Delay(_delay), _current.GetHashCode().ToString(), CoroutineTag.UI);
 	}
 

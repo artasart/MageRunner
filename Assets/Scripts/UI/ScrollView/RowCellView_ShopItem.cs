@@ -98,7 +98,8 @@ public class RowCellView_ShopItem : RowCellView
 			}
 		}
 
-		var message = isAd ? "Get Item after wathching AD?" : $"Do you want to purchase with {priceTag} ?";
+		// after wathching AD?
+		var message = isAd ? "Get Item for free?" : $"Do you want to purchase with {priceTag} ?";
 		var amount = shopItemData.amount == 0 ? string.Empty : " x " + shopItemData.amount;
 
 
@@ -324,7 +325,7 @@ public class RowCellView_ShopItem : RowCellView
 
 		txtmp_Name.text = itemData.name;
 		txtmp_Title.text = itemData.name;
-		txtmp_Price.text = itemData.type == "cash" ? $"${itemData.price}" : "Watch AD";
+		txtmp_Price.text = itemData.type == "cash" ? $"${itemData.price}" : "Free"; // Watch AD
 
 		img_Outline.color = Util.HexToRGB("#FFC700");
 		img_Buy.color = Util.HexToRGB("#FFC700");

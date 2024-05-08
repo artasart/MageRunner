@@ -23,7 +23,7 @@ public class Popup_GameOver : Popup_Base
 		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), string.Empty);
 		txtmp_Energy = GetUI_TMPText(nameof(txtmp_Energy), string.Empty);
 
-		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
+		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation: true);
 
 		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
 		btn_Retry.onClick.RemoveListener(OpenSound);
@@ -35,7 +35,8 @@ public class Popup_GameOver : Popup_Base
 
 	private void OnClick_Reward()
 	{
-		btn_Reward.interactable = false;
+		btn_Reward.GetComponent<CanvasGroup>().alpha = .1f;
+		btn_Reward.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
 		GameManager.Scene.Dim(true);
 
@@ -43,9 +44,9 @@ public class Popup_GameOver : Popup_Base
 	}
 
 	private void StackSplash()
-    {
+	{
 		GameManager.Scene.Dim(true);
-		
+
 		GameManager.UI.StackSplash<Splash_Gold>();
 		GameManager.UI.FetchSplash<Splash_Gold>().OpenBox(10);
 
@@ -53,10 +54,10 @@ public class Popup_GameOver : Popup_Base
 	}
 
 	private void PopSplash()
-    {
+	{
 		GameManager.UI.FetchSplash<Splash_Gold>().ShowMessage();
 		GameManager.UI.PopSplash();
-    }
+	}
 
 	private void OnClick_Retry()
 	{
@@ -92,7 +93,8 @@ public class Popup_GameOver : Popup_Base
 		Scene.game.AddExp(exp);
 		Scene.game.SaveGameData();
 
-		btn_Reward.interactable = true;
+		btn_Reward.GetComponent<CanvasGroup>().alpha = 1f;
+		btn_Reward.GetComponent<CanvasGroup>().blocksRaycasts = true;
 		btn_Reward.gameObject.SetActive(UnityEngine.Random.Range(0f, 1f) < .5f);
 
 		string amount = string.Empty;

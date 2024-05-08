@@ -106,7 +106,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
   randomSeed: 0
@@ -6626,7 +6626,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
   randomSeed: 0
@@ -12115,7 +12115,6 @@ Transform:
   - {fileID: 5477105425208770010}
   - {fileID: 6251731878943205874}
   - {fileID: 1100006876448317847}
-  - {fileID: 3720821482172618171}
   m_Father: {fileID: 2934885246845526770}
   m_LocalEulerAnglesHint: {x: -0.107, y: -0.004, z: 3.056}
 --- !u!1 &4788305551443026960
@@ -12152,6 +12151,7 @@ Transform:
   - {fileID: 4077586299184994691}
   - {fileID: 7762682216706676072}
   - {fileID: 1565958724317522145}
+  - {fileID: 3720821482172618171}
   m_Father: {fileID: 4807910958447557485}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7755754130363214410
@@ -13826,14 +13826,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9151148394481430314}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.8731879, y: -0.48738366, z: 0.00014386418, w: 0.00025236182}
-  m_LocalPosition: {x: -0.0026075593, y: 0.08984203, z: -0.00005220766}
-  m_LocalScale: {x: 1.25, y: 1.2499999, z: 1}
+  m_LocalRotation: {x: 0.8660254, y: -0.50000006, z: -1.4551915e-11, w: -2.3590019e-11}
+  m_LocalPosition: {x: -0.1, y: 0.375, z: 0}
+  m_LocalScale: {x: 1.2499999, y: 1.2499998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 552941435498987934}
   - {fileID: 8369177675354282277}
-  m_Father: {fileID: 4009520901075058634}
+  m_Father: {fileID: 4575949909242350276}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 240}
 --- !u!198 &1745011028166172827
 ParticleSystem:
@@ -13908,7 +13908,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
   randomSeed: 0

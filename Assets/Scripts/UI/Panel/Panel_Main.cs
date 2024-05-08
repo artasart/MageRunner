@@ -87,7 +87,7 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_ChangeNickname()
 	{
-		GameManager.UI.StackPopup<Popup_InputField>();
+		GameManager.UI.StackPopup<Popup_InputField>(true);
 	}
 
 	private void OnClick_BuyGold()
@@ -105,7 +105,8 @@ public class Panel_Main : Panel_Base
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>Gold Box</color> after wathching AD?", "Reward",
+		// after wathching AD
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>Gold Box</color>?", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
@@ -135,7 +136,8 @@ public class Panel_Main : Panel_Base
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Reward",
+		// after wathching AD?
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color>", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
