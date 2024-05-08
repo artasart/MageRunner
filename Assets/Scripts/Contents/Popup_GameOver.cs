@@ -75,8 +75,6 @@ public class Popup_GameOver : Popup_Base
 
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
-		// Ad here..
-
 		Scene.game.Replay();
 	}
 

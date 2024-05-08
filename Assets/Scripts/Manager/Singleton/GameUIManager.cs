@@ -631,7 +631,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 		if (_current != null) _current.alpha = _target;
 
-		if (_target == 1f && _current == null) _current.blocksRaycasts = true;
+		if (_target == 1f && _current != null) _current.blocksRaycasts = true;
 
 		_end?.Invoke();
 	}

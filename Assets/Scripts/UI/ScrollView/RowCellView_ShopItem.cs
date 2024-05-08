@@ -112,12 +112,13 @@ public class RowCellView_ShopItem : RowCellView
 
 				if (shopItemData.type == "ad")
 				{
-					GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD)));
+					Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content);
+					// GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content));
 				}
 
 				else
 				{
-					Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD));
+					Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content);
 				}
 			},
 			() =>

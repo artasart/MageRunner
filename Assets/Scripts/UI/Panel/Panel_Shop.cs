@@ -63,9 +63,12 @@ public class Panel_Shop : Panel_Base
 
 		var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
 
-		Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
-		Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
-		Scene.main.navigator.transform.SetAsLastSibling();
+		if (GameManager.UI.FetchPanel<Panel_Main>() != null && Scene.main != null && Scene.main.navigator != null)
+		{
+			Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
+			Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+			Scene.main.navigator.transform.SetAsLastSibling();
+		}
 	}
 
 	public void Init()

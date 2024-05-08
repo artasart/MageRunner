@@ -1,5 +1,6 @@
 using DG.Tweening;
-using System;
+using MEC;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -109,8 +110,8 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			// Invoke(nameof(GoldAd), .75f);
-			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), .75f));
+			Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content);
+			// GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content));
 		},
 
 		() =>
@@ -139,8 +140,8 @@ public class Panel_Main : Panel_Base
 		{
 			GameManager.Scene.Dim(true);
 
-			// Invoke(nameof(EnergyAd), .75f);
-			GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), .75f));
+			Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content);
+			// GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content));
 		},
 		() =>
 		{
@@ -148,14 +149,18 @@ public class Panel_Main : Panel_Base
 		});
 	}
 
-	public void GoldAd()
+	public IEnumerator<float> GoldAd()
 	{
+		yield return Timing.WaitForOneFrame;
+
 		GameManager.UI.StackSplash<Splash_Gold>();
 		GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();
 	}
 
-	public void EnergyAd()
+	private IEnumerator<float> EnergyAd()
 	{
+		yield return Timing.WaitForOneFrame;
+
 		LocalData.gameData.energy += 5;
 
 		SetEnergy();

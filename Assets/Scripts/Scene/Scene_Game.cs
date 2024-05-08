@@ -116,7 +116,7 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		GameManager.AdMob.initialClosed += () => isWatched = false;
+		GameManager.AdMob.initialClosed += () => { initialClosed = true; Time.timeScale = 0f; };
 
 		GameManager.Scene.Fade(false, .075f);
 		GameManager.UI.Restart();
@@ -180,7 +180,7 @@ public class Scene_Game : SceneLogic
 
 		if (isRide) playerActor.AddDamage(50);
 
-		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
+		// Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
 	}
 
 	public void Replay()
@@ -207,9 +207,14 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_Replay()
 	{
-		ShowInterstitialAd();
+		// Scene.game.ShowInterstitialAd();
 
-		yield return Timing.WaitUntilFalse(() => isWatched);
+		// if(initialClosed== false && isWatched)
+        // {
+			// yield return Timing.WaitUntilTrue(() => initialClosed);
+
+//			initialClosed = false;
+//		}
 
 		GameManager.Scene.Fade(true);
 
@@ -605,13 +610,29 @@ public class Scene_Game : SceneLogic
 	public int goldMultiplier = 1;
 	public int expMultiplier = 1;
 
-	private void ShowInterstitialAd()
+	public void ShowInterstitialAd()
 	{
 		if (!isWatched) return;
 
 		GameManager.AdMob.ShowInterstitialAd();
 
+		Time.timeScale = 0f;
+
 		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
+	}
+
+	bool isWatched = false;
+	bool initialClosed = false;
+
+	IEnumerator<float> Co_CheckTimeForAd()
+	{
+		isWatched = false;
+
+		yield return Timing.WaitForSeconds(90f);
+
+		isWatched = true;
+
+		Debug.Log("Can Show Initial AD");
 	}
 
 	public void AddGameExp()
@@ -621,19 +642,6 @@ public class Scene_Game : SceneLogic
 		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp * expMultiplier;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(amount);
-	}
-
-	bool isWatched = false;
-
-	IEnumerator<float> Co_CheckTimeForAd()
-	{
-		isWatched = false;
-
-		yield return Timing.WaitForSeconds(120f);
-
-		isWatched = true;
-
-		Debug.Log("Can Show Initial AD");
 	}
 
 	#endregion
