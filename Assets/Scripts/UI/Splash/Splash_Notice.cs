@@ -37,5 +37,7 @@ public class Splash_Notice : Splash_Base
 		}
 
 		slider_Timer.value = slider_Timer.maxValue;
+
+		GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
 	}
 }

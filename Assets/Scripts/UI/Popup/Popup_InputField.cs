@@ -23,18 +23,19 @@ public class Popup_InputField : Popup_Base
 
 	protected override void OnClick_Close()
 	{
-		if (nickname == string.Empty)
+		if (string.IsNullOrEmpty( inputField_Nickname.text))
 		{
 			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 
 			txtmp_Message.gameObject.SetActive(true);
 			txtmp_Message.text = "must enter nickname";
+			CancelInvoke(nameof(Hide));
 			Invoke(nameof(Hide), 2f);
 
 			return;
 		}
 
-		base.OnClick_Close();
+		GameManager.UI.PopPopup();
 	}
 
 	protected override void Awake()
@@ -64,6 +65,16 @@ public class Popup_InputField : Popup_Base
 
 	private void OnClick_Check()
 	{
+		if(string.IsNullOrEmpty( nickname))
+        {
+			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			txtmp_Message.gameObject.SetActive(true);
+			txtmp_Message.text = "must enter nickname";
+			CancelInvoke(nameof(Hide));
+			Invoke(nameof(Hide), 2f);
+		}
+
 		GameManager.Backend.SetNickname(nickname, () =>
 		{
 			GameManager.UI.PopPopup();
@@ -75,7 +86,7 @@ public class Popup_InputField : Popup_Base
 			group_Modal.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 			txtmp_Message.gameObject.SetActive(true);
 			txtmp_Message.text = "nickname already exist";
-
+			CancelInvoke(nameof(Hide));
 			Invoke(nameof(Hide), 2f);
 		});
 	}

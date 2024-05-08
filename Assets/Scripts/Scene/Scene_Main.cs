@@ -94,12 +94,23 @@ public class Scene_Main : SceneLogic
 
 	private IEnumerator<float> Co_MainStart()
 	{
+		if(LocalData.gameData.nickname == string.Empty)
+        {
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "THE RUNNER #0");
+		}
+        else
+		{
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, LocalData.gameData.runnerTag.ToString());
+		}
+
 		yield return Timing.WaitUntilTrue(() => GameManager.Scene.IsFaded());
 
 #if UNITY_EDITOR
 
 		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
 		{
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
+
 			yield return Timing.WaitForSeconds(.5f);
 
 			GameManager.UI.StackSplash<Splash_Notice>();
@@ -117,21 +128,22 @@ public class Scene_Main : SceneLogic
 
 		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
 		{
-			yield return Timing.WaitForSeconds(.5f);
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("usernickname-empty", "THE RUNNER #empty");
+			yield return Timing.WaitForSeconds(.5f);
 
 			GameManager.UI.StackSplash<Splash_Notice>();
 			GameManager.UI.FetchSplash<Splash_Notice>().SetTimer();
 
 			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
 			{
-
 				GameManager.UI.StackPopup<Popup_InputField>();
 
 				LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
 
 				GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, LocalData.gameData.runnerTag.ToString());
+
+				GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
 			});
 		}
 
