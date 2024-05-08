@@ -18,7 +18,7 @@ public class Popup_InputField : Popup_Base
 	private void OnEnable()
 	{
 		inputField_Nickname.text = LocalData.gameData.nickname;
-		nickname = string.Empty;
+		nickname = LocalData.gameData.nickname;
 	}
 
 	protected override void Awake()

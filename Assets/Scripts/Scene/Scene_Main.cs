@@ -81,7 +81,7 @@ public class Scene_Main : SceneLogic
 
 	private void Start()
 	{
-		GameManager.Scene.Fade(false, .1f);
+		GameManager.Scene.Fade(false, .5f);
 
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();

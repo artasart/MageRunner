@@ -235,6 +235,8 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 			Debug.Log("Rewarded ad full screen content closed.");
 
 			LoadRewardedAD();
+
+			GameManager.Scene.Dim(false);
 		};
 
 		rewardedAd.OnAdFullScreenContentFailed += (AdError error) =>
@@ -242,6 +244,8 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 			Debug.LogError("Rewarded ad failed to open full screen content with error : " + error);
 
 			LoadRewardedAD();
+
+			GameManager.Scene.Dim(false);
 		};
 	}
 
