@@ -109,6 +109,14 @@ public static class LocalData
 			invenData.stashLevel = 1;
 		}
 	}
+
+	public static void InitInvenData()
+    {
+		invenData.invenItemData.Clear();
+		invenData.amount = 0;
+		invenData.totalAmount = 10;
+		invenData.stashLevel = 1;
+	}
 }
 
 public static class Scene

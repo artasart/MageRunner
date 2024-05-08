@@ -35,7 +35,7 @@ public class Popup_InputField : Popup_Base
 			return;
 		}
 
-		GameManager.UI.PopPopup();
+		GameManager.UI.PopPopup(true);
 	}
 
 	protected override void Awake()
@@ -79,7 +79,7 @@ public class Popup_InputField : Popup_Base
 
 		GameManager.Backend.SetNickname(nickname, () =>
 		{
-			GameManager.UI.PopPopup();
+			GameManager.UI.PopPopup(true);
 
 			GameManager.UI.FetchPanel<Panel_Main>().SetUserNickname(nickname);
 		},
@@ -87,7 +87,7 @@ public class Popup_InputField : Popup_Base
 		{
 			if (nickname == GameManager.Backend.GetNickname())
 			{
-				GameManager.UI.PopPopup();
+				GameManager.UI.PopPopup(true);
 
 				GameManager.UI.FetchPanel<Panel_Main>().SetUserNickname(nickname);
 

@@ -61,11 +61,29 @@ public class Popup_Settings : Popup_Base
 
 	private void OnClick_LogOut()
 	{
-		PlayerPrefs.DeleteKey(Define.APPLEUSERID);
+		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.Scene.LoadScene(SceneName.Logo);
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you really want to <color=#FFC700>delete account</color>?", "Alert",
+() =>
+{
+	PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
-		GameManager.Backend.WithDrawAccount();
+	LocalData.gameData.nickname = string.Empty;
+	LocalData.gameData.runnerTag = 1;
+	LocalData.InitGameData();
+	LocalData.InitInvenData();
+
+	Scene.main.SaveData();
+
+	GameManager.Scene.LoadScene(SceneName.Logo);
+
+	GameManager.Backend.WithDrawAccount();
+},
+
+() =>
+{
+
+});
 	}
 
 	private void OnClick_License()

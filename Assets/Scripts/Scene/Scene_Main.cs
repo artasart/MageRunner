@@ -96,7 +96,7 @@ public class Scene_Main : SceneLogic
 	{
 		if(LocalData.gameData.nickname == string.Empty)
         {
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "THE RUNNER #0");
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "0");
 		}
         else
 		{
