@@ -32,8 +32,6 @@ public class Scene_Logo : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_Logo>(true);
 
-		GameManager.UI.FetchPanel<Panel_Logo>().SetMessage(PlayerPrefs.HasKey(Define.APPLEUSERID).ToString());
-
 		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
 		{
 			GameManager.Sound.PlayBGM("Dawn");

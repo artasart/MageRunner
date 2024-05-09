@@ -36,7 +36,19 @@ public class BackendManager : SingletonManager<BackendManager>
 		}
 		else
 		{
+			GameManager.Scene.Dim(false);
+
 			DebugManager.Log("Apple Login Failed.", DebugColor.Login);
+
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Apple Login Failed. " + bro.GetStatusCode());
+
+			if(bro.GetStatusCode() == "410")
+            {
+				GameManager.UI.StackPopup<Popup_Basic>(true);
+
+				GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+                    $"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice");
+			}
 		}
 	}
 
@@ -54,7 +66,15 @@ public class BackendManager : SingletonManager<BackendManager>
 		else
 		{
 			DebugManager.Log("Apple Login Failed.", DebugColor.Login);
-			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Failed.");
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Failed. " + bro.GetStatusCode());
+
+			if (bro.GetStatusCode() == "410")
+			{
+				GameManager.UI.StackPopup<Popup_Basic>(true);
+
+				GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+					$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice");
+			}
 		}
 	}
 

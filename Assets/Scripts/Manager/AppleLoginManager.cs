@@ -36,6 +36,8 @@ public class AppleLoginManager : MonoBehaviour
 		{
 			Debug.Log("Received revoked callback " + result);
 
+			GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("Received revoked callback " + result);
+
 			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
 			GameManager.Scene.LoadScene(SceneName.Logo);
@@ -58,7 +60,12 @@ public class AppleLoginManager : MonoBehaviour
 					case CredentialState.Revoked:
 					case CredentialState.NotFound:
 						GameManager.UI.FetchPanel<Panel_Logo>().SetMessage("NotFound");
-						PlayerPrefs.DeleteKey(Define.APPLEUSERID);
+						GameManager.UI.StackPopup<Popup_Basic>(true);
+						GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+							$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice",()=> {
+								Application.Quit();
+							});
+						
 						return;
 				}
 			},
