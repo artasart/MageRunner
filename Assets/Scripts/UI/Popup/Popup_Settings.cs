@@ -80,6 +80,8 @@ public class Popup_Settings : Popup_Base
 			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
 			GameManager.Backend.WithDrawAccount();
+
+			GameManager.UI.FetchPanel<Panel_HUD>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 #endif
 			Invoke(nameof(QuitApp), .75f);
 		},
@@ -92,20 +94,9 @@ public class Popup_Settings : Popup_Base
 
 	private void QuitApp()
 	{
-		GameManager.UI.PopPopup(true);
 		GameManager.Scene.Dim(false);
 
-		GameManager.UI.StackPopup<Popup_Basic>();
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"Application need to be restarted.", "Notice",
-		() =>
-		{
-			Application.Quit();
-		},
-
-		() =>
-		{
-
-		});
+		GetComponent<AppleRevoker>().Revoke();
 	}
 
 
