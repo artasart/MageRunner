@@ -16,7 +16,7 @@ public class Panel_Logo : Panel_Base
 
 	Transform group_Login;
 	CanvasGroup loginCanvasGroup;
-	
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -38,13 +38,7 @@ public class Panel_Logo : Panel_Base
 		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation: true);
 		btn_AppleLogin.onClick.RemoveListener(OpenSound);
 		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
-
-#if UNITY_IOS
-		btn_GoogleLogin.gameObject.SetActive(false);
-#elif UNITY_ANDROID
-		btn_AppleLogin.gameObject.SetActive(false);
-#endif
-		}
+	}
 
 	public void SetDownload(string message)
 	{
@@ -57,11 +51,10 @@ public class Panel_Logo : Panel_Base
 
 	private void Onclick_AppleLogin()
 	{
-		FindObjectOfType<AppleLoginManager>().SignInWithApple();
-
 		DebugManager.Log("Apple Login", DebugColor.Login);
-	}
 
+		FindObjectOfType<AppleLoginManager>().SignInWithApple();
+	}
 
 	private void OnClick_GoogleLogin()
 	{

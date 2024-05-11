@@ -276,6 +276,11 @@ public static class Util
 		return element;
 	}
 
+	public static Transform FindTransform(GameObject _gameObject, string name)
+	{
+		return _gameObject.transform.Search(name);
+	}
+
 
 	public static string MoneyWithAbbreviation(double amount)
 	{

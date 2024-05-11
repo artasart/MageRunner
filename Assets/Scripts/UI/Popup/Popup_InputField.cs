@@ -17,6 +17,8 @@ public class Popup_InputField : Popup_Base
 
 	private void OnEnable()
 	{
+		if (LocalData.gameData == null) return;
+
 		inputField_Nickname.text = LocalData.gameData.nickname;
 		nickname = LocalData.gameData.nickname;
 	}

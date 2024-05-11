@@ -5525,7 +5525,6 @@ GameObject:
   - component: {fileID: 1047963530}
   - component: {fileID: 1047963529}
   - component: {fileID: 1047963531}
-  - component: {fileID: 1047963532}
   m_Layer: 0
   m_Name: Scene_Main
   m_TagString: Untagged
@@ -5605,18 +5604,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 51d366d4c0597ba4a9543ed5c8639e8b, type: 2}
---- !u!114 &1047963532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1047963525}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 053b6afdfe58d8146975159abc8f9727, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1089775529
 GameObject:
   m_ObjectHideFlags: 0

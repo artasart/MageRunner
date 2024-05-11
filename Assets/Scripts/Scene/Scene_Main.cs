@@ -86,19 +86,22 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
-
+		GameManager.UI.StackPanel<Panel_Shop>();
+		GameManager.UI.PopPanel();
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
+
+		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
 	}
 
 	private IEnumerator<float> Co_MainStart()
 	{
-		if(LocalData.gameData.nickname == string.Empty)
-        {
+		if (LocalData.gameData.nickname == string.Empty)
+		{
 			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "0");
 		}
-        else
+		else
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, LocalData.gameData.runnerTag.ToString());
 		}
@@ -113,8 +116,7 @@ public class Scene_Main : SceneLogic
 
 			yield return Timing.WaitForSeconds(.5f);
 
-			GameManager.UI.StackSplash<Splash_Notice>();
-			GameManager.UI.FetchSplash<Splash_Notice>().SetTimer();
+			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
 		}
 
 		var tag = UnityEngine.Random.Range(100000, 999999);
@@ -153,8 +155,6 @@ public class Scene_Main : SceneLogic
 		}
 
 #endif
-
-		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
 		GetFarmedItem();
 		CheckLogin();

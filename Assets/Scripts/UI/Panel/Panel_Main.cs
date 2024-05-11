@@ -243,8 +243,7 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_Stat()
 	{
-		GameManager.UI.SwitchPanel<Panel_Stat>(true);
-		GameManager.UI.FetchPanel<Panel_Stat>().Init();
+		GameManager.UI.SwitchPanel<Panel_Stat>(true).Init();
 	}
 
 	private void OnClick_Mail()
