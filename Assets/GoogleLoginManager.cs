@@ -14,13 +14,16 @@ public class GoogleLoginManager : MonoBehaviour
 	{
 		if (isSuccess == false)
 		{
-			Debug.LogError(errorMessage);
+			GameManager.Scene.ShowToastAndDisappear("Google Login failed.");
+
 			return;
 		}
 
-		Debug.Log("구글 토큰 : " + token);
 		var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
-		Debug.Log("페데레이션 로그인 결과 : " + bro);
+
+		FindObjectOfType<Scene_Logo>().StartLogin();
+
+		PlayerPrefs.SetString("GoogleLogin", "Login");
 	}
 
 	public void SignOutGoogleLogin()
@@ -32,11 +35,21 @@ public class GoogleLoginManager : MonoBehaviour
 	{
 		if (isSuccess == false)
 		{
-			Debug.Log("구글 로그아웃 에러 응답 발생 : " + error);
+			DebugManager.Log("Google Login error.", DebugColor.Login);
+
+			GameManager.Scene.ShowToastAndDisappear("Google sign out failed.");
 		}
+
 		else
 		{
-			Debug.Log("로그아웃 성공");
+			DebugManager.Log("Google SignOut success.", DebugColor.Login);
+
+			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim, "You have signed out successfully!\nmoving to login...", "Notice",
+				() => {
+					GameManager.Scene.LoadScene(SceneName.Logo);
+
+					PlayerPrefs.SetString("GoogleLogin", "Logout");
+				});
 		}
 	}
 

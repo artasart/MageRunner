@@ -60,8 +60,6 @@ public class Panel_Logo : Panel_Base
 
 	private void OnClick_GoogleLogin()
 	{
-		GameManager.Scene.Dim(true);
-
 		DebugManager.Log("Google Login", DebugColor.Login);
 
 		FindObjectOfType<GoogleLoginManager>().StartGoogleLogin();

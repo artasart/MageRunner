@@ -18,9 +18,12 @@ public class Popup_Settings : Popup_Base
 	Button btn_LogOut;
 	Button btn_Sound;
 	Button btn_License;
+	Button btn_SignOut;
 
 	Transform group_Sound;
 	Transform group_License;
+
+	public bool isAppleLogin = false;
 
 	private void OnEnable()
 	{
@@ -45,6 +48,8 @@ public class Popup_Settings : Popup_Base
 		btn_LogOut = GetUI_Button(nameof(btn_LogOut), OnClick_LogOut, useAnimation: true);
 		btn_License = GetUI_Button(nameof(btn_License), OnClick_License, useAnimation: true);
 		btn_Sound = GetUI_Button(nameof(btn_Sound), OnClick_Sound, useAnimation: true);
+		btn_SignOut = GetUI_Button(nameof(btn_SignOut), OnClick_SignOut, useAnimation: true);
+		btn_SignOut.gameObject.SetActive(false);
 
 		group_Sound = this.transform.Search(nameof(group_Sound));
 		group_License = this.transform.Search(nameof(group_License));
@@ -52,12 +57,25 @@ public class Popup_Settings : Popup_Base
 
 	private void Start()
 	{
+		isAppleLogin = true;
+
+		if (PlayerPrefs.GetString("GoogleLogin") == "Login")
+        {
+			btn_SignOut.gameObject.SetActive(true);
+			isAppleLogin = false;
+		}
+
 		slider_BGM.value = GameManager.Sound.bgmVolume;
 		slider_SFX.value = GameManager.Sound.sfxVolume;
 
 		txtmp_BGMVolume.text = (GameManager.Sound.bgmVolume * 100).ToString("N0");
 		txtmp_SFXVolume.text = (GameManager.Sound.sfxVolume * 100).ToString("N0");
 	}
+
+	private void OnClick_SignOut()
+    {
+		GetComponent<GoogleLoginManager>().SignOutGoogleLogin();
+    }
 
 	private void OnClick_LogOut()
 	{
@@ -79,7 +97,7 @@ public class Popup_Settings : Popup_Base
 #if UNITY_IOS
 			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
-			GameManager.Backend.WithDrawAccount();
+			GameManager.Backend.WithdrawAccount();
 
 			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 #endif
@@ -98,7 +116,17 @@ public class Popup_Settings : Popup_Base
 
 		GameManager.UI.PopPopup(true);
 
-		GetComponent<AppleRevoker>().Revoke();
+		if(isAppleLogin)
+        {
+			GetComponent<AppleRevoker>().Revoke();
+		}
+
+        else
+        {
+			GameManager.UI.StackPopup<Popup_Basic>(true);
+			GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"Application need to be restarted.", "Notice",
+			Application.Quit);
+		}
 	}
 
 
