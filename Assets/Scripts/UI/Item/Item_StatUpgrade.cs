@@ -183,7 +183,7 @@ public class Item_StatUpgrade : Item_Base
 			default: break;
 		}
 
-		Scene.main.SaveData();
+		GameScene.main.SaveData();
 
 
 		if (level != 10) txtmp_Upgrade.text = GetUpgradeGold().ToString("N0");

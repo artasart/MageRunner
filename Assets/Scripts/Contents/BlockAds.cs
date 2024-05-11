@@ -43,7 +43,7 @@ public class BlockAds : MonoBehaviour
 		LocalData.gameData.isAdWatched = true;
 
 		DateTime adWatchTime = Util.StringToDateTime(LocalData.gameData.adWatchTime);
-		DateTime endTime = adWatchTime.AddSeconds(Scene.main.adWaitTime);
+		DateTime endTime = adWatchTime.AddSeconds(GameScene.main.adWaitTime);
 
 		while (DateTime.Now < endTime)
 		{

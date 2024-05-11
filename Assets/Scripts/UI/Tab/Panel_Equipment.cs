@@ -95,7 +95,7 @@ public class Panel_Equipment : Panel_Base
 	{
 		RemovePlayerEquipSlot(true);
 
-		var equipment = Scene.main.equipmentManager.equipments.
+		var equipment = GameScene.main.equipmentManager.equipments.
 			Where(item => item.Key != EquipmentType.Hair &&
 						  item.Key != EquipmentType.FaceHair).ToList();
 
@@ -136,7 +136,7 @@ public class Panel_Equipment : Panel_Base
 
 	private void OnClick_BuyStash()
 	{
-		if (LocalData.gameData.gold < Scene.main.payAmount)
+		if (LocalData.gameData.gold < GameScene.main.payAmount)
 		{
 			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
@@ -148,14 +148,14 @@ public class Panel_Equipment : Panel_Base
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to buy stash?\n\ncost : <color=orange>{Scene.main.payAmount}</color>", "Purchase",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to buy stash?\n\ncost : <color=orange>{GameScene.main.payAmount}</color>", "Purchase",
 			() =>
 			{
 				if (LocalData.invenData.stashLevel > 10) return;
 
-				if (LocalData.gameData.gold > Scene.main.payAmount)
+				if (LocalData.gameData.gold > GameScene.main.payAmount)
 				{
-					LocalData.gameData.gold -= Scene.main.payAmount;
+					LocalData.gameData.gold -= GameScene.main.payAmount;
 					LocalData.invenData.totalAmount += 10;
 					LocalData.invenData.stashLevel++;
 

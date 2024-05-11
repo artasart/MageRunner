@@ -76,7 +76,7 @@ public class Scene_Game : SceneLogic
 	{
 		base.Awake();
 
-		Scene.game = this;
+		GameScene.game = this;
 
 		LoadGameData();
 		MakePool();
@@ -116,7 +116,7 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
-		GameManager.AdMob.initialClosed += () => { initialClosed = true; Time.timeScale = 0f; };
+		GameManager.AdMob.initialClosed += () => { initialClosed = true; Time.timeScale = 1f; };
 
 		GameManager.Scene.Fade(false, .075f);
 		GameManager.UI.Restart();
@@ -180,7 +180,7 @@ public class Scene_Game : SceneLogic
 
 		if (isRide) playerActor.AddDamage(50);
 
-		// Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
+		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
 	}
 
 	public void Replay()
@@ -207,14 +207,14 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_Replay()
 	{
-		// Scene.game.ShowInterstitialAd();
+		GameScene.game.ShowInterstitialAd();
 
-		// if(initialClosed== false && isWatched)
-		// {
-		// yield return Timing.WaitUntilTrue(() => initialClosed);
+		if(initialClosed== false && isWatched)
+		{ 
+		yield return Timing.WaitUntilTrue(() => initialClosed);
 
-		//			initialClosed = false;
-		//		}
+					initialClosed = false;
+				}
 
 		GameManager.Scene.Fade(true);
 
@@ -275,30 +275,30 @@ public class Scene_Game : SceneLogic
 
 	private void ShowGameResult()
 	{
-		if (Scene.game.score > LocalData.gameData.highScore)
+		if (GameScene.game.score > LocalData.gameData.highScore)
 		{
 			GameManager.UI.StackSplash<Splash_Congrates>();
 
 			GameManager.UI.FetchSplash<Splash_Congrates>().SetEndAction(() =>
 			{
 				GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
-						Scene.game.score,
-						Scene.game.gold,
-						Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
+						GameScene.game.score,
+						GameScene.game.gold,
+						GameScene.game.exp = Mathf.RoundToInt(GameScene.game.score * .45f)
 				);
 
 				Invoke(nameof(ShowGameOverUI), .15f);
 			});
 
-			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(Scene.game.score);
+			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(GameScene.game.score);
 		}
 
 		else
 		{
 			GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
-			Scene.game.score,
-			Scene.game.gold,
-			Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
+			GameScene.game.score,
+			GameScene.game.gold,
+			GameScene.game.exp = Mathf.RoundToInt(GameScene.game.score * .45f)
 			);
 
 			GameManager.UI.PopPopupAll();
@@ -556,7 +556,7 @@ public class Scene_Game : SceneLogic
 			MonsterActor closestMonster = null;
 			float closestDistance = Mathf.Infinity;
 
-			yield return Timing.WaitUntilTrue(() => Scene.game.gameState == GameState.Playing);
+			yield return Timing.WaitUntilTrue(() => GameScene.game.gameState == GameState.Playing);
 
 			foreach (MonsterActor monster in monsters)
 			{
@@ -637,9 +637,9 @@ public class Scene_Game : SceneLogic
 
 	public void AddGameExp()
 	{
-		if (Scene.game.level == 30) return;
+		if (GameScene.game.level == 30) return;
 
-		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp * expMultiplier;
+		var amount = LocalData.masterData.inGameLevel[GameScene.game.level - 1].monsterExp * expMultiplier;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(amount);
 	}

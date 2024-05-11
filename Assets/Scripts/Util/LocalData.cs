@@ -119,7 +119,7 @@ public static class LocalData
 	}
 }
 
-public static class Scene
+public static class GameScene
 {
 	public static Scene_Game game;
 	public static Scene_Main main;

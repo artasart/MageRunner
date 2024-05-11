@@ -80,8 +80,8 @@ public class MonsterActor : Actor
 		hp.GetComponent<TMP_Text>().text = 0.ToString();
 		GetItem();
 
-		Scene.game.AddGameExp();
-		Scene.game.AddScore(score);
+		GameScene.game.AddGameExp();
+		GameScene.game.AddScore(score);
 		CancelInvoke(nameof(ApplyDamage));
 	}
 
@@ -133,7 +133,7 @@ public class MonsterActor : Actor
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (Scene.game.playerActor.isDead) return;
+		if (GameScene.game.playerActor.isDead) return;
 
 		if (other.CompareTag(Define.PLAYER) && !isDead)
 		{
@@ -152,7 +152,7 @@ public class MonsterActor : Actor
 
 				other.GetComponent<PlayerActor>().Distortion();
 
-				Scene.game.cameraShake.Shake(new CameraNoise.Properties(90f, .05f, 10f, .5f, .125f, .089f, .028f));
+				GameScene.game.cameraShake.Shake(new CameraNoise.Properties(90f, .05f, 10f, .5f, .125f, .089f, .028f));
 			}
 		}
 
@@ -175,7 +175,7 @@ public class MonsterActor : Actor
 	{
 		if (isDead) return;
 
-		Scene.game.playerActor.Damage(damage);
+		GameScene.game.playerActor.Damage(damage);
 	}
 
 	#endregion
@@ -209,27 +209,27 @@ public class MonsterActor : Actor
 		{
 			if (string.IsNullOrEmpty(item)) continue;
 
-			if (Scene.game.bags.ContainsKey(item))
+			if (GameScene.game.bags.ContainsKey(item))
 			{
-				Scene.game.bags[item]++;
+				GameScene.game.bags[item]++;
 			}
 
 			else
 			{
-				Scene.game.bags.Add(item, 1);
+				GameScene.game.bags.Add(item, 1);
 			}
 		}
 
 		switch (type)
 		{
 			case EquipmentType.Cloth:
-				Scene.game.bags[itemName] /= 3;
+				GameScene.game.bags[itemName] /= 3;
 				break;
 			case EquipmentType.Armor:
-				Scene.game.bags[itemName] /= 2;
+				GameScene.game.bags[itemName] /= 2;
 				break;
 			case EquipmentType.Pant:
-				Scene.game.bags[itemName] /= 3;
+				GameScene.game.bags[itemName] /= 3;
 				break;
 			default:
 				break;
@@ -238,9 +238,9 @@ public class MonsterActor : Actor
 
 	public void SetDamageUI()
 	{
-		damage = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterDamage;
+		damage = LocalData.masterData.inGameLevel[GameScene.game.level - 1].monsterDamage;
 
-		hp.GetComponent<TMP_Text>().text = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterDamage.ToString();
+		hp.GetComponent<TMP_Text>().text = LocalData.masterData.inGameLevel[GameScene.game.level - 1].monsterDamage.ToString();
 	}
 
 	#endregion

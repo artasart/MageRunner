@@ -74,14 +74,14 @@ public class Popup_Settings : Popup_Base
 			LocalData.InitGameData();
 			LocalData.InitInvenData();
 
-			Scene.main.SaveData();
+			GameScene.main.SaveData();
 
 #if UNITY_IOS
 			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
 			GameManager.Backend.WithDrawAccount();
 
-			GameManager.UI.FetchPanel<Panel_HUD>().GetComponent<CanvasGroup>().blocksRaycasts = false;
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 #endif
 			Invoke(nameof(QuitApp), .75f);
 		},
@@ -95,6 +95,8 @@ public class Popup_Settings : Popup_Base
 	private void QuitApp()
 	{
 		GameManager.Scene.Dim(false);
+
+		GameManager.UI.PopPopup(true);
 
 		GetComponent<AppleRevoker>().Revoke();
 	}

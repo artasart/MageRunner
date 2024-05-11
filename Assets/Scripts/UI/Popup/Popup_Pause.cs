@@ -20,9 +20,9 @@ public class Popup_Pause : Popup_Base
 	{
 		if (!isInitialized) { isInitialized = true; return; }
 
-		Scene.game.gameState = GameState.Playing;
+		GameScene.game.gameState = GameState.Playing;
 
-		Scene.game.playerActor.ToggleSimulation(true);
+		GameScene.game.playerActor.ToggleSimulation(true);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Show();
 	}
@@ -31,9 +31,9 @@ public class Popup_Pause : Popup_Base
 	{
 		if (!isInitialized) { return; }
 
-		Scene.game.gameState = GameState.Paused;
+		GameScene.game.gameState = GameState.Paused;
 
-		Scene.game.playerActor.ToggleSimulation(false);
+		GameScene.game.playerActor.ToggleSimulation(false);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();		
 	}
@@ -62,7 +62,7 @@ public class Popup_Pause : Popup_Base
 
 	private void OnClick_Home()
 	{
-		Scene.game.SaveGameData();
+		GameScene.game.SaveGameData();
 
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}

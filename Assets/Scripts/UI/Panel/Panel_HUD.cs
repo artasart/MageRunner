@@ -64,7 +64,7 @@ public class Panel_HUD : Panel_Base
 	private void Start()
 	{
 		slider_Level.value = 0f;
-		slider_Level.maxValue = LocalData.masterData.inGameLevel[Scene.game.level - 1].exp;
+		slider_Level.maxValue = LocalData.masterData.inGameLevel[GameScene.game.level - 1].exp;
 		txtmp_Level = GetUI_TMPText(nameof(txtmp_Level), "Lv.1");
 
 		items_Skill.Add(Skills.PowerOverWhelming, btn_Down.GetComponent<Item_Skill>());
@@ -82,13 +82,13 @@ public class Panel_HUD : Panel_Base
 
 	public void OnClick_Down()
 	{
-		if (Scene.game.playerActor.isFlyMode) return;
+		if (GameScene.game.playerActor.isFlyMode) return;
 
-		if (Scene.game.playerActor.isDead) return;
+		if (GameScene.game.playerActor.isDead) return;
 
 		if (isUsed.ContainsKey(Skills.PowerOverWhelming) && isUsed[Skills.PowerOverWhelming]) return;
 
-		if(Scene.game.playerActor.mana >= 50)
+		if(GameScene.game.playerActor.mana >= 50)
 		{
 			FindObjectOfType<PlayerActor>().StartFly();
 		}
@@ -158,19 +158,19 @@ public class Panel_HUD : Panel_Base
 
 			slider_Level.value = amount;
 
-			Scene.game.level++;
+			GameScene.game.level++;
 
-			slider_Level.maxValue = (int)LocalData.masterData.inGameLevel[Scene.game.level - 1].exp;
+			slider_Level.maxValue = (int)LocalData.masterData.inGameLevel[GameScene.game.level - 1].exp;
 
-			txtmp_Level.text = "Lv." + Scene.game.level.ToString();
+			txtmp_Level.text = "Lv." + GameScene.game.level.ToString();
 
-			Scene.game.playerActor.mana = Scene.game.playerActor.manaTotal;
+			GameScene.game.playerActor.mana = GameScene.game.playerActor.manaTotal;
 
 			GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
-			if (Scene.game.level == 30) slider_Level.value = slider_Level.maxValue;
+			if (GameScene.game.level == 30) slider_Level.value = slider_Level.maxValue;
 
-			Scene.game.playerActor.AddDamage(5);
+			GameScene.game.playerActor.AddDamage(5);
 
 			Invoke(nameof(OpenSKillPopup), .25f);
 		}
@@ -220,7 +220,7 @@ public class Panel_HUD : Panel_Base
 
 	public void SetManaUI()
 	{
-		txtmp_Mana.text = $"<color=#DCDCDC>{Scene.game.playerActor.mana}</color>/{Scene.game.playerActor.manaTotal}";
+		txtmp_Mana.text = $"<color=#DCDCDC>{GameScene.game.playerActor.mana}</color>/{GameScene.game.playerActor.manaTotal}";
 	}
 }
 

@@ -11,16 +11,16 @@ public class RideManager : MonoBehaviour
 
 	private void Start()
 	{
-		playerSpriteList = Scene.main.playerActor.GetComponentInChildren<SPUM_SpriteList>();
-		rideSpriteList = Scene.main.playerHorseActor.GetComponentInChildren<SPUM_SpriteList>();
+		playerSpriteList = GameScene.main.playerActor.GetComponentInChildren<SPUM_SpriteList>();
+		rideSpriteList = GameScene.main.playerHorseActor.GetComponentInChildren<SPUM_SpriteList>();
 
-		Scene.main.playerHorseActor.transform.position = Vector3.zero;
-		Scene.main.playerHorseActor.SetActive(false);
+		GameScene.main.playerHorseActor.transform.position = Vector3.zero;
+		GameScene.main.playerHorseActor.SetActive(false);
 	}
 
 	public void ChangeRide(string rideName, int rideIndex)
 	{
-		Scene.main.playerActor.gameObject.SetActive(false);
+		GameScene.main.playerActor.gameObject.SetActive(false);
 
 		var path = rideName + "" + rideIndex;
 
@@ -39,10 +39,10 @@ public class RideManager : MonoBehaviour
 		rideSpriteList._backListString = playerSpriteList._backListString;
 		rideSpriteList._weaponListString = playerSpriteList._weaponListString;
 
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj.ResyncData();
-		Scene.main.playerActor.gameObject.SetActive(false);
-		Scene.main.playerHorseActor.SetActive(true);
-		Scene.main.CameraUp();
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj.ResyncData();
+		GameScene.main.playerActor.gameObject.SetActive(false);
+		GameScene.main.playerHorseActor.SetActive(true);
+		GameScene.main.CameraUp();
 
 		LocalData.gameData.ride = new Ride("Horse", 1);
 
@@ -53,15 +53,15 @@ public class RideManager : MonoBehaviour
 
 	public void RideOff()
 	{
-		PoolManager.Spawn("Puff", Scene.main.playerActor.transform.position + Vector3.up * .5f, Quaternion.identity);
+		PoolManager.Spawn("Puff", GameScene.main.playerActor.transform.position + Vector3.up * .5f, Quaternion.identity);
 
-		Scene.main.playerActor.gameObject.SetActive(true);
-		Scene.main.playerHorseActor.SetActive(false);
+		GameScene.main.playerActor.gameObject.SetActive(true);
+		GameScene.main.playerHorseActor.SetActive(false);
 
 		LocalData.gameData.ride.name = string.Empty;
 		LocalData.gameData.ride.index = 0;
 
-		Scene.main.CameraDown();
+		GameScene.main.CameraDown();
 
 		GameManager.UI.FetchPanel<Panel_Equipment>().SetRideAbility(1, 5);
 
@@ -74,17 +74,17 @@ public class RideManager : MonoBehaviour
 
 	public void SetRide(string name)
 	{
-		Scene.main.playerHorseActor.SetActive(false);
+		GameScene.main.playerHorseActor.SetActive(false);
 
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._horseString = name;
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._anim = Scene.main.playerHorseActor.transform.Search("HorseRoot").GetComponent<Animator>();
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>().isRideHorse = true;
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.SetParent(Scene.main.playerHorseActor.transform.Search("Root"));
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.localPosition = Vector3.zero;
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseSPList = Scene.main.playerHorseActor.transform.Search("HorseRoot").GetComponent<SPUM_HorseSpriteList>();
-		Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseString = name;
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._horseString = name;
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._anim = GameScene.main.playerHorseActor.transform.Search("HorseRoot").GetComponent<Animator>();
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>().isRideHorse = true;
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.SetParent(GameScene.main.playerHorseActor.transform.Search("Root"));
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.localPosition = Vector3.zero;
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseSPList = GameScene.main.playerHorseActor.transform.Search("HorseRoot").GetComponent<SPUM_HorseSpriteList>();
+		GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseString = name;
 
-		Scene.main.playerHorseActor.SetActive(true);
+		GameScene.main.playerHorseActor.SetActive(true);
 	}
 
 	public void ClearEquipmentAll( )
@@ -109,7 +109,7 @@ public class RideManager : MonoBehaviour
 
 	public void SetRideBody(string name)
 	{
-		SPUM_HorseSpriteList hST = Scene.main.playerHorseActor.GetComponentInChildren<SPUM_HorseSpriteList>();
+		SPUM_HorseSpriteList hST = GameScene.main.playerHorseActor.GetComponentInChildren<SPUM_HorseSpriteList>();
 
 		Object[] sprites = Resources.LoadAll(name);
 

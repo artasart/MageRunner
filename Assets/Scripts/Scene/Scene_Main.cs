@@ -76,7 +76,7 @@ public class Scene_Main : SceneLogic
 		PoolManager.InitPool();
 		PoolManager.SetPoolData(Define.VFX_PUFF, 10, Define.PATH_VFX);
 
-		Scene.main = this;
+		GameScene.main = this;
 	}
 
 	private void Start()

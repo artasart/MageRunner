@@ -70,7 +70,7 @@ public class Ground : LevelElement
 		{
 			yield return Timing.WaitUntilTrue(() => game.gameState == GameState.Playing);
 
-			transform.Translate(Vector3.left * Scene.game.levelController.moveSpeed * Scene.game.levelController.moveSpeedMultiplier * Time.deltaTime);
+			transform.Translate(Vector3.left * GameScene.game.levelController.moveSpeed * GameScene.game.levelController.moveSpeedMultiplier * Time.deltaTime);
 
 			yield return Timing.WaitForOneFrame;
 		}
@@ -119,7 +119,7 @@ public class Ground : LevelElement
 						
 			if (blocks[i].activeSelf)
 			{
-				if (UnityEngine.Random.Range(0f, 1f) <= LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterProbability)
+				if (UnityEngine.Random.Range(0f, 1f) <= LocalData.masterData.inGameLevel[GameScene.game.level - 1].monsterProbability)
 				{
 					var monster = PoolManager.Spawn(Define.MONSTER_ACTOR, Vector3.right * UnityEngine.Random.Range(-.4f, .4f) + Vector3.up * 2.48f, Quaternion.identity, blocks[i].transform);
 					monster.GetComponent<MonsterActor>().SetDamageUI();
@@ -128,7 +128,7 @@ public class Ground : LevelElement
 
 				else
 				{
-					if (UnityEngine.Random.Range(0f, 1f) <= LocalData.masterData.inGameLevel[Scene.game.level - 1].coinProbability)
+					if (UnityEngine.Random.Range(0f, 1f) <= LocalData.masterData.inGameLevel[GameScene.game.level - 1].coinProbability)
 					{
 						for (int amount = -1; amount < 2; amount++)
 						{
@@ -138,7 +138,7 @@ public class Ground : LevelElement
 
 					else
 					{
-						if (UnityEngine.Random.Range(0f, 1f) <= LocalData.masterData.inGameLevel[Scene.game.level - 1].skillCardProbability)
+						if (UnityEngine.Random.Range(0f, 1f) <= LocalData.masterData.inGameLevel[GameScene.game.level - 1].skillCardProbability)
 						{
 							PoolManager.Spawn("SkillCard", Vector3.up * 3f, Quaternion.identity, blocks[i].transform);
 						}

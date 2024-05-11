@@ -99,7 +99,7 @@ public class RowCellView_ShopItem : RowCellView
 		}
 
 		// after wathching AD?
-		var message = isAd ? "Get Item for free?" : $"Do you want to purchase with {priceTag} ?";
+		var message = isAd ? "Get item after watching AD?" : $"Do you want to purchase with {priceTag} ?";
 		var amount = shopItemData.amount == 0 ? string.Empty : " x " + shopItemData.amount;
 
 
@@ -113,8 +113,8 @@ public class RowCellView_ShopItem : RowCellView
 
 				if (shopItemData.type == "ad")
 				{
-					Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content);
-					// GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content));
+					// Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content);
+					GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content));
 				}
 
 				else
@@ -131,8 +131,6 @@ public class RowCellView_ShopItem : RowCellView
 	private IEnumerator<float> Co_WatchedAD(string name)
 	{
 		yield return Timing.WaitForOneFrame;
-
-		DebugManager.ClearLog(name);
 
 		GameManager.Scene.Dim(false);
 
@@ -292,7 +290,7 @@ public class RowCellView_ShopItem : RowCellView
 		else if (name == "Gold")
 		{
 			DebugManager.Log($"Gold is added {shopItemData.amount}", DebugColor.Data);
-			Scene.main.AddGold(shopItemData.amount);
+			GameScene.main.AddGold(shopItemData.amount);
 		}
 
 		else if (name == "Energy")

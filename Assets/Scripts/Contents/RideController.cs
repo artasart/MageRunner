@@ -17,22 +17,22 @@ public class RideController : MonoBehaviour
 
 	public void SetRide(string name)
 	{
-		Scene.game.playerActor.gameObject.SetActive(false);
+		GameScene.game.playerActor.gameObject.SetActive(false);
 
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>()._horseString = name;
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>()._anim = Scene.game.playerActor.transform.Search("UnitRoot").GetComponent<Animator>();
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>().isRideHorse = true;
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.SetParent(Scene.game.playerActor.transform.Search("Root"));
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.localPosition = Vector3.zero;
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseSPList = Scene.game.playerActor.transform.Search("UnitRoot").GetComponent<SPUM_HorseSpriteList>();
-		Scene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseString = name;
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>()._horseString = name;
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>()._anim = GameScene.game.playerActor.transform.Search("UnitRoot").GetComponent<Animator>();
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>().isRideHorse = true;
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.SetParent(GameScene.game.playerActor.transform.Search("Root"));
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj.transform.localPosition = Vector3.zero;
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseSPList = GameScene.game.playerActor.transform.Search("UnitRoot").GetComponent<SPUM_HorseSpriteList>();
+		GameScene.game.playerActor.GetComponent<SPUM_Prefabs>()._spriteOBj._spHorseString = name;
 
-		Scene.game.playerActor.gameObject.SetActive(true);
+		GameScene.game.playerActor.gameObject.SetActive(true);
 	}
 
 	public void SetRideBody(string name)
 	{
-		SPUM_HorseSpriteList hST = Scene.game.playerActor.GetComponentInChildren<SPUM_HorseSpriteList>();
+		SPUM_HorseSpriteList hST = GameScene.game.playerActor.GetComponentInChildren<SPUM_HorseSpriteList>();
 
 		Object[] sprites = Resources.LoadAll(name);
 

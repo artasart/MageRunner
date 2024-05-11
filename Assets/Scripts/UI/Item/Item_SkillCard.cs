@@ -69,7 +69,7 @@ public class Item_SkillCard : Item_Base
 		{
 			int level = 0;
 
-			if (Scene.game.actorSkills.ContainsKey(skill.name)) { level = Scene.game.actorSkills[skill.name].level; }
+			if (GameScene.game.actorSkills.ContainsKey(skill.name)) { level = GameScene.game.actorSkills[skill.name].level; }
 
 			if (skill.type == "passive")
 			{
@@ -94,9 +94,9 @@ public class Item_SkillCard : Item_Base
 			group_Upgrade.GetChild(i).GetComponent<Image>().color = new Color(0f, 0f, 0f, .43f);
 		}
 
-		if (Scene.game.actorSkills.ContainsKey(skill.name))
+		if (GameScene.game.actorSkills.ContainsKey(skill.name))
 		{
-			for (int i = 0; i < Scene.game.actorSkills[skill.name].level; i++)
+			for (int i = 0; i < GameScene.game.actorSkills[skill.name].level; i++)
 			{
 				group_Upgrade.GetChild(i).GetComponent<Image>().color = Color.white;
 			}
@@ -112,9 +112,9 @@ public class Item_SkillCard : Item_Base
 	{
 		GameManager.Sound.PlaySound("Zap");
 
-		Scene.game.AddSkill(selectedSkill);
+		GameScene.game.AddSkill(selectedSkill);
 
-		for (int i = 0; i < Scene.game.actorSkills[selectedSkill.name].level; i++)
+		for (int i = 0; i < GameScene.game.actorSkills[selectedSkill.name].level; i++)
 		{
 			group_Upgrade.GetChild(i).GetComponent<Image>().color = Color.white;
 		}

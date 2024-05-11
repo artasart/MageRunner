@@ -76,12 +76,12 @@ public class Popup_GameOver : Popup_Base
 
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
-		Scene.game.Replay();
+		GameScene.game.Replay();
 	}
 
 	private void OnClick_Home()
 	{
-		Scene.game.SaveGameData();
+		GameScene.game.SaveGameData();
 
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
@@ -90,8 +90,8 @@ public class Popup_GameOver : Popup_Base
 	{
 		txtmp_Score.text = $"You ran {score}m, gaiend {gold} golds & {exp} exp!";
 
-		Scene.game.AddExp(exp);
-		Scene.game.SaveGameData();
+		GameScene.game.AddExp(exp);
+		GameScene.game.SaveGameData();
 
 		btn_Reward.GetComponent<CanvasGroup>().alpha = 1f;
 		btn_Reward.GetComponent<CanvasGroup>().blocksRaycasts = true;

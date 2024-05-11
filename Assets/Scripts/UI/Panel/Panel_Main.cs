@@ -106,13 +106,13 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
 		// after wathching AD
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>Gold Box</color>?", "Reward",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>Gold Box</color>\nafter watching AD?", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
 
-			Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content);
-			// GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content));
+			// Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content);
+			GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content));
 		},
 
 		() =>
@@ -137,13 +137,13 @@ public class Panel_Main : Panel_Base
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
 		// after wathching AD?
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color>", "Reward",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color>\nafter watching AD?", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
 
-			Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content);
-			// GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content));
+			// Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content);
+			GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content));
 		},
 		() =>
 		{
@@ -221,9 +221,9 @@ public class Panel_Main : Panel_Base
 
 		LocalData.gameData.energy -= 1;
 
-		Scene.main.particle_RingShield.DOScale(Vector3.one * .75f, .5f);
+		GameScene.main.particle_RingShield.DOScale(Vector3.one * .75f, .5f);
 
-		Util.Zoom(Scene.main.virtualCamera, .1f, .025f);
+		Util.Zoom(GameScene.main.virtualCamera, .1f, .025f);
 
 		GameManager.Scene.LoadScene(SceneName.Game, fadeSpeed: .25f);
 	}

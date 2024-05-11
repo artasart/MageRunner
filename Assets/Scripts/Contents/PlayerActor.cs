@@ -82,7 +82,7 @@ public class PlayerActor : Actor
 
 	void Update()
 	{
-		if (Scene.game.gameState == GameState.Paused || isDead) return;
+		if (GameScene.game.gameState == GameState.Paused || isDead) return;
 
 		HandleJumpInput();
 		HandleSlideInput();
@@ -178,7 +178,7 @@ public class PlayerActor : Actor
 				{
 					GameManager.Sound.PlaySound("Jump_2");
 
-					Scene.game.ZoomCamera(4f);
+					GameScene.game.ZoomCamera(4f);
 
 					isDoubleJump = true;
 				}
@@ -198,9 +198,9 @@ public class PlayerActor : Actor
 		rgbd2d.velocity = new Vector2(rgbd2d.velocity.x, jumpValue);
 		isGrounded = false;
 
-		if(Scene.game.isRide)
+		if(GameScene.game.isRide)
 		{
-			Scene.game.ZoomCamera(4f, .2f);
+			GameScene.game.ZoomCamera(4f, .2f);
 		}
 
 		CheckJump();
@@ -217,7 +217,7 @@ public class PlayerActor : Actor
 
 		yield return Timing.WaitUntilTrue(() => rgbd2d.velocity.y < 0);
 
-		if (isDoubleJump) Scene.game.ZoomCamera(3f);
+		if (isDoubleJump) GameScene.game.ZoomCamera(3f);
 
 		isJumping = false;
 		isGrounded = false;
@@ -271,12 +271,12 @@ public class PlayerActor : Actor
 
 			PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
 
-			var target = Scene.game.isRide ? "Pivot_Root" : "Root";
+			var target = GameScene.game.isRide ? "Pivot_Root" : "Root";
 
 			this.transform.Search(target).gameObject.SetActive(false);
 			particle_ElectricMode.Play();
 
-			Scene.game.levelController.moveSpeedMultiplier = Scene.game.moveMultiplier;
+			GameScene.game.levelController.moveSpeedMultiplier = GameScene.game.moveMultiplier;
 
 			mana -= 50;
 
@@ -286,8 +286,8 @@ public class PlayerActor : Actor
 		rgbd2d.gravityScale = 0;
 		rgbd2d.velocity = Vector3.zero;
 
-		Scene.game.SetVirtualCamBody(new Vector3(3.5f, -1.25f, -10f));
-		Scene.game.ZoomCamera(4f);
+		GameScene.game.SetVirtualCamBody(new Vector3(3.5f, -1.25f, -10f));
+		GameScene.game.ZoomCamera(4f);
 
 		Invoke(nameof(EndFly), 4.5f);
 	}
@@ -298,17 +298,17 @@ public class PlayerActor : Actor
 
 		PoolManager.Spawn("Thunder_ExplosionSmall", this.transform.position, Quaternion.identity);
 
-		Scene.game.levelController.moveSpeedMultiplier = 1;
+		GameScene.game.levelController.moveSpeedMultiplier = 1;
 
 
-		var target = Scene.game.isRide ? "Pivot_Root" : "Root";
+		var target = GameScene.game.isRide ? "Pivot_Root" : "Root";
 		this.transform.Search(target).gameObject.SetActive(true);
 		particle_ElectricMode.Stop();
 
 		rgbd2d.gravityScale = 1.5f;
 
-		Scene.game.SetVirtualCamBody(new Vector3(3.25f, 1.25f, -10f));
-		Scene.game.ZoomCamera(3f);
+		GameScene.game.SetVirtualCamBody(new Vector3(3.25f, 1.25f, -10f));
+		GameScene.game.ZoomCamera(3f);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().UseSkill(Skills.PowerOverWhelming, 10f);
 
@@ -328,7 +328,7 @@ public class PlayerActor : Actor
 		{
 			hp.GetComponent<TMP_Text>().text = "Busted";
 
-			Scene.game.cameraShake.Shake();
+			GameScene.game.cameraShake.Shake();
 
 			var multiplier = isGrounded ? 1.5f : 1f;
 
@@ -357,18 +357,18 @@ public class PlayerActor : Actor
 		animator.SetBool(Define.EDITCHK, true);
 		rgbd2d.velocity *= dieVelocity;
 
-		if (Scene.game.isRide)
+		if (GameScene.game.isRide)
 		{
 			boxCollider2D.size = new Vector2(1.33f, .75f);
 		}
 
 		this.transform.localEulerAngles = Vector3.forward * 13f;
 
-		Scene.game.StopEnviroment();
-		Scene.game.SetCameraTarget(null);
-		Scene.game.StopDifficulty();
-		Scene.game.StopScoreCount();
-		Scene.game.GameOver();
+		GameScene.game.StopEnviroment();
+		GameScene.game.SetCameraTarget(null);
+		GameScene.game.StopDifficulty();
+		GameScene.game.StopScoreCount();
+		GameScene.game.GameOver();
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
 	}
@@ -379,7 +379,7 @@ public class PlayerActor : Actor
 
 		this.GetComponent<Rigidbody2D>().simulated = false;
 
-		if (Scene.game.isRide)
+		if (GameScene.game.isRide)
 		{
 			boxCollider2D.size = new Vector2(1.33f, 1f);
 			boxCollider2D.enabled = false;
@@ -441,7 +441,7 @@ public class PlayerActor : Actor
 
 		yield return Timing.WaitForSeconds(.5f);
 
-		Scene.game.GameOver();
+		GameScene.game.GameOver();
 	}
 
 	#endregion
@@ -464,7 +464,7 @@ public class PlayerActor : Actor
 			if (isDoubleJump)
 			{
 				isDoubleJump = false;
-				Scene.game.ZoomCamera(3f);
+				GameScene.game.ZoomCamera(3f);
 			}
 		}
 
@@ -472,7 +472,7 @@ public class PlayerActor : Actor
 		{
 			Die();
 
-			Scene.game.cameraShake.Shake();
+			GameScene.game.cameraShake.Shake();
 
 			Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
 
@@ -517,7 +517,7 @@ public class PlayerActor : Actor
 
 			rgbd2d.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
 
-			Scene.game.cameraShake.Shake();
+			GameScene.game.cameraShake.Shake();
 		}
 	}
 

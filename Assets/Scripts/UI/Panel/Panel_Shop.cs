@@ -23,13 +23,13 @@ public class Panel_Shop : Panel_Base
 
 	private void OnDisable()
 	{
-		if(GameManager.UI.FetchPanel<Panel_Main>() != null && Scene.main != null && Scene.main.navigator != null)
+		if(GameManager.UI.FetchPanel<Panel_Main>() != null && GameScene.main != null && GameScene.main.navigator != null)
 		{
 			var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
 
-			Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
-			Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
-			Scene.main.navigator.transform.SetAsLastSibling();
+			GameScene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
+			GameScene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+			GameScene.main.navigator.transform.SetAsLastSibling();
 		}
 	}
 
@@ -63,21 +63,21 @@ public class Panel_Shop : Panel_Base
 
 		var parent = GameManager.UI.FetchPanel<Panel_Main>().transform;
 
-		if (GameManager.UI.FetchPanel<Panel_Main>() != null && Scene.main != null && Scene.main.navigator != null)
+		if (GameManager.UI.FetchPanel<Panel_Main>() != null && GameScene.main != null && GameScene.main.navigator != null)
 		{
-			Scene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
-			Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
-			Scene.main.navigator.transform.SetAsLastSibling();
+			GameScene.main.navigator.transform.SetParent(parent.Search("MobileSafeArea"));
+			GameScene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+			GameScene.main.navigator.transform.SetAsLastSibling();
 		}
 	}
 
 	public void Init()
 	{
-		if (GameManager.UI.FetchPanel<Panel_Main>() != null && Scene.main != null && Scene.main.navigator != null)
+		if (GameManager.UI.FetchPanel<Panel_Main>() != null && GameScene.main != null && GameScene.main.navigator != null)
 		{
-			Scene.main.navigator.transform.SetParent(this.transform.Search("MobileSafeArea"));
-			Scene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
-			Scene.main.navigator.transform.SetAsLastSibling();
+			GameScene.main.navigator.transform.SetParent(this.transform.Search("MobileSafeArea"));
+			GameScene.main.navigator.GetComponent<RectTransform>().localScale = Vector3.one;
+			GameScene.main.navigator.transform.SetAsLastSibling();
 		}
 
 		OnClick_Equipment();

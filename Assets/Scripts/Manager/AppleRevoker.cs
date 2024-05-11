@@ -16,8 +16,6 @@ public class AppleRevoker : MonoBehaviour
 		var token = PlayerPrefs.GetString("token");
 		var authorizationCode = PlayerPrefs.GetString("authorizationCode");
 
-		GameManager.UI.PopPopup(true);
-
 		RevokeAppleToken(token, authorizationCode, ()=>
 		{
 			GameManager.UI.StackPopup<Popup_Basic>(true);

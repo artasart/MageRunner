@@ -102,8 +102,8 @@ public class RowCellView_InvenItem : RowCellView
 	{
 		if (invenItemData.isRide)
 		{
-			Scene.main.rideManager.Ride();
-			Scene.main.rideManager.ChangeRide(invenItemData.name, invenItemData.index);
+			GameScene.main.rideManager.Ride();
+			GameScene.main.rideManager.ChangeRide(invenItemData.name, invenItemData.index);
 
 			GameManager.UI.FetchPanel<Panel_Equipment>().SetPlayerEquipSlot("Horse", invenItemData.thumbnail);
 		}
@@ -112,44 +112,44 @@ public class RowCellView_InvenItem : RowCellView
 		{
 			if (invenItemData.name == "empty")
 			{
-				Scene.main.equipmentManager.spumPrefabs = Scene.main.playerActor.GetComponent<SPUM_Prefabs>();
+				GameScene.main.equipmentManager.spumPrefabs = GameScene.main.playerActor.GetComponent<SPUM_Prefabs>();
 
 				if (GameManager.UI.FetchPanel<Panel_Equipment>().category == EquipmentCategoryType.All)
 				{
-					Scene.main.equipmentManager.ClearEquipmentAll();
+					GameScene.main.equipmentManager.ClearEquipmentAll();
 
 					GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(true);
 
-					Scene.main.rideManager.ClearEquipmentAll();
-					Scene.main.rideManager.RideOff();
+					GameScene.main.rideManager.ClearEquipmentAll();
+					GameScene.main.rideManager.RideOff();
 				}
 
 				else
 				{
 					string category = GameManager.UI.FetchPanel<Panel_Equipment>().category.ToString();
 
-					Scene.main.equipmentManager.ClearEquipment(Util.String2Enum<EquipmentType>(category));
+					GameScene.main.equipmentManager.ClearEquipment(Util.String2Enum<EquipmentType>(category));
 
 					GameManager.UI.FetchPanel<Panel_Equipment>().RemovePlayerEquipSlot(false);
 				}
 			}
 
-			Scene.main.equipmentManager.ChangeEquipment(new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index), true);
+			GameScene.main.equipmentManager.ChangeEquipment(new Equipment(invenItemData.type, invenItemData.nameIndex, invenItemData.index), true);
 
 			GameManager.UI.FetchPanel<Panel_Equipment>().SetPlayerEquipSlot(invenItemData.type.ToString(), invenItemData.thumbnail);
 		}
 
 
-		if(Scene.main.rideManager.isRide)
+		if(GameScene.main.rideManager.isRide)
 		{
-			Scene.main.equipmentManager.spumPrefabs = Scene.main.playerHorseActor.GetComponent<SPUM_Prefabs>();
+			GameScene.main.equipmentManager.spumPrefabs = GameScene.main.playerHorseActor.GetComponent<SPUM_Prefabs>();
 		}
 
 		else
 		{
-			Scene.main.equipmentManager.spumPrefabs = Scene.main.playerActor.GetComponent<SPUM_Prefabs>();
+			GameScene.main.equipmentManager.spumPrefabs = GameScene.main.playerActor.GetComponent<SPUM_Prefabs>();
 		}
 
-		Scene.main.SaveData();
+		GameScene.main.SaveData();
 	}
 }
