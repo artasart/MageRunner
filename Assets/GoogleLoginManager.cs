@@ -1,8 +1,4 @@
 using BackEnd;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using static Enums;
 
@@ -46,24 +42,16 @@ public class GoogleLoginManager : MonoBehaviour
 
 	private void GoogleSignOutCallback(bool isSuccess, string error)
 	{
-		Debug.Log("Error : " + error);
+        if (isSuccess == false)
+        {
+            GameManager.Scene.ShowToastAndDisappear("Google sign out failed. Try again.");
+        }
 
-		if (isSuccess == false)
-		{
-			GameManager.Scene.ShowToastAndDisappear("Google sign out failed. Try again.");
+        else
+        {
+			GameManager.Scene.LoadScene(SceneName.Logo);
 		}
-
-		else
-		{
-			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(
-			ModalType.Confrim,
-			"You have signed out successfully!\nmoving to login...", "Notice",
-			() =>
-			{
-				GameManager.Scene.LoadScene(SceneName.Logo);
-			});
-		}
-	}
+    }
 
 	public void Revoke()
 	{

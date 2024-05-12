@@ -1,10 +1,7 @@
-using AppleAuth.Enums;
-using AppleAuth;
 using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using AppleAuth.Extensions;
 
 public class Panel_Logo : Panel_Base
 {

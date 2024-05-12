@@ -76,7 +76,7 @@ public class Popup_Settings : Popup_Base
 			{
 				if (loginType == LoginType.Google)
 				{
-					GetComponent<GoogleLoginManager>().SignOutGoogleLogin();
+					FindObjectOfType<GoogleLoginManager>().SignOutGoogleLogin();
 				}
 
 				else if (loginType == LoginType.Apple)
@@ -130,7 +130,7 @@ public class Popup_Settings : Popup_Base
 
 		if (loginType == LoginType.Apple) GetComponent<AppleRevoker>().Revoke();
 
-		else if (loginType == LoginType.Google) GetComponent<GoogleLoginManager>().Revoke();
+		else if (loginType == LoginType.Google) FindObjectOfType<GoogleLoginManager>().Revoke();
 	}
 
 

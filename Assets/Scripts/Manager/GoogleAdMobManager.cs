@@ -98,6 +98,8 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 	public void ShowInterstitialAd()
 	{
+		GameManager.Sound.MuteBGM(true);
+
 		if (interstitialAd != null && interstitialAd.CanShowAd())
 		{
 			Debug.Log("Showing interstitial ad.");
@@ -136,6 +138,8 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 		interstitialAd.OnAdFullScreenContentClosed += () =>
 		{
 			Debug.Log("Interstitial ad full screen content closed.");
+
+			GameManager.Sound.MuteBGM(false);
 
 			initialClosed?.Invoke();
 		};
@@ -398,9 +402,9 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 			Debug.Log("Rewarded interstitial ad loaded with response : " + ad.GetResponseInfo());
 
-			RegisterRewardedInterstitialAdCallback();
-
 			rewardedInterstitialAd = ad;
+
+			RegisterRewardedInterstitialAdCallback();
 		});
 	}
 
@@ -408,11 +412,13 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		rewardInitialClosed = _reward;
 
+		GameManager.Sound.MuteBGM(true);
+
 		if (rewardedInterstitialAd != null && rewardedInterstitialAd.CanShowAd())
 		{
 			rewardedInterstitialAd.Show((Reward reward) =>
 			{
-			
+
 			});
 		}
 	}
@@ -421,6 +427,8 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		rewardedInterstitialAd.OnAdFullScreenContentClosed += () =>
 		{
+			GameManager.Sound.MuteBGM(false);
+
 			rewardInitialClosed?.Invoke();
 
 			LoadRewardedInterstitialAd();

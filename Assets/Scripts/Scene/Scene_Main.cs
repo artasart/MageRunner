@@ -8,6 +8,7 @@ using Cinemachine;
 using TMPro;
 using static Enums;
 using MEC;
+using BackEnd;
 
 public class Scene_Main : SceneLogic
 {
@@ -99,7 +100,7 @@ public class Scene_Main : SceneLogic
 	{
 		if (LocalData.gameData.nickname == string.Empty)
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "0");
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
 		}
 		else
 		{
@@ -108,16 +109,8 @@ public class Scene_Main : SceneLogic
 
 		yield return Timing.WaitUntilTrue(() => GameManager.Scene.IsFaded());
 
+
 #if UNITY_EDITOR
-
-		if (string.IsNullOrEmpty(GameManager.Backend.GetNickname()))
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
-
-			yield return Timing.WaitForSeconds(.5f);
-
-			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
-		}
 
 		var tag = UnityEngine.Random.Range(100000, 999999);
 
@@ -127,15 +120,19 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", tag.ToString());
 
 #elif UNITY_IOS
+		var bro = Backend.BMember.GetUserInfo();
 
-		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
+		yield return Timing.WaitUntilTrue(() => bro != null);
+
+		var nickname = bro.GetReturnValuetoJSON()["row"]["nickname"].ToString();
+
+		Debug.Log(nickname);
+
+		if (string.IsNullOrEmpty(nickname))
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 
-			yield return Timing.WaitForSeconds(.5f);
-
-			GameManager.UI.StackSplash<Splash_Notice>();
-			GameManager.UI.FetchSplash<Splash_Notice>().SetTimer();
+			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
 
 			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
 			{
@@ -151,9 +148,8 @@ public class Scene_Main : SceneLogic
 
 		else
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, LocalData.gameData.runnerTag.ToString());
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, LocalData.gameData.runnerTag.ToString());
 		}
-
 #endif
 
 		GetFarmedItem();

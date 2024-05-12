@@ -133,7 +133,7 @@ MonoBehaviour:
   banneAdUnitId: ca-app-pub-3940256099942544/2934735716
   interstitialAdUnitId: ca-app-pub-3120027971723464/5889917979
   rewardedAdUnitId: ca-app-pub-3120027971723464/3432125656
-  rewardedinterstitialAdUnitId: unused
+  rewardedinterstitialAdUnitId: ca-app-pub-3120027971723464/6401494803
 --- !u!114 &8612382667891417839
 MonoBehaviour:
   m_ObjectHideFlags: 0
