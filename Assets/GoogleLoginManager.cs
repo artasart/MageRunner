@@ -14,8 +14,6 @@ public class GoogleLoginManager : MonoBehaviour
 
 	private void GoogleLoginCallback(bool isSuccess, string errorMessage, string token)
 	{
-		Debug.Log(errorMessage);
-
 		if (isSuccess == false)
 		{
 			GameManager.Scene.ShowToastAndDisappear("Google Login failed.");

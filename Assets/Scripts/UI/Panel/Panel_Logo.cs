@@ -10,7 +10,6 @@ public class Panel_Logo : Panel_Base
 {
 	Button btn_AppleLogin;
 	Button btn_GoogleLogin;
-	Button btn_GoogleLogOut;
 
 	TMP_Text txtmp_Download;
 	TMP_Text txtmp_LoginMessage;
@@ -39,7 +38,6 @@ public class Panel_Logo : Panel_Base
 		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation: true);
 		btn_AppleLogin.onClick.RemoveListener(OpenSound);
 		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
-		btn_GoogleLogOut = GetUI_Button(nameof(btn_GoogleLogOut), OnClick_GoogleLogOut, useAnimation: true);
 	}
 
 	public void SetDownload(string message)
@@ -63,12 +61,6 @@ public class Panel_Logo : Panel_Base
 		DebugManager.Log("Google Login", DebugColor.Login);
 
 		FindObjectOfType<GoogleLoginManager>().StartGoogleLogin();
-	}
-
-	private void OnClick_GoogleLogOut()
-	{
-
-		FindObjectOfType<GoogleLoginManager>().SignOutGoogleLogin();
 	}
 
 	public void StartLogin(bool isInstant = false, Action _action = null)

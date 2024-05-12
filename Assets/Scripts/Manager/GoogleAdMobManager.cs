@@ -404,6 +404,8 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 	public void ShowRewardedInterstitialAd(Action _reward)
 	{
+		Debug.Log("Show Rearded Interstitial Ad");
+
 		const string rewardMsg =
 			"Rewarded interstitial ad rewarded the user. Type: {0}, amount: {1}.";
 
