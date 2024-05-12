@@ -24,23 +24,18 @@ public class GoogleLoginManager : MonoBehaviour
 
 		var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
 
-		Debug.Log(bro.GetStatusCode());
-
 		if(bro.GetStatusCode() == "200")
 		{
 			FindObjectOfType<Scene_Logo>().StartLogin();
-
+			
 			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
 		}
 
-		else
+		else if (bro.GetStatusCode() == "410")
 		{
 			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
 			$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
-			$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
-			{
-				Application.Quit();
-			});
+			$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice");
 		}
 	}
 

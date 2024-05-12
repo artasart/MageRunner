@@ -31,6 +31,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	RewardedInterstitialAd rewardedInterstitialAd;
 
 	public Action initialClosed;
+	public Action rewardInitialClosed;
 
 	private void Awake()
 	{
@@ -367,7 +368,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	#endregion
 
 
-	#region
+	#region RewardAInterestitialAd
 
 	public void LoadRewardedInterstitialAd()
 	{
@@ -385,41 +386,45 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 		adRequest.Keywords.Add("unity-admob-sample");
 
 		// send the request to load the ad.
-		RewardedInterstitialAd.Load(rewardedinterstitialAdUnitId, adRequest,
-			(RewardedInterstitialAd ad, LoadAdError error) => {
-				// if error is not null, the load request failed.
-				if (error != null || ad == null)
-				{
-					Debug.LogError("rewarded interstitial ad failed to load an ad " +
-						"with error : " + error);
-					return;
-				}
+		RewardedInterstitialAd.Load(rewardedinterstitialAdUnitId, adRequest, (RewardedInterstitialAd ad, LoadAdError error) =>
+		{
+			// if error is not null, the load request failed.
+			if (error != null || ad == null)
+			{
+				Debug.LogError("rewarded interstitial ad failed to load an ad " +
+					"with error : " + error);
+				return;
+			}
 
-				Debug.Log("Rewarded interstitial ad loaded with response : " +
-					ad.GetResponseInfo());
+			Debug.Log("Rewarded interstitial ad loaded with response : " + ad.GetResponseInfo());
 
-				rewardedInterstitialAd = ad;
-			});
+			RegisterRewardedInterstitialAdCallback();
+
+			rewardedInterstitialAd = ad;
+		});
 	}
 
 	public void ShowRewardedInterstitialAd(Action _reward)
 	{
-		Debug.Log("Show Rearded Interstitial Ad");
-
-		const string rewardMsg =
-			"Rewarded interstitial ad rewarded the user. Type: {0}, amount: {1}.";
+		rewardInitialClosed = _reward;
 
 		if (rewardedInterstitialAd != null && rewardedInterstitialAd.CanShowAd())
 		{
-			rewardedInterstitialAd.Show((Reward reward) => {
-
-				Debug.Log(String.Format(rewardMsg, reward.Type, reward.Amount));
-
-				_reward?.Invoke();
-
-				LoadRewardedInterstitialAd();
+			rewardedInterstitialAd.Show((Reward reward) =>
+			{
+			
 			});
 		}
+	}
+
+	private void RegisterRewardedInterstitialAdCallback()
+	{
+		rewardedInterstitialAd.OnAdFullScreenContentClosed += () =>
+		{
+			rewardInitialClosed?.Invoke();
+
+			LoadRewardedInterstitialAd();
+		};
 	}
 
 	#endregion

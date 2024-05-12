@@ -86,7 +86,7 @@ public class Scene_Main : SceneLogic
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
-		GameManager.UI.StackPanel<Panel_Shop>();
+		GameManager.UI.StackPanel<Panel_Shop>(true);
 		GameManager.UI.PopPanel();
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 
@@ -112,7 +112,7 @@ public class Scene_Main : SceneLogic
 
 		if (string.IsNullOrEmpty(GameManager.Backend.GetNickname()))
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 
 			yield return Timing.WaitForSeconds(.5f);
 

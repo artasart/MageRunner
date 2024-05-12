@@ -58,10 +58,7 @@ public class AppleLoginManager : MonoBehaviour
 					case CredentialState.NotFound:
 						GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim, 
 						$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
-						$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
-						{
-							Application.Quit();
-						});
+						$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice");
 
 						return;
 				}
