@@ -1,7 +1,9 @@
 using BackEnd;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Enums;
 
 public class GoogleLoginManager : MonoBehaviour
 {
@@ -12,6 +14,8 @@ public class GoogleLoginManager : MonoBehaviour
 
 	private void GoogleLoginCallback(bool isSuccess, string errorMessage, string token)
 	{
+		Debug.Log(errorMessage);
+
 		if (isSuccess == false)
 		{
 			GameManager.Scene.ShowToastAndDisappear("Google Login failed.");
@@ -19,11 +23,21 @@ public class GoogleLoginManager : MonoBehaviour
 			return;
 		}
 
-		var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
+		Backend.BMember.AuthorizeFederation(token, FederationType.Google, (res) =>
+		{
+			Debug.Log(res.GetStatusCode());
 
-		FindObjectOfType<Scene_Logo>().StartLogin();
+			FindObjectOfType<Scene_Logo>().StartLogin();
 
-		PlayerPrefs.SetString("GoogleLogin", "Login");
+			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
+
+//			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
+//$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+//$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
+//{
+//	Application.Quit();
+//});
+		});
 	}
 
 	public void SignOutGoogleLogin()
@@ -35,22 +49,26 @@ public class GoogleLoginManager : MonoBehaviour
 	{
 		if (isSuccess == false)
 		{
-			DebugManager.Log("Google Login error.", DebugColor.Login);
-
-			GameManager.Scene.ShowToastAndDisappear("Google sign out failed.");
+			GameManager.Scene.ShowToastAndDisappear("Google sign out failed. Try again.");
 		}
 
 		else
 		{
-			DebugManager.Log("Google SignOut success.", DebugColor.Login);
-
-			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim, "You have signed out successfully!\nmoving to login...", "Notice",
-				() => {
-					GameManager.Scene.LoadScene(SceneName.Logo);
-
-					PlayerPrefs.SetString("GoogleLogin", "Logout");
-				});
+			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(
+			ModalType.Confrim,
+			"You have signed out successfully!\nmoving to login...", "Notice",
+			() =>
+			{
+				GameManager.Scene.LoadScene(SceneName.Logo);
+			});
 		}
 	}
 
+	public void Revoke()
+	{
+		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
+			$"Application need to be restarted.",
+			"Notice",
+			Application.Quit);
+	}
 }

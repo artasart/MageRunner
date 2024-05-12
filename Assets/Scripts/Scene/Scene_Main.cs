@@ -110,9 +110,9 @@ public class Scene_Main : SceneLogic
 
 #if UNITY_EDITOR
 
-		if (string.IsNullOrEmpty(LocalData.gameData.nickname))
+		if (string.IsNullOrEmpty(GameManager.Backend.GetNickname()))
 		{
-			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
 
 			yield return Timing.WaitForSeconds(.5f);
 

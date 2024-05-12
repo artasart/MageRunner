@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using static Enums;
 
 public class Popup_Settings : Popup_Base
 {
@@ -15,15 +16,15 @@ public class Popup_Settings : Popup_Base
 	Color onColor;
 	Color offColor;
 
-	Button btn_LogOut;
+	Button btn_SignOut;
 	Button btn_Sound;
 	Button btn_License;
-	Button btn_SignOut;
+	Button btn_LogOut;
 
 	Transform group_Sound;
 	Transform group_License;
 
-	public bool isAppleLogin = false;
+	public LoginType loginType;
 
 	private void OnEnable()
 	{
@@ -45,11 +46,11 @@ public class Popup_Settings : Popup_Base
 		onColor = Util.HexToRGB("#03AC97");
 		offColor = Util.HexToRGB("#6F604E");
 
+		btn_SignOut = GetUI_Button(nameof(btn_SignOut), OnClick_SignOut, useAnimation: true);
 		btn_LogOut = GetUI_Button(nameof(btn_LogOut), OnClick_LogOut, useAnimation: true);
+
 		btn_License = GetUI_Button(nameof(btn_License), OnClick_License, useAnimation: true);
 		btn_Sound = GetUI_Button(nameof(btn_Sound), OnClick_Sound, useAnimation: true);
-		btn_SignOut = GetUI_Button(nameof(btn_SignOut), OnClick_SignOut, useAnimation: true);
-		btn_SignOut.gameObject.SetActive(false);
 
 		group_Sound = this.transform.Search(nameof(group_Sound));
 		group_License = this.transform.Search(nameof(group_License));
@@ -57,13 +58,7 @@ public class Popup_Settings : Popup_Base
 
 	private void Start()
 	{
-		isAppleLogin = true;
-
-		if (PlayerPrefs.GetString("GoogleLogin") == "Login")
-        {
-			btn_SignOut.gameObject.SetActive(true);
-			isAppleLogin = false;
-		}
+		loginType = Util.String2Enum<LoginType>(PlayerPrefs.GetString(Define.LOGINTYPE));
 
 		slider_BGM.value = GameManager.Sound.bgmVolume;
 		slider_SFX.value = GameManager.Sound.sfxVolume;
@@ -72,42 +67,57 @@ public class Popup_Settings : Popup_Base
 		txtmp_SFXVolume.text = (GameManager.Sound.sfxVolume * 100).ToString("N0");
 	}
 
-	private void OnClick_SignOut()
-    {
-		GetComponent<GoogleLoginManager>().SignOutGoogleLogin();
-    }
-
 	private void OnClick_LogOut()
 	{
-		GameManager.UI.StackPopup<Popup_Basic>(true);
+		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(
+			ModalType.ConfirmCancel,
+			$"Do you want to log out account?\n", "Notice",
+			() =>
+			{
+				if (loginType == LoginType.Google)
+				{
+					GetComponent<GoogleLoginManager>().SignOutGoogleLogin();
+				}
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you really want to <color=#FFC700>withdraw account</color>?\n\n" +
-			$"<size=30><color=#A90000>your account and personal data will be deleted.</size></color>", "Alert",
-		() =>
-		{
-			GameManager.Scene.Dim(true);
+				else if (loginType == LoginType.Apple)
+				{
+					PlayerPrefs.SetString(Define.LOGINTYPE, string.Empty);
+					PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
-			LocalData.gameData.nickname = string.Empty;
-			LocalData.gameData.runnerTag = 1;
-			LocalData.InitGameData();
-			LocalData.InitInvenData();
+					GameManager.Scene.LoadScene(SceneName.Logo);
+				}
+			}
+		);
+	}
 
-			GameScene.main.SaveData();
+	private void OnClick_SignOut()
+	{
+		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.ConfirmCancel,
+			$"Do you really want to <color=#FFC700>withdraw account</color>?\n\n" +
+			$"<size=30><color=#A90000>your account and personal data will be deleted.</size></color>",
+			"Notice",
+			() =>
+			{
+				GameManager.Scene.Dim(true);
 
-#if UNITY_IOS
-			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
+				LocalData.gameData.nickname = string.Empty;
+				LocalData.gameData.runnerTag = 1;
+				LocalData.InitGameData();
+				LocalData.InitInvenData();
 
-			GameManager.Backend.WithdrawAccount();
+				GameScene.main.SaveData();
 
-			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
-#endif
-			Invoke(nameof(QuitApp), .75f);
-		},
+				if (loginType == LoginType.Apple)
+				{
+					PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
-		() =>
-		{
+					GameManager.Backend.WithdrawAccount();
 
-		});
+					GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
+				}
+
+				Invoke(nameof(QuitApp), .75f);
+			});
 	}
 
 	private void QuitApp()
@@ -116,17 +126,11 @@ public class Popup_Settings : Popup_Base
 
 		GameManager.UI.PopPopup(true);
 
-		if(isAppleLogin)
-        {
-			GetComponent<AppleRevoker>().Revoke();
-		}
+		PlayerPrefs.SetString(Define.LOGINTYPE, string.Empty);
 
-        else
-        {
-			GameManager.UI.StackPopup<Popup_Basic>(true);
-			GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"Application need to be restarted.", "Notice",
-			Application.Quit);
-		}
+		if (loginType == LoginType.Apple) GetComponent<AppleRevoker>().Revoke();
+
+		else if (loginType == LoginType.Google) GetComponent<GoogleLoginManager>().Revoke();
 	}
 
 

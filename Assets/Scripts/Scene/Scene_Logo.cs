@@ -36,6 +36,8 @@ public class Scene_Logo : SceneLogic
 
 #if UNITY_EDITOR
 		StartLogin();
+#elif UNITY_ANDROID
+
 #elif UNITY_IOS
 		FindObjectOfType<AppleLoginManager>().Init();
 #endif

@@ -82,4 +82,6 @@ public static class Define
 
 	[Header("Backend")]
 	public const string STATUSCODE_WITHDRAW = "410";
+
+	public const string LOGINTYPE = "LoginType";
 }

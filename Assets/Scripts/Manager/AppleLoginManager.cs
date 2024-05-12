@@ -5,6 +5,7 @@ using AppleAuth.Interfaces;
 using AppleAuth.Native;
 using System.Text;
 using UnityEngine;
+using static Enums;
 
 public class AppleLoginManager : MonoBehaviour
 {
@@ -55,12 +56,12 @@ public class AppleLoginManager : MonoBehaviour
 
 					case CredentialState.Revoked:
 					case CredentialState.NotFound:
-						GameManager.UI.StackPopup<Popup_Basic>(true);
-						GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, $"This account is currently being withdrawn.\nPlease try latter.\n\n" +
-							$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
-							{
-								Application.Quit();
-							});
+						GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim, 
+						$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+						$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
+						{
+							Application.Quit();
+						});
 
 						return;
 				}
@@ -92,6 +93,7 @@ public class AppleLoginManager : MonoBehaviour
 				GameManager.Scene.Dim(true);
 
 				PlayerPrefs.SetString(Define.APPLEUSERID, credential.User);
+				PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Apple.ToString());
 
 				SetupAppleData(credential.User, credential);
 

@@ -61,4 +61,12 @@ public static class Enums
 		Mana,
 		Speed,
 	}
+
+
+	public enum LoginType
+	{
+		None,
+		Google,
+		Apple,
+	}
 }

@@ -1648,7 +1648,7 @@ GameObject:
   - component: {fileID: 6168612379001845049}
   - component: {fileID: 5484812868107217997}
   m_Layer: 5
-  m_Name: txtmp_Logout
+  m_Name: txtmp_SignOut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2022,6 +2022,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInstant: 0
+  loginType: 0
 --- !u!114 &8069122345768809640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2596,7 +2597,7 @@ GameObject:
   - component: {fileID: 3710931415182686414}
   - component: {fileID: 217464280542927708}
   m_Layer: 5
-  m_Name: btn_LogOut
+  m_Name: btn_SignOut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4188,7 +4189,7 @@ GameObject:
   - component: {fileID: 8434390497457008457}
   - component: {fileID: 448319292714619597}
   m_Layer: 5
-  m_Name: btn_SignOut
+  m_Name: btn_LogOut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
