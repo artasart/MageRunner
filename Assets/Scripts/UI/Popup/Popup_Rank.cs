@@ -10,6 +10,7 @@ public class Popup_Rank : Popup_Base
 	public InfiniteRankScroller infiniteRankScroller { get; private set; }
 	public EnhancedScroller enhancedScroller { get; private set; }
 
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -23,6 +24,11 @@ public class Popup_Rank : Popup_Base
 		{
 			Refresh();
 		}
+	}
+
+	public void GetRankList()
+	{
+		GameManager.Backend.GetRankList();
 	}
 
 	public void Refresh()

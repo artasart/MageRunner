@@ -38,17 +38,17 @@ public class GoogleLoginManager : MonoBehaviour
 	{
 		if (isSuccess == false)
 		{
-			GameManager.Scene.ShowToastAndDisappear("Google Login failed.");
+			//GameManager.Scene.ShowToastAndDisappear("Google Login failed.");
 
 			return;
 		}
 
 		var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
 
-		if(bro.GetStatusCode() == "200")
+		if (bro.GetStatusCode() == "200" || bro.GetStatusCode() == "201")
 		{
 			FindObjectOfType<Scene_Logo>().StartLogin();
-			
+
 			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
 			PlayerPrefs.SetString(Define.GOOGLETOKEN, token);
 		}

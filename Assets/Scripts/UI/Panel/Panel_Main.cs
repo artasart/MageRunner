@@ -98,7 +98,7 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_Rank()
 	{
-		GameManager.UI.StackPopup<Popup_Rank>(true);
+		GameManager.UI.StackPopup<Popup_Rank>(true).GetRankList();
 	}
 
 	private void OnClick_ChangeNickname()

@@ -108,9 +108,9 @@ public class Scene_Main : SceneLogic
 		yield return Timing.WaitUntilTrue(() => bro != null);
 		if (bro.GetReturnValuetoJSON()["row"]["nickname"] == null)
 		{
-			LocalData.gameData.nickname = "nickname-empty";
+			LocalData.gameData.nickname = string.Empty;
 			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", LocalData.gameData.runnerTag);
 			
 			GameManager.Scene.Fade(false, .5f);
 
@@ -144,7 +144,6 @@ public class Scene_Main : SceneLogic
 		if (string.IsNullOrEmpty(nickname))
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, string.Empty);
 			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
 			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
 			{
