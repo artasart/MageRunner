@@ -416,10 +416,10 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 				Debug.Log(String.Format(rewardMsg, reward.Type, reward.Amount));
 
 				_reward?.Invoke();
+
+				LoadRewardedInterstitialAd();
 			});
 		}
-
-		LoadRewardedInterstitialAd();
 	}
 
 	#endregion

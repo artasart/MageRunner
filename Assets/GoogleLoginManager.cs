@@ -2,6 +2,7 @@ using BackEnd;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using static Enums;
 
@@ -21,21 +22,21 @@ public class GoogleLoginManager : MonoBehaviour
 			return;
 		}
 
-		Backend.BMember.AuthorizeFederation(token, FederationType.Google, (res) =>
-		{
-			Debug.Log(res.GetStatusCode());
+		var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
 
-			FindObjectOfType<Scene_Logo>().StartLogin();
+		Debug.Log(bro.GetStatusCode());
 
-			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
 
-//			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
-//$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
-//$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
-//{
-//	Application.Quit();
-//});
-		});
+		FindObjectOfType<Scene_Logo>().StartLogin();
+
+		PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
+
+		//			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
+		//$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+		//$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
+		//{
+		//	Application.Quit();
+		//});		
 	}
 
 	public void SignOutGoogleLogin()
