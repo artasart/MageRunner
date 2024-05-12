@@ -133,9 +133,11 @@ public class Scene_Main : SceneLogic
 			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
 		}
 
+		yield return Timing.WaitUntilTrue(() => LocalData.gameData.nickname != string.Empty);
+
 		GameManager.Backend.GameDataInsert(() =>
 		{
-			GameManager.Backend.RankDataInsert();
+			if (LocalData.gameData.highScore > 0) GameManager.Backend.RankDataInsert();
 		});
 	}
 

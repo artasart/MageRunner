@@ -48,7 +48,9 @@ public class Panel_Main : Panel_Base
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_PlayGame.onClick.RemoveListener(OpenSound);
 
-		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail);
+		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
+		btn_PlayGame.onClick.RemoveListener(OpenSound);
+
 		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
 
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
@@ -93,7 +95,9 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_Mail()
 	{
-		GameManager.UI.StackPopup<Popup_Mail>(true);
+		GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+		btn_Mail.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
 	}
 
 	private void OnClick_Rank()

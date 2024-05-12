@@ -35,6 +35,7 @@ public class Panel_Logo : Panel_Base
 		btn_AppleLogin = GetUI_Button(nameof(btn_AppleLogin), Onclick_AppleLogin, useAnimation: true);
 		btn_AppleLogin.onClick.RemoveListener(OpenSound);
 		btn_GoogleLogin = GetUI_Button(nameof(btn_GoogleLogin), OnClick_GoogleLogin, useAnimation: true);
+		btn_GoogleLogin.onClick.RemoveListener(OpenSound);
 	}
 
 	public void SetDownload(string message)
