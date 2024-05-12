@@ -135,10 +135,7 @@ public class Scene_Main : SceneLogic
 
 		yield return Timing.WaitUntilTrue(() => LocalData.gameData.nickname != string.Empty);
 
-		GameManager.Backend.GameDataInsert(() =>
-		{
-			if (LocalData.gameData.highScore > 0) GameManager.Backend.RankDataInsert();
-		});
+		GameManager.Backend.GameDataInsert();
 	}
 
 	private void IOSSetting(string nickname)

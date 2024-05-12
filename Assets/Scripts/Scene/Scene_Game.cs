@@ -277,6 +277,8 @@ public class Scene_Game : SceneLogic
 	{
 		if (GameScene.game.score > LocalData.gameData.highScore)
 		{
+			LocalData.gameData.highScore = GameScene.game.score;
+
 			GameManager.UI.StackSplash<Splash_Congrates>();
 
 			GameManager.UI.FetchSplash<Splash_Congrates>().SetEndAction(() =>

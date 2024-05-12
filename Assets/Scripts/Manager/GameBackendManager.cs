@@ -134,6 +134,8 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void RankDataInsert()
 	{
+		Debug.Log("Rank Data Insert");
+
 		string rowInDate = string.Empty;
 
 		Backend.GameData.GetMyData(Define.USER_DATA, new Where(), callback =>
@@ -159,7 +161,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 			Param param = new Param()
 			{
-				{"highestScore", LocalData.gameData.highScore }
+				{"highScore", LocalData.gameData.highScore }
 			};
 
 			Backend.URank.User.UpdateUserScore(Define.UUID_RANK, Define.USER_DATA, rowInDate, param, callack =>
@@ -178,6 +180,8 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void GetRankList()
 	{
+		Debug.Log("Get Rank Data");
+
 		Backend.URank.User.GetRankList(Define.UUID_RANK, 10, callback =>
 		{
 			if(callback.IsSuccess())
