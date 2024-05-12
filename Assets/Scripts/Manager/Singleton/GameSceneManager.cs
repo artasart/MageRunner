@@ -332,6 +332,8 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public void ShowToastAndDisappear(string message)
 	{
+		CancelInvoke(nameof(CloseToastPopup));
+
 		ShowToastPopup($"{message}", false, () => CancelInvoke(nameof(CloseToastPopup)));
 
 		Invoke(nameof(CloseToastPopup), 2f);
@@ -340,19 +342,6 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 	public void ClickToastPopup()
 	{
 		callback_ClickToast?.Invoke();
-	}
-
-	private void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.Q))
-		{
-			Time.timeScale = 0f;
-		}
-
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			Time.timeScale = 1f;
-		}
 	}
 
 	#endregion

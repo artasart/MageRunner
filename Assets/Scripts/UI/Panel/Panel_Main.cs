@@ -112,7 +112,7 @@ public class Panel_Main : Panel_Base
 			GameManager.Scene.Dim(true);
 
 			// Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content);
-			GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content));
+			GameManager.AdMob.ShowRewardedInterstitialAd(() => Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content));
 		},
 
 		() =>
@@ -143,7 +143,7 @@ public class Panel_Main : Panel_Base
 			GameManager.Scene.Dim(true);
 
 			// Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content);
-			GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content));
+			GameManager.AdMob.ShowRewardedInterstitialAd(() => Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content));
 		},
 		() =>
 		{

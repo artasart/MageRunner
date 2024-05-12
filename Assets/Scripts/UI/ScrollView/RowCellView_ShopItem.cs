@@ -115,7 +115,7 @@ public class RowCellView_ShopItem : RowCellView
 				if (shopItemData.type == "ad")
 				{
 					// Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content);
-					GameManager.AdMob.ShowRewardedAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content));
+					GameManager.AdMob.ShowRewardedInterstitialAd(() => Util.RunCoroutine(Co_WatchedAD(shopItemData.name).Delay(.5f), nameof(Co_WatchedAD), CoroutineTag.Content));
 				}
 
 				else

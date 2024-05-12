@@ -12,24 +12,34 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	public string banneAdUnitId = "ca-app-pub-3940256099942544/6300978111";
 	public string interstitialAdUnitId = "ca-app-pub-3940256099942544/1033173712";
 	public string rewardedAdUnitId = "ca-app-pub-3940256099942544/5224354917";
+		public string rewardedinterstitialAdUnitId = "ca-app-pub-3940256099942544/5354046379";
 #elif UNITY_IOS
-		public string banneAdUnitId = "ca-app-pub-3940256099942544/2934735716";
-		public string interstitialAdUnitId = "ca-app-pub-3940256099942544/4411468910";
-		public string rewardedAdUnitId = "ca-app-pub-3940256099942544/1712485313";
+	public string banneAdUnitId = "ca-app-pub-3940256099942544/2934735716";
+	public string interstitialAdUnitId = "ca-app-pub-3940256099942544/4411468910";
+	public string rewardedAdUnitId = "ca-app-pub-3940256099942544/1712485313";		
+	public string rewardedinterstitialAdUnitId = "ca-app-pub-3940256099942544/6978759866";
 #else
-		public string banneAdUnitId = "unused";
-		public string interstitialAdUnitId = "unused";
-		public string rewardedAdUnitId = "unused";
+	public string banneAdUnitId = "unused";
+	public string interstitialAdUnitId = "unused";
+	public string rewardedAdUnitId = "unused";
+	public string rewardedinterstitialAdUnitId = "unused";
 #endif
 
 	BannerView bannerView;
 	RewardedAd rewardedAd;
 	InterstitialAd interstitialAd;
+	RewardedInterstitialAd rewardedInterstitialAd;
 
 	public Action initialClosed;
 
 	private void Awake()
 	{
+#if UNITY_EDITOR
+		banneAdUnitId = "unused";
+		interstitialAdUnitId = "unused";
+		rewardedAdUnitId = "unused";
+		rewardedinterstitialAdUnitId = "unused";
+#endif
 		MobileAds.Initialize((InitializationStatus initStatus) =>
 		{
 
@@ -46,32 +56,11 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 		LoadInterstitialAd();
 
 		// Rewarded
-		LoadRewardedAD();
+		// LoadRewardedAD();
+
+		// Rewarded InterstitialAd
+		LoadRewardedInterstitialAd();
 	}
-
-	public void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Z))
-		{
-			ShowBanner();
-		}
-
-		else if (Input.GetKeyDown(KeyCode.X))
-		{
-			HideBanner();
-		}
-
-		else if (Input.GetKeyDown(KeyCode.C))
-		{
-			ShowRewardedAd();
-		}
-
-		else if (Input.GetKeyDown(KeyCode.V))
-		{
-			ShowInterstitialAd();
-		}
-	}
-
 
 	#region InterstitialAd
 
@@ -373,6 +362,62 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 			bannerView.Hide();
 		}
+	}
+
+	#endregion
+
+
+	#region
+
+	public void LoadRewardedInterstitialAd()
+	{
+		// Clean up the old ad before loading a new one.
+		if (rewardedInterstitialAd != null)
+		{
+			rewardedInterstitialAd.Destroy();
+			rewardedInterstitialAd = null;
+		}
+
+		Debug.Log("Loading the rewarded interstitial ad.");
+
+		// create our request used to load the ad.
+		var adRequest = new AdRequest();
+		adRequest.Keywords.Add("unity-admob-sample");
+
+		// send the request to load the ad.
+		RewardedInterstitialAd.Load(rewardedinterstitialAdUnitId, adRequest,
+			(RewardedInterstitialAd ad, LoadAdError error) => {
+				// if error is not null, the load request failed.
+				if (error != null || ad == null)
+				{
+					Debug.LogError("rewarded interstitial ad failed to load an ad " +
+						"with error : " + error);
+					return;
+				}
+
+				Debug.Log("Rewarded interstitial ad loaded with response : " +
+					ad.GetResponseInfo());
+
+				rewardedInterstitialAd = ad;
+			});
+	}
+
+	public void ShowRewardedInterstitialAd(Action _reward)
+	{
+		const string rewardMsg =
+			"Rewarded interstitial ad rewarded the user. Type: {0}, amount: {1}.";
+
+		if (rewardedInterstitialAd != null && rewardedInterstitialAd.CanShowAd())
+		{
+			rewardedInterstitialAd.Show((Reward reward) => {
+
+				Debug.Log(String.Format(rewardMsg, reward.Type, reward.Amount));
+
+				_reward?.Invoke();
+			});
+		}
+
+		LoadRewardedInterstitialAd();
 	}
 
 	#endregion
