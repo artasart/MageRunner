@@ -40,6 +40,7 @@ public class Scene_Logo : SceneLogic
 
 #elif UNITY_IOS
 		FindObjectOfType<AppleLoginManager>().Init();
+		FindObjectOfType<GoogleLoginManager>().Init();
 #endif
 	}
 

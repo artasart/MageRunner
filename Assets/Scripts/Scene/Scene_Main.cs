@@ -118,10 +118,15 @@ public class Scene_Main : SceneLogic
 #elif UNITY_IOS
 		var bro = Backend.BMember.GetUserInfo();
 		yield return Timing.WaitUntilTrue(() => bro != null);
-		var nickname = bro.GetReturnValuetoJSON()["row"]["nickname"].ToString();
-		IOSSetting(nickname);
+		if (bro.GetReturnValuetoJSON()["row"]["nickname"] == null)
+		{
+			IOSSetting(string.Empty);
+		}
+		else
+		{
+			IOSSetting(bro.GetReturnValuetoJSON()["row"]["nickname"].ToString());
+		}
 #endif
-
 		GetFarmedItem();
 		CheckLogin();
 

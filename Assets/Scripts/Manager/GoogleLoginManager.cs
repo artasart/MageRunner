@@ -4,6 +4,31 @@ using static Enums;
 
 public class GoogleLoginManager : MonoBehaviour
 {
+	public void Init()
+	{
+		var token = PlayerPrefs.GetString(Define.GOOGLETOKEN);
+
+		if (!string.IsNullOrEmpty(token))
+		{
+			var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
+
+			if (bro.GetStatusCode() == "200")
+			{
+				FindObjectOfType<Scene_Logo>().StartLogin();
+
+				PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
+				PlayerPrefs.SetString(Define.GOOGLETOKEN, token);
+			}
+
+			else if (bro.GetStatusCode() == "410")
+			{
+				GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
+				$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+				$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice");
+			}
+		}
+	}
+
 	public void StartGoogleLogin()
 	{
 		TheBackend.ToolKit.GoogleLogin.iOS.GoogleLogin(GoogleLoginCallback);
@@ -25,6 +50,7 @@ public class GoogleLoginManager : MonoBehaviour
 			FindObjectOfType<Scene_Logo>().StartLogin();
 			
 			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
+			PlayerPrefs.SetString(Define.GOOGLETOKEN, token);
 		}
 
 		else if (bro.GetStatusCode() == "410")
@@ -49,6 +75,8 @@ public class GoogleLoginManager : MonoBehaviour
 
         else
         {
+			PlayerPrefs.SetString(Define.GOOGLETOKEN, string.Empty);
+
 			GameManager.Scene.LoadScene(SceneName.Logo);
 		}
     }
@@ -59,5 +87,7 @@ public class GoogleLoginManager : MonoBehaviour
 			$"Application need to be restarted.",
 			"Notice",
 			Application.Quit);
+
+		PlayerPrefs.SetString(Define.GOOGLETOKEN, string.Empty);
 	}
 }

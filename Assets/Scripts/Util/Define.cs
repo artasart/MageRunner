@@ -86,4 +86,5 @@ public static class Define
 	public const string STATUSCODE_WITHDRAW = "410";
 
 	public const string LOGINTYPE = "LoginType";
+	public const string GOOGLETOKEN = "GoogleToken";
 }
