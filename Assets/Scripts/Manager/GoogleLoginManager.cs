@@ -12,7 +12,7 @@ public class GoogleLoginManager : MonoBehaviour
 		{
 			var bro = Backend.BMember.AuthorizeFederation(token, FederationType.Google);
 
-			if (bro.GetStatusCode() == "200")
+			if (bro.GetStatusCode() == "200" || bro.GetStatusCode() == "201")
 			{
 				FindObjectOfType<Scene_Logo>().StartLogin();
 

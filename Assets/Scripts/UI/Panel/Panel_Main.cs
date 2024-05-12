@@ -48,7 +48,7 @@ public class Panel_Main : Panel_Base
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_PlayGame.onClick.RemoveListener(OpenSound);
 
-		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
+		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail);
 		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
 
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
@@ -93,12 +93,12 @@ public class Panel_Main : Panel_Base
 
 	private void OnClick_Mail()
 	{
-		GameManager.UI.StackPopup<Popup_Mail>();
+		GameManager.UI.StackPopup<Popup_Mail>(true);
 	}
 
 	private void OnClick_Rank()
 	{
-		GameManager.UI.StackPopup<Popup_Rank>();
+		GameManager.UI.StackPopup<Popup_Rank>(true);
 	}
 
 	private void OnClick_ChangeNickname()

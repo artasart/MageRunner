@@ -82,14 +82,12 @@ public class Scene_Main : SceneLogic
 
 	private void Start()
 	{
-		GameManager.Scene.Fade(false, .5f);
-
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
-		GameManager.UI.StackPanel<Panel_Shop>(true);
-		GameManager.UI.PopPanel();
+
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
 
 		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
@@ -98,17 +96,7 @@ public class Scene_Main : SceneLogic
 
 	private IEnumerator<float> Co_MainStart()
 	{
-		if (LocalData.gameData.nickname == string.Empty)
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
-		}
-		else
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, LocalData.gameData.runnerTag.ToString());
-		}
-
-		yield return Timing.WaitUntilTrue(() => GameManager.Scene.IsFaded());
-
+		yield return Timing.WaitForOneFrame;
 
 #if UNITY_EDITOR
 		var tag = UnityEngine.Random.Range(100000, 999999);
@@ -120,17 +108,24 @@ public class Scene_Main : SceneLogic
 		yield return Timing.WaitUntilTrue(() => bro != null);
 		if (bro.GetReturnValuetoJSON()["row"]["nickname"] == null)
 		{
+			LocalData.gameData.nickname = "nickname-empty";
+			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
+			
+			GameManager.Scene.Fade(false, .5f);
+
+			yield return Timing.WaitUntilTrue(() => GameManager.Scene.IsFaded());
+
 			IOSSetting(string.Empty);
 		}
 		else
 		{
 			IOSSetting(bro.GetReturnValuetoJSON()["row"]["nickname"].ToString());
+			GameManager.Scene.Fade(false, .5f);
 		}
 #endif
 		GetFarmedItem();
 		CheckLogin();
-
-		yield return Timing.WaitForOneFrame;
 
 		if (!string.IsNullOrEmpty(LocalData.gameData.ride.name))
 		{
@@ -146,8 +141,6 @@ public class Scene_Main : SceneLogic
 
 	private void IOSSetting(string nickname)
 	{
-		Debug.Log("Nickname : " + nickname);
-
 		if (string.IsNullOrEmpty(nickname))
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
