@@ -81,6 +81,8 @@ public static class Define
 	public const string APPLEUSERID = "AppleUserId";
 
 	[Header("Backend")]
+	public const string USER_DATA = "USER_DATA";
+	public const string UUID_RANK = "";
 	public const string STATUSCODE_WITHDRAW = "410";
 
 	public const string LOGINTYPE = "LoginType";

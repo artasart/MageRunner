@@ -93,4 +93,150 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 			$"This account is currently being withdrawn.\nplease try again later.\n\n" +
 			$"<size=25><color=#323232>Processing usually takes within an hour</size></color>", "Notice");
 	}
+
+
+	public void GameDataInsert(Action success = null)
+	{
+		Param param = new Param()
+		{
+			{ "nickname", LocalData.gameData.nickname},
+			{ "level", LocalData.gameData.nickname},
+			{ "exp", LocalData.gameData.nickname},
+			{ "gold", LocalData.gameData.nickname},
+			{ "highScore", LocalData.gameData.nickname},
+			{ "energy", LocalData.gameData.nickname},
+			{ "energyTotal", LocalData.gameData.nickname},
+			{ "isPremium", LocalData.gameData.nickname},
+			{ "runnerTag", LocalData.gameData.nickname},
+			{ "damage", LocalData.gameData.nickname},
+			{ "mana", LocalData.gameData.nickname},
+			{ "speed", LocalData.gameData.nickname},
+			{ "damageLevel", LocalData.gameData.nickname},
+			{ "manaLevel", LocalData.gameData.nickname},
+			{ "speedLevel", LocalData.gameData.nickname},
+		};
+
+		Backend.GameData.Insert(Define.USER_DATA, param, callback =>
+		{
+			if(callback.IsSuccess())
+			{
+				Debug.Log("Game Data insert Completed.");
+
+				success?.Invoke();
+			}
+
+			else
+			{
+				Debug.Log("Game Data insert Failed.");
+			}
+		});
+	}
+
+	public void RankDataInsert()
+	{
+		string rowInDate = string.Empty;
+
+		Backend.GameData.GetMyData(Define.USER_DATA, new Where(), callback =>
+		{
+			if (!callback.IsSuccess())
+			{
+				Debug.LogError("Data search failed.");
+
+				return;
+			}
+
+			Debug.Log("Data Searched..");
+
+			if (callback.FlattenRows().Count > 0)
+			{
+				rowInDate = callback.FlattenRows()[0]["inDate"].ToString();
+			}
+
+			else
+			{
+				Debug.Log("No Data");
+			}
+
+			Param param = new Param()
+			{
+				{"highestScore", LocalData.gameData.highScore }
+			};
+
+			Backend.URank.User.UpdateUserScore(Define.UUID_RANK, Define.USER_DATA, rowInDate, param, callack =>
+			{
+				if (callback.IsSuccess())
+				{
+					Debug.Log("Succes..");
+				}
+				else
+				{
+					Debug.Log("Failed to insert Game Rank");
+				}
+			});
+		});
+	}
+
+	public void GetRankList()
+	{
+		Backend.URank.User.GetRankList(Define.UUID_RANK, 10, callback =>
+		{
+			if(callback.IsSuccess())
+			{
+				LitJson.JsonData rankDataJson = callback.FlattenRows();
+
+				if(rankDataJson.Count <= 0)
+				{
+					Debug.Log("NO Rank Data.");
+				}
+
+				else
+				{
+					Debug.Log("Rank data exist." + rankDataJson.Count);
+
+					for (int i = 0; i < rankDataJson.Count; i++)
+					{
+						Debug.Log(int.Parse(rankDataJson[i]["rank"].ToString()));
+						Debug.Log(int.Parse(rankDataJson[i]["highScore"].ToString()));
+
+						if (rankDataJson[i].ContainsKey("nickname") == true)
+						{
+							Debug.Log(rankDataJson[i]["nickname"?.ToString()]);
+						}
+					}
+				}
+			}
+
+			else
+			{
+				Debug.Log("No Data");
+			}
+		});
+	}
+
+	public void GetMyRank()
+	{
+		Backend.URank.User.GetMyRank(Define.UUID_RANK, callback =>
+		{
+			if (callback.IsSuccess())
+			{
+				LitJson.JsonData rankDataJson = callback.FlattenRows();
+
+				if (rankDataJson.Count <= 0)
+				{
+					Debug.Log("I'm not in a rank");
+				}
+
+				else
+				{
+					Debug.Log(int.Parse(rankDataJson[0]["rank"].ToString()));
+					Debug.Log(int.Parse(rankDataJson[0]["highScore"].ToString()));
+
+					if (rankDataJson[0].ContainsKey("nickname") == true)
+					{
+						Debug.Log(rankDataJson[0]["nickname"?.ToString()]);
+					}
+				}
+			}
+		});
+	}
 }

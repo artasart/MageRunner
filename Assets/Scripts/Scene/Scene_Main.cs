@@ -111,45 +111,15 @@ public class Scene_Main : SceneLogic
 
 
 #if UNITY_EDITOR
-
 		var tag = UnityEngine.Random.Range(100000, 999999);
-
 		LocalData.gameData.nickname = "test nickname for editor";
 		LocalData.gameData.runnerTag = tag;
-
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", tag.ToString());
-
 #elif UNITY_IOS
 		var bro = Backend.BMember.GetUserInfo();
-
 		yield return Timing.WaitUntilTrue(() => bro != null);
-
 		var nickname = bro.GetReturnValuetoJSON()["row"]["nickname"].ToString();
-
-		Debug.Log(nickname);
-
-		if (string.IsNullOrEmpty(nickname))
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
-
-			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
-
-			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
-			{
-				GameManager.UI.StackPopup<Popup_InputField>(true);
-
-				LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
-
-				GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, LocalData.gameData.runnerTag.ToString());
-
-				GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
-			});
-		}
-
-		else
-		{
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, LocalData.gameData.runnerTag.ToString());
-		}
+		IOSSetting(nickname);
 #endif
 
 		GetFarmedItem();
@@ -162,16 +132,41 @@ public class Scene_Main : SceneLogic
 			rideManager.Ride();
 			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
 		}
+
+		GameManager.Backend.GameDataInsert(() =>
+		{
+			GameManager.Backend.RankDataInsert();
+		});
 	}
 
-	private void Update()
+	private void IOSSetting(string nickname)
 	{
-		if (Input.GetKeyDown(KeyCode.Space))
+		Debug.Log("Nickname : " + nickname);
+
+		if (string.IsNullOrEmpty(nickname))
 		{
-			GameManager.UI.StackSplash<Splash_Gold>();
-			GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(string.Empty, string.Empty);
+			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
+			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
+			{
+				Invoke(nameof(InsertNickname), .75f);
+			});
+		}
+
+		else
+		{
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, LocalData.gameData.runnerTag.ToString());
 		}
 	}
+
+	private void InsertNickname()
+	{
+		GameManager.UI.StackPopup<Popup_InputField>(true);
+
+		GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
+	}
+
 
 	private void CheckLogin()
 	{

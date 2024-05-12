@@ -27,6 +27,9 @@ public class Panel_Main : Panel_Base
 	Button btn_ChangeNickname;
 	Button btn_Stat;
 
+	Button btn_Mail;
+	Button btn_Rank;
+
 	public Transform group_TopMenu { get; private set; }
 
 	Button btn_Energy;
@@ -44,6 +47,9 @@ public class Panel_Main : Panel_Base
 
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_PlayGame.onClick.RemoveListener(OpenSound);
+
+		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
+		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
 
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
@@ -83,6 +89,16 @@ public class Panel_Main : Panel_Base
 
 		txtmp_Gold.text = LocalData.gameData.gold.ToString("N0");
 		txtmp_Message.StartPingPong(1f);
+	}
+
+	private void OnClick_Mail()
+	{
+		GameManager.UI.StackPopup<Popup_Mail>();
+	}
+
+	private void OnClick_Rank()
+	{
+		GameManager.UI.StackPopup<Popup_Rank>();
 	}
 
 	private void OnClick_ChangeNickname()
@@ -244,16 +260,6 @@ public class Panel_Main : Panel_Base
 	private void OnClick_Stat()
 	{
 		GameManager.UI.SwitchPanel<Panel_Stat>(true).Init();
-	}
-
-	private void OnClick_Mail()
-	{
-		GameManager.UI.StackPopup<Popup_Mail>();
-	}
-
-	private void OnClick_Rank()
-	{
-		GameManager.UI.StackPopup<Popup_Rank>();
 	}
 
 	private void OnClick_DayCheck()
