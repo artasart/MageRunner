@@ -26,17 +26,22 @@ public class GoogleLoginManager : MonoBehaviour
 
 		Debug.Log(bro.GetStatusCode());
 
+		if(bro.GetStatusCode() == "200")
+		{
+			FindObjectOfType<Scene_Logo>().StartLogin();
 
-		FindObjectOfType<Scene_Logo>().StartLogin();
+			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
+		}
 
-		PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
-
-		//			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
-		//$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
-		//$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
-		//{
-		//	Application.Quit();
-		//});		
+		else
+		{
+			GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.Confrim,
+			$"This account is currently being withdrawn.\nPlease try latter.\n\n" +
+			$"<size=25><color=#323232>processed ususally takes within an hour</size></color>", "Notice", () =>
+			{
+				Application.Quit();
+			});
+		}
 	}
 
 	public void SignOutGoogleLogin()
@@ -46,6 +51,8 @@ public class GoogleLoginManager : MonoBehaviour
 
 	private void GoogleSignOutCallback(bool isSuccess, string error)
 	{
+		Debug.Log("Error : " + error);
+
 		if (isSuccess == false)
 		{
 			GameManager.Scene.ShowToastAndDisappear("Google sign out failed. Try again.");

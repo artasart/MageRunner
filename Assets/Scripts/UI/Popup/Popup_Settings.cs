@@ -71,7 +71,7 @@ public class Popup_Settings : Popup_Base
 	{
 		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(
 			ModalType.ConfirmCancel,
-			$"Do you want to log out account?\n", "Notice",
+			$"Do you want to sign out account?\n", "Notice",
 			() =>
 			{
 				if (loginType == LoginType.Google)
@@ -111,10 +111,10 @@ public class Popup_Settings : Popup_Base
 				{
 					PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
-					GameManager.Backend.WithdrawAccount();
-
 					GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 				}
+
+				GameManager.Backend.WithdrawAccount();
 
 				Invoke(nameof(QuitApp), .75f);
 			});
