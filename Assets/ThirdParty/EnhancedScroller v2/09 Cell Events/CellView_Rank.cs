@@ -26,5 +26,21 @@ public class CellView_Rank : CellView
 		txtmp_Level.text = "Lv." + rankData.level.ToString();
 		txtmp_Rank.text = rankData.rank.ToString();
 		txtmp_Score.text = rankData.score.ToString("N0") + " m";
+
+		if (rankData.isMine)
+		{
+			txtmp_Nickname.color = Util.HexToRGB("#FFC700");
+			txtmp_Level.color = Util.HexToRGB("#FFC700");
+			txtmp_Rank.color = Util.HexToRGB("#FFC700");
+			txtmp_Score.color = Util.HexToRGB("#FFC700");
+		}
+
+		else
+		{
+			txtmp_Nickname.color = Util.HexToRGB("#DCDCDC");
+			txtmp_Level.color = Util.HexToRGB("#DCDCDC");
+			txtmp_Rank.color = Util.HexToRGB("#DCDCDC");
+			txtmp_Score.color = Util.HexToRGB("#DCDCDC");
+		}
 	}
 }

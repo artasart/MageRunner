@@ -230,6 +230,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 				rankData.rank = int.Parse(rankDataJson[i]["rank"].ToString());
 				rankData.score = int.Parse(rankDataJson[i]["score"].ToString());
 				rankData.level = int.Parse(rankDataJson[i]["level"].ToString());
+				rankData.isMine = rankData.nickname == GameManager.Backend.GetNickname();
 
 				rankDatas.Add(rankData);
 			}
@@ -246,18 +247,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 		{
 			LitJson.JsonData rankDataJson = bro.FlattenRows();
 
-			if (rankDataJson.Count <= 0)
-			{
-				DebugManager.Log("I'm not in a rank");
-			}
-
-			else
-			{
-				if (rankDataJson[0].ContainsKey("nickname") == true)
-				{
-					DebugManager.Log(rankDataJson[0]["nickname"?.ToString()].ToString());
-				}
-			}
+			if (rankDataJson.Count <= 0) return;
 		}
 	}
 

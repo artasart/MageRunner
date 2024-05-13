@@ -91,6 +91,8 @@ public class Panel_Main : Panel_Base
 
 		txtmp_Gold.text = LocalData.gameData.gold.ToString("N0");
 		txtmp_Message.StartPingPong(1f);
+
+		UpdateRank();
 	}
 
 	private void OnClick_Mail()
@@ -103,6 +105,10 @@ public class Panel_Main : Panel_Base
 	private void OnClick_Rank()
 	{
 		GameManager.UI.StackPopup<Popup_Rank>(true).GetRankList();
+
+		btn_Rank.transform.Search("img_NewRank").gameObject.SetActive(false);
+
+		PlayerPrefs.SetInt("NewRank", 0);
 	}
 
 	private void OnClick_ChangeNickname()
@@ -316,5 +322,14 @@ public class Panel_Main : Panel_Base
 	{
 		btn_Energy.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
 		btn_Coin.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
+	}
+
+	public void UpdateRank()
+	{
+		Debug.Log("Update Rank");
+		Debug.Log(PlayerPrefs.GetInt("NewRank"));
+		Debug.Log(PlayerPrefs.GetInt("NewRank") == 1);
+
+		btn_Rank.transform.Search("img_NewRank").gameObject.SetActive(PlayerPrefs.GetInt("NewRank") == 1);
 	}
 }

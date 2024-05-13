@@ -9,4 +9,5 @@ public class RankData : Data
 	public int rank;
 	public int score;
 	public int level;
+	public bool isMine;
 }
