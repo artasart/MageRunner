@@ -72,7 +72,7 @@ public static class LocalData
 				1));
 		}
 
-		foreach(var item in gameData.equipment)
+		foreach (var item in gameData.equipment)
 		{
 			item.Value.path = string.Empty;
 		}
@@ -111,7 +111,7 @@ public static class LocalData
 	}
 
 	public static void InitInvenData()
-    {
+	{
 		invenData.invenItemData.Clear();
 		invenData.amount = 0;
 		invenData.totalAmount = 10;
@@ -169,12 +169,10 @@ public class GameData
 	public bool isAdWatched;
 
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
-	public Ride ride;
-
 	public SerializableDictionary<string, int> bags;
-
-	// public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
 	public List<ActorSkill> actorSkills;
+
+	public Ride ride;
 }
 
 [Serializable]

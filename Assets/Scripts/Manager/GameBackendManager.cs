@@ -96,7 +96,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 	}
 
 
-	public void GameDataInsert(Action success = null)
+	public void SetGameData(Action success = null)
 	{
 		Param param = new Param()
 		{
@@ -115,6 +115,9 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 			{ "damageLevel", LocalData.gameData.damageLevel},
 			{ "manaLevel", LocalData.gameData.manaLevel},
 			{ "speedLevel", LocalData.gameData.speedLevel},
+			{ "equipment", LocalData.gameData.equipment},
+			{ "bags", LocalData.gameData.bags},
+			{ "actorSkills", LocalData.gameData.actorSkills},
 		};
 
 		Backend.GameData.Insert(Define.USER_DATA, param, callback =>
@@ -133,7 +136,40 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 		});
 	}
 
-	public void RankDataInsert()
+	public void GetGameData()
+	{
+		var bro = Backend.GameData.GetMyData("USER_DATA", new Where());
+
+		if (bro.IsSuccess())
+		{
+			LitJson.JsonData gameDataJson = bro.FlattenRows();
+
+			if (gameDataJson.Count <= 0) return;
+
+			LocalData.gameData.nickname = gameDataJson[0]["nickname"].ToString();
+			LocalData.gameData.level = int.Parse(gameDataJson[0]["level"].ToString());
+			LocalData.gameData.exp = int.Parse(gameDataJson[0]["exp"].ToString());
+			LocalData.gameData.gold = int.Parse(gameDataJson[0]["gold"].ToString());
+			LocalData.gameData.highScore = int.Parse(gameDataJson[0]["highScore"].ToString());
+			LocalData.gameData.energy = int.Parse(gameDataJson[0]["energy"].ToString());
+			LocalData.gameData.energyTotal = int.Parse(gameDataJson[0]["energyTotal"].ToString());
+			LocalData.gameData.isPremium = bool.Parse(gameDataJson[0]["isPremium"].ToString());
+			LocalData.gameData.runnerTag = int.Parse(gameDataJson[0]["runnerTag"].ToString());
+			LocalData.gameData.damage = int.Parse(gameDataJson[0]["damage"].ToString());
+			LocalData.gameData.mana = int.Parse(gameDataJson[0]["mana"].ToString());
+			LocalData.gameData.speed = float.Parse(gameDataJson[0]["speed"].ToString());
+			LocalData.gameData.damageLevel = int.Parse(gameDataJson[0]["damageLevel"].ToString());
+			LocalData.gameData.manaLevel = int.Parse(gameDataJson[0]["manaLevel"].ToString());
+			LocalData.gameData.speedLevel = int.Parse(gameDataJson[0]["speedLevel"].ToString());
+		}
+
+		else
+		{
+			Debug.LogError("Failed. : " + bro);
+		}
+	}
+
+	public void SetRankData()
 	{
 		DebugManager.ClearLog("Rank Data Insert");
 
