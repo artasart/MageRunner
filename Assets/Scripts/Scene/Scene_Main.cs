@@ -36,8 +36,6 @@ public class Scene_Main : SceneLogic
 
 	protected override void OnDestroy()
 	{
-		GameManager.Backend.SetGameData();
-
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
 	}
@@ -49,8 +47,6 @@ public class Scene_Main : SceneLogic
 
 	public void SaveData()
 	{
-		GameManager.Backend.SetGameData();
-
 		LocalData.gameData.equipment = equipmentManager.equipments;
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
@@ -154,14 +150,6 @@ public class Scene_Main : SceneLogic
 			GameManager.Backend.SetGameData();
 
 			PlayerPrefs.SetInt("isLogin", 1);
-		}
-	}
-
-	private void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.Space))
-		{
-			GameManager.Backend.GetGameData();
 		}
 	}
 
