@@ -242,7 +242,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 	public void GetMyRank()
 	{
 		var bro = Backend.URank.User.GetMyRank(Define.UUID_RANK);
-
+		
 		if (bro.IsSuccess())
 		{
 			LitJson.JsonData rankDataJson = bro.FlattenRows();

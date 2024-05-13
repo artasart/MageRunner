@@ -87,8 +87,6 @@ public class Panel_Main : Panel_Base
 
 	private void Start()
 	{
-		SetEnergy();
-
 		txtmp_Gold.text = LocalData.gameData.gold.ToString("N0");
 		txtmp_Message.StartPingPong(1f);
 

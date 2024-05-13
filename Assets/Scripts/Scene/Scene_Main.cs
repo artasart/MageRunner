@@ -84,10 +84,13 @@ public class Scene_Main : SceneLogic
 
 	private void Start()
 	{
+		GameManager.Backend.GetGameData();
+
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
 
+		GameManager.UI.FetchPanel<Panel_Main>().SetEnergy();
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
 

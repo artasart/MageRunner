@@ -74,6 +74,9 @@ public class Popup_Settings : Popup_Base
 			$"Do you want to sign out account?\n", "Notice",
 			() =>
 			{
+				LocalData.gameData.isAdWatched = false;
+				LocalData.gameData.adWatchTime = System.DateTime.Now.AddSeconds(90).ToString("yyyy-MM-ddTHH:mm:ss");
+
 				if (loginType == LoginType.Google)
 				{
 					FindObjectOfType<GoogleLoginManager>().SignOutGoogleLogin();

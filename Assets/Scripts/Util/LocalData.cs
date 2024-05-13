@@ -40,6 +40,8 @@ public static class LocalData
 
 	public static void InitGameData()
 	{
+		Debug.Log("InitGameData");
+
 		gameData = new GameData();
 		gameData.ride = new Ride("", 0);
 		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
