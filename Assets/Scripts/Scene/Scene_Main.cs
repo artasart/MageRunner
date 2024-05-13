@@ -113,6 +113,7 @@ public class Scene_Main : SceneLogic
 		LocalData.gameData.runnerTag = tag;
 		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, tag.ToString());
 #elif UNITY_IOS
+
 		var bro = Backend.BMember.GetUserInfo();
 		yield return Timing.WaitUntilTrue(() => bro != null);
 		if (bro.GetReturnValuetoJSON()["row"]["nickname"] == null)
@@ -140,6 +141,13 @@ public class Scene_Main : SceneLogic
 		{
 			rideManager.Ride();
 			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
+		}
+
+		if (PlayerPrefs.GetInt("isLogin") == 0)
+		{
+			GameManager.Backend.GameDataInsert();
+
+			PlayerPrefs.SetInt("isLogin", 1);
 		}
 	}
 
