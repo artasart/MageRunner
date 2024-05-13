@@ -67,7 +67,7 @@ public class AppleLoginManager : MonoBehaviour
 			{
 				var authorizationErrorCode = error.GetAuthorizationErrorCode();
 
-				DebugManager.LogWarning("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
+				Debug.LogWarning("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
 			});
 	}
 
@@ -103,7 +103,7 @@ public class AppleLoginManager : MonoBehaviour
 			{
 				var authorizationErrorCode = error.GetAuthorizationErrorCode();
 
-				DebugManager.LogWarning("Sign in with Apple failed " + authorizationErrorCode.ToString() + " " + error.ToString());
+				Debug.LogWarning("Sign in with Apple failed " + authorizationErrorCode.ToString() + " " + error.ToString());
 			});
 	}
 
