@@ -35,5 +35,9 @@ public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour
 		Timing.KillCoroutines((int)CoroutineTag.Web);
 		Timing.KillCoroutines((int)CoroutineTag.UI);
 		Timing.KillCoroutines((int)CoroutineTag.Content);
+
+		GameManager.Backend.GameDataInsert();
+
+		PlayerPrefs.SetInt("isLogin", 0);
 	}
 }

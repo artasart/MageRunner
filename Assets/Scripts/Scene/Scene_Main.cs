@@ -99,10 +99,19 @@ public class Scene_Main : SceneLogic
 		yield return Timing.WaitForOneFrame;
 
 #if UNITY_EDITOR
+		GameManager.Scene.Fade(false, .5f);
+
+		if (PlayerPrefs.GetInt("isLogin") == 0)
+		{
+			GameManager.Backend.Login("admin", "1234");
+
+			PlayerPrefs.SetInt("isLogin", 1);
+		}
+
 		var tag = UnityEngine.Random.Range(100000, 999999);
-		LocalData.gameData.nickname = "test nickname for editor";
+		LocalData.gameData.nickname = GameManager.Backend.GetNickname();
 		LocalData.gameData.runnerTag = tag;
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("test nickname for editor", tag.ToString());
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, tag.ToString());
 #elif UNITY_IOS
 		var bro = Backend.BMember.GetUserInfo();
 		yield return Timing.WaitUntilTrue(() => bro != null);
@@ -110,7 +119,7 @@ public class Scene_Main : SceneLogic
 		{
 			LocalData.gameData.nickname = string.Empty;
 			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", LocalData.gameData.runnerTag);
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", LocalData.gameData.runnerTag.ToString());
 			
 			GameManager.Scene.Fade(false, .5f);
 
@@ -132,10 +141,6 @@ public class Scene_Main : SceneLogic
 			rideManager.Ride();
 			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
 		}
-
-		yield return Timing.WaitUntilTrue(() => LocalData.gameData.nickname != string.Empty);
-
-		GameManager.Backend.GameDataInsert();
 	}
 
 	private void IOSSetting(string nickname)

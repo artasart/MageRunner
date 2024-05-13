@@ -77518,6 +77518,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1877763924}
     m_Modifications:
+    - target: {fileID: 246494059155318288, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
+      propertyPath: cameraShake.useMainCamera
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1665512603240443558, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -77561,6 +77565,14 @@ PrefabInstance:
     - target: {fileID: 4123325747638326621, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
       propertyPath: m_Name
       value: PlayerActor
+      objectReference: {fileID: 0}
+    - target: {fileID: 7797814339561347294, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
+      propertyPath: cameraShake.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7797814339561347294, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
+      propertyPath: cameraShake.useMainCamera
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8682956352979546831, guid: 92d7b2c8e3bb9044eab4fce5c35af1ed, type: 3}
       propertyPath: m_SizeDelta.x

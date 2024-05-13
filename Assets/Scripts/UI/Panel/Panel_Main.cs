@@ -49,7 +49,7 @@ public class Panel_Main : Panel_Base
 		btn_PlayGame.onClick.RemoveListener(OpenSound);
 
 		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
-		btn_PlayGame.onClick.RemoveListener(OpenSound);
+		btn_Mail.onClick.RemoveListener(OpenSound);
 
 		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
 

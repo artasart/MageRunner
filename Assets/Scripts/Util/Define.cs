@@ -82,7 +82,7 @@ public static class Define
 
 	[Header("Backend")]
 	public const string USER_DATA = "USER_DATA";
-	public const string UUID_RANK = "db232710-10af-11ef-8088-e711a8192935";
+	public const string UUID_RANK = "5b722560-10bf-11ef-b60e-79b280e9ceda";
 	public const string STATUSCODE_WITHDRAW = "410";
 
 	public const string LOGINTYPE = "LoginType";

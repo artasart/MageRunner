@@ -10,20 +10,16 @@ public class Popup_Rank : Popup_Base
 	public InfiniteRankScroller infiniteRankScroller { get; private set; }
 	public EnhancedScroller enhancedScroller { get; private set; }
 
+	TMP_Text txtmp_Empty;
 
 	protected override void Awake()
 	{
 		base.Awake();
 
 		infiniteRankScroller = this.GetComponentInChildren<InfiniteRankScroller>();
-	}
+		enhancedScroller = this.GetComponentInChildren<EnhancedScroller>();
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			Refresh();
-		}
+		txtmp_Empty = GetUI_TMPText(nameof(txtmp_Empty), "Rank data is empty :(");
 	}
 
 	public void GetRankList()
@@ -31,16 +27,14 @@ public class Popup_Rank : Popup_Base
 		GameManager.Backend.GetRankList();
 	}
 
-	public void Refresh()
+	public void Refresh(List<RankData> rankDatas)
 	{
-		var rankDatas = new List<RankData>();
-
-		var rankData = new RankData();
-		rankData.nickname = "artasart";
-
-		rankDatas.Add(rankData);
-
 		infiniteRankScroller.Refresh(rankDatas);
+	}
+
+	public void SetEmpty(bool isEmpty)
+	{
+		txtmp_Empty.gameObject.SetActive(isEmpty);
 	}
 }
 
