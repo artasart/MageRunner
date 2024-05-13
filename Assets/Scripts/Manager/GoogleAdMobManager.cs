@@ -67,7 +67,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 	public void LoadInterstitialAd()
 	{
-		Debug.Log("Loading the interstitial ad.");
+		DebugManager.Log("Loading the interstitial ad.");
 
 		if (interstitialAd != null)
 		{
@@ -86,7 +86,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 				return;
 			}
 
-			Debug.Log("Interstitial ad loaded with response : "
+			DebugManager.Log("Interstitial ad loaded with response : "
 					  + ad.GetResponseInfo());
 
 			interstitialAd = ad;
@@ -102,7 +102,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 		if (interstitialAd != null && interstitialAd.CanShowAd())
 		{
-			Debug.Log("Showing interstitial ad.");
+			DebugManager.Log("Showing interstitial ad.");
 
 			interstitialAd.Show();
 		}
@@ -117,27 +117,27 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		interstitialAd.OnAdPaid += (AdValue adValue) =>
 		{
-			Debug.Log(String.Format("Interstitial ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
+			DebugManager.Log(String.Format("Interstitial ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
 		};
 
 		interstitialAd.OnAdImpressionRecorded += () =>
 		{
-			Debug.Log("Interstitial ad recorded an impression.");
+			DebugManager.Log("Interstitial ad recorded an impression.");
 		};
 
 		interstitialAd.OnAdClicked += () =>
 		{
-			Debug.Log("Interstitial ad was clicked.");
+			DebugManager.Log("Interstitial ad was clicked.");
 		};
 
 		interstitialAd.OnAdFullScreenContentOpened += () =>
 		{
-			Debug.Log("Interstitial ad full screen content opened.");
+			DebugManager.Log("Interstitial ad full screen content opened.");
 		};
 
 		interstitialAd.OnAdFullScreenContentClosed += () =>
 		{
-			Debug.Log("Interstitial ad full screen content closed.");
+			DebugManager.Log("Interstitial ad full screen content closed.");
 
 			GameManager.Sound.MuteBGM(false);
 
@@ -154,7 +154,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		interstitialAd.OnAdFullScreenContentClosed += () =>
 		{
-			Debug.Log("Interstitial Ad full screen content closed.");
+			DebugManager.Log("Interstitial Ad full screen content closed.");
 
 			LoadInterstitialAd();
 		};
@@ -175,7 +175,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 	public void LoadRewardedAD()
 	{
-		Debug.Log("Loading the rewarded ad.");
+		DebugManager.Log("Loading the rewarded ad.");
 
 		if (rewardedAd != null)
 		{
@@ -194,7 +194,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 				return;
 			}
 
-			Debug.Log("Rewarded ad loaded with response : " + rewardedAd.GetResponseInfo());
+			DebugManager.Log("Rewarded ad loaded with response : " + rewardedAd.GetResponseInfo());
 
 			this.rewardedAd = rewardedAd;
 
@@ -206,27 +206,27 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		rewardedAd.OnAdPaid += (AdValue adValue) =>
 		{
-			Debug.Log(String.Format("Rewarded ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
+			DebugManager.Log(String.Format("Rewarded ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
 		};
 
 		rewardedAd.OnAdImpressionRecorded += () =>
 		{
-			Debug.Log("Rewarded ad recorded an impression.");
+			DebugManager.Log("Rewarded ad recorded an impression.");
 		};
 
 		rewardedAd.OnAdClicked += () =>
 		{
-			Debug.Log("Rewarded ad was clicked.");
+			DebugManager.Log("Rewarded ad was clicked.");
 		};
 
 		rewardedAd.OnAdFullScreenContentOpened += () =>
 		{
-			Debug.Log("Rewarded ad full screen content opened.");
+			DebugManager.Log("Rewarded ad full screen content opened.");
 		};
 
 		rewardedAd.OnAdFullScreenContentClosed += () =>
 		{
-			Debug.Log("Rewarded ad full screen content closed.");
+			DebugManager.Log("Rewarded ad full screen content closed.");
 
 			LoadRewardedAD();
 
@@ -253,9 +253,9 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 		{
 			rewardedAd.Show((Reward reward) =>
 			{
-				Debug.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
+				DebugManager.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
 
-				Debug.Log("Reward user here.");
+				DebugManager.Log("Reward user here.");
 
 				_reward?.Invoke();
 			});
@@ -270,7 +270,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 	private void LoadAd()
 	{
-		Debug.Log("Load banner view.");
+		DebugManager.Log("Load banner view.");
 
 		if (bannerView == null)
 		{
@@ -284,7 +284,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 	private void CreateBannerView()
 	{
-		Debug.Log("Creating banner view.");
+		DebugManager.Log("Creating banner view.");
 
 		if (bannerView != null)
 		{
@@ -306,7 +306,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		bannerView.OnBannerAdLoaded += () =>
 		{
-			Debug.Log("Banner view loaded an ad with response : " + bannerView.GetResponseInfo());
+			DebugManager.Log("Banner view loaded an ad with response : " + bannerView.GetResponseInfo());
 		};
 
 		bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
@@ -318,29 +318,29 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 
 		bannerView.OnAdPaid += (AdValue adValue) =>
 		{
-			Debug.Log(string.Format("Banner view paid {0} {1}.",
+			DebugManager.Log(string.Format("Banner view paid {0} {1}.",
 				adValue.Value,
 				adValue.CurrencyCode));
 		};
 
 		bannerView.OnAdImpressionRecorded += () =>
 		{
-			Debug.Log("Banner view recorded an impression.");
+			DebugManager.Log("Banner view recorded an impression.");
 		};
 
 		bannerView.OnAdClicked += () =>
 		{
-			Debug.Log("Banner view was clicked.");
+			DebugManager.Log("Banner view was clicked.");
 		};
 
 		bannerView.OnAdFullScreenContentOpened += (null);
 		{
-			Debug.Log("Banner view full screen content opened.");
+			DebugManager.Log("Banner view full screen content opened.");
 		};
 
 		bannerView.OnAdFullScreenContentClosed += (null);
 		{
-			Debug.Log("Banner view full screen content closed.");
+			DebugManager.Log("Banner view full screen content closed.");
 		};
 	}
 
@@ -348,7 +348,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		if (bannerView != null)
 		{
-			Debug.Log("Show banner ad.");
+			DebugManager.Log("Show banner ad.");
 
 			bannerView.Show();
 		}
@@ -363,7 +363,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 	{
 		if (bannerView != null)
 		{
-			Debug.Log("Hide banner ad.");
+			DebugManager.Log("Hide banner ad.");
 
 			bannerView.Hide();
 		}
@@ -383,7 +383,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 			rewardedInterstitialAd = null;
 		}
 
-		Debug.Log("Loading the rewarded interstitial ad.");
+		DebugManager.Log("Loading the rewarded interstitial ad.");
 
 		// create our request used to load the ad.
 		var adRequest = new AdRequest();
@@ -400,7 +400,7 @@ public class GoogleAdMobManager : SingletonManager<GoogleAdMobManager>
 				return;
 			}
 
-			Debug.Log("Rewarded interstitial ad loaded with response : " + ad.GetResponseInfo());
+			DebugManager.Log("Rewarded interstitial ad loaded with response : " + ad.GetResponseInfo());
 
 			rewardedInterstitialAd = ad;
 

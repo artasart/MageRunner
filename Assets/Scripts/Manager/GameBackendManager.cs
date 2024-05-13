@@ -16,7 +16,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 		if (backendResult.IsSuccess())
 		{
-			Debug.Log("Initialized successfully: " + backendResult);
+			DebugManager.Log("Initialized successfully: " + backendResult);
 		}
 		else
 		{
@@ -60,17 +60,17 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 		if (backendResult.IsSuccess())
 		{
-			Debug.Log($"Nickname changed to {nickname}");
+			DebugManager.Log($"Nickname changed to {nickname}");
 			success?.Invoke();
 		}
 		else if (backendResult.GetStatusCode() == "409")
 		{
-			Debug.Log("Nickname change failed: Nickname already exists.");
+			DebugManager.Log("Nickname change failed: Nickname already exists.");
 			fail?.Invoke();
 		}
 		else
 		{
-			Debug.Log("Nickname change failed.");
+			DebugManager.Log("Nickname change failed.");
 		}
 	}
 
@@ -98,8 +98,6 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void GameDataInsert(Action success = null)
 	{
-		Debug.Log("GameData Insert");
-
 		Param param = new Param()
 		{
 			{ "nickname", LocalData.gameData.nickname},
@@ -123,14 +121,14 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 		{
 			if (callback.IsSuccess())
 			{
-				Debug.Log("Game Data insert Completed.");
+				DebugManager.Log("Game Data insert Completed.");
 
 				success?.Invoke();
 			}
 
 			else
 			{
-				Debug.Log("Game Data insert Failed.");
+				DebugManager.Log("Game Data insert Failed.");
 			}
 		});
 	}
@@ -160,18 +158,18 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 			if (score.IsSuccess())
 			{
-				Debug.Log("Success");
+				DebugManager.Log("Success");
 			}
 
 			else
 			{
-				Debug.Log("Failed");
+				DebugManager.Log("Failed");
 			}
 		}
 
 		else
 		{
-			Debug.Log("Error");
+			DebugManager.Log("Error");
 		}
 	}
 
@@ -197,11 +195,6 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 				rankData.score = int.Parse(rankDataJson[i]["score"].ToString());
 				rankData.level = int.Parse(rankDataJson[i]["level"].ToString());
 
-				Debug.Log(int.Parse(rankDataJson[i]["rank"].ToString()));
-				Debug.Log(int.Parse(rankDataJson[i]["score"].ToString()));
-				Debug.Log(int.Parse(rankDataJson[i]["level"].ToString()));
-				Debug.Log(rankDataJson[i]["nickname"?.ToString()]);
-
 				rankDatas.Add(rankData);
 			}
 
@@ -219,14 +212,14 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 			if (rankDataJson.Count <= 0)
 			{
-				Debug.Log("I'm not in a rank");
+				DebugManager.Log("I'm not in a rank");
 			}
 
 			else
 			{
 				if (rankDataJson[0].ContainsKey("nickname") == true)
 				{
-					Debug.Log(rankDataJson[0]["nickname"?.ToString()]);
+					DebugManager.Log(rankDataJson[0]["nickname"?.ToString()].ToString());
 				}
 			}
 		}
@@ -238,19 +231,19 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void SignUp(string id, string password)
 	{
-		Debug.Log("회원가입을 요청합니다.");
+		DebugManager.Log("Requset Sign in.");
 
 		var bro = Backend.BMember.CustomSignUp(id, password);
 
 		if (bro.IsSuccess())
 		{
-			Debug.Log("회원가입에 성공했습니다. : " + bro);
+			DebugManager.Log("Success " + bro);
 
 			Login(id, password);
 		}
 		else
 		{
-			Debug.LogError("회원가입에 실패했습니다. : " + bro);
+			Debug.LogError("Failed : " + bro);
 		}
 	}
 
@@ -260,11 +253,11 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 		if (bro.IsSuccess())
 		{
-			Debug.Log("로그인에 성공했습니다. : " + bro);
+			DebugManager.Log("Success : " + bro);
 		}
 		else
 		{
-			Debug.LogError("로그인에 실패했습니다. : " + bro);
+			Debug.LogError("Failed : " + bro);
 		}
 	}
 

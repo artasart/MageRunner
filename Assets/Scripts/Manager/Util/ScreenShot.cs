@@ -9,7 +9,7 @@ public class ScreenCaptureEditor
 	{
 		string path = Application.persistentDataPath + "/" + System.DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".png";
 		ScreenCapture.CaptureScreenshot(path);
-		Debug.Log("Save Screenshot Capture : " + path);
+		DebugManager.Log("Save Screenshot Capture : " + path);
 	}
 
 	[MenuItem("Tools/Screenshot/Open Screenshot Folder %&o")]

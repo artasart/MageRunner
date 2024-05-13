@@ -633,8 +633,6 @@ public class Scene_Game : SceneLogic
 		yield return Timing.WaitForSeconds(90f);
 
 		isWatched = true;
-
-		Debug.Log("Can Show Initial AD");
 	}
 
 	public void AddGameExp()

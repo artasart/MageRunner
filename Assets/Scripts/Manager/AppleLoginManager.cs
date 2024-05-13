@@ -34,7 +34,7 @@ public class AppleLoginManager : MonoBehaviour
 
 		this.appleAuthManager?.SetCredentialsRevokedCallback(result =>
 		{
-			Debug.Log("Received revoked callback " + result);
+			DebugManager.Log("Received revoked callback " + result);
 
 			PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
@@ -67,7 +67,7 @@ public class AppleLoginManager : MonoBehaviour
 			{
 				var authorizationErrorCode = error.GetAuthorizationErrorCode();
 
-				Debug.LogWarning("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
+				DebugManager.LogWarning("Error while trying to get credential state " + authorizationErrorCode.ToString() + " " + error.ToString());
 			});
 	}
 
@@ -103,7 +103,7 @@ public class AppleLoginManager : MonoBehaviour
 			{
 				var authorizationErrorCode = error.GetAuthorizationErrorCode();
 
-				Debug.LogWarning("Sign in with Apple failed " + authorizationErrorCode.ToString() + " " + error.ToString());
+				DebugManager.LogWarning("Sign in with Apple failed " + authorizationErrorCode.ToString() + " " + error.ToString());
 			});
 	}
 
