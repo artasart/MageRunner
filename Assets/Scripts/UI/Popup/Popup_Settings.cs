@@ -20,6 +20,7 @@ public class Popup_Settings : Popup_Base
 	Button btn_Sound;
 	Button btn_License;
 	Button btn_LogOut;
+	Button btn_Login;
 
 	Transform group_Sound;
 	Transform group_License;
@@ -48,6 +49,7 @@ public class Popup_Settings : Popup_Base
 
 		btn_SignOut = GetUI_Button(nameof(btn_SignOut), OnClick_SignOut, useAnimation: true);
 		btn_LogOut = GetUI_Button(nameof(btn_LogOut), OnClick_LogOut, useAnimation: true);
+		btn_Login = GetUI_Button(nameof(btn_Login), OnClick_Login, useAnimation: true);
 
 		btn_License = GetUI_Button(nameof(btn_License), OnClick_License, useAnimation: true);
 		btn_Sound = GetUI_Button(nameof(btn_Sound), OnClick_Sound, useAnimation: true);
@@ -60,11 +62,30 @@ public class Popup_Settings : Popup_Base
 	{
 		loginType = Util.String2Enum<LoginType>(PlayerPrefs.GetString(Define.LOGINTYPE));
 
+		if (loginType == LoginType.Guest)
+		{
+			btn_Login.gameObject.SetActive(true);
+			btn_SignOut.gameObject.SetActive(false);
+			btn_LogOut.gameObject.SetActive(false);
+		}
+		
+		else
+		{
+			btn_Login.gameObject.SetActive(false);
+			btn_SignOut.gameObject.SetActive(true);
+			btn_LogOut.gameObject.SetActive(true);
+		}
+
 		slider_BGM.value = GameManager.Sound.bgmVolume;
 		slider_SFX.value = GameManager.Sound.sfxVolume;
 
 		txtmp_BGMVolume.text = (GameManager.Sound.bgmVolume * 100).ToString("N0");
 		txtmp_SFXVolume.text = (GameManager.Sound.sfxVolume * 100).ToString("N0");
+	}
+
+	private void OnClick_Login()
+	{
+		GameManager.UI.StackPopup<Popup_Login>().HideGuestLogin();
 	}
 
 	private void OnClick_LogOut()

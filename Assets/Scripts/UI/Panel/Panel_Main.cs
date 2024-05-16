@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static Enums;
 
 public class Panel_Main : Panel_Base
 {
@@ -324,9 +325,7 @@ public class Panel_Main : Panel_Base
 
 	public void UpdateRank()
 	{
-		Debug.Log("Update Rank");
-		Debug.Log(PlayerPrefs.GetInt("NewRank"));
-		Debug.Log(PlayerPrefs.GetInt("NewRank") == 1);
+		if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString()) return;
 
 		btn_Rank.transform.Search("img_NewRank").gameObject.SetActive(PlayerPrefs.GetInt("NewRank") == 1);
 	}

@@ -61,7 +61,7 @@ public class Scene_Main : SceneLogic
 	{
 		base.Awake();
 
-		PlayerPrefs.GetInt(Define.QUICKLOGIN, 1);
+		PlayerPrefs.SetInt(Define.QUICKLOGIN, 1);
 
 		LocalData.LoadMasterData();
 		LocalData.LoadGameData();
@@ -90,8 +90,6 @@ public class Scene_Main : SceneLogic
 
 	private void Start()
 	{
-		GameManager.Backend.GetGameData();
-
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
@@ -112,17 +110,27 @@ public class Scene_Main : SceneLogic
 #if UNITY_EDITOR
 		GameManager.Scene.Fade(false, .5f);
 
-		if (PlayerPrefs.GetInt("isLogin") == 0)
+		if(PlayerPrefs.GetString(Define.LOGINTYPE) != LoginType.Guest.ToString())
 		{
-			GameManager.Backend.Login("admin", "1234");
+			if (PlayerPrefs.GetInt("isLogin") == 0)
+			{
+				GameManager.Backend.Login("admin", "1234");
 
-			PlayerPrefs.SetInt("isLogin", 1);
+				PlayerPrefs.SetInt("isLogin", 1);
+			}
+
+			var tag = UnityEngine.Random.Range(100000, 999999);
+			LocalData.gameData.nickname = GameManager.Backend.GetNickname();
+			LocalData.gameData.runnerTag = tag;
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, tag.ToString());
 		}
 
-		var tag = UnityEngine.Random.Range(100000, 999999);
-		LocalData.gameData.nickname = GameManager.Backend.GetNickname();
-		LocalData.gameData.runnerTag = tag;
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, tag.ToString());
+		else
+		{
+			PlayerPrefs.SetString(Define.GOOGLETOKEN, string.Empty);
+			PlayerPrefs.SetString(Define.APPLEUSERID, string.Empty);
+		}
+
 #elif UNITY_IOS
 
 		var bro = Backend.BMember.GetUserInfo();

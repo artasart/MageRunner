@@ -1,7 +1,9 @@
+using BackEnd;
 using MEC;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static Enums;
 
 public class Scene_Logo : SceneLogic
 {
@@ -77,7 +79,20 @@ public class Scene_Logo : SceneLogic
 
 		if(PlayerPrefs.GetInt(Define.QUICKLOGIN) == 1)
 		{
-#if UNITY_IOS
+#if UNITY_EDITOR
+			if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString())
+			{
+				BackendReturnObject bro = Backend.BMember.GuestLogin("Sign in with Guest");
+
+				if (bro.IsSuccess())
+				{
+					DebugManager.Log("Guest Success.");
+
+					GameManager.Scene.LoadScene(SceneName.Main);
+				}
+			}
+
+#elif UNITY_IOS
 		FindObjectOfType<AppleLoginManager>().Init();
 		FindObjectOfType<GoogleLoginManager>().Init();
 #endif
@@ -85,7 +100,9 @@ public class Scene_Logo : SceneLogic
 
 		else
 		{
-			GameManager.UI.StartPopup<Popup_Login>();
+			GameManager.UI.FetchPanel<Panel_Logo>().HideDownload();
+
+			GameManager.UI.StackPopup<Popup_Login>();
 		}
 	}
 }

@@ -37,6 +37,11 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	#region Initialize
 
+	public override void OnDestroy()
+	{
+		base.OnDestroy();
+	}
+
 	private void Awake()
 	{
 		group_MasterCanvas = GameObject.Find("go_Canvas");

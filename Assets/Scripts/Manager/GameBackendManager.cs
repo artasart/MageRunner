@@ -8,9 +8,9 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 {
 	public override void OnDestroy()
 	{
-		base.OnDestroy();
-
 		SetGameData();
+
+		base.OnDestroy();
 	}
 
 	private void Awake()
@@ -84,6 +84,8 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public string GetNickname()
 	{
+		if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString()) return string.Empty;
+
 		var backendResult = Backend.BMember.GetUserInfo();
 		var nickname = backendResult.GetReturnValuetoJSON()["row"]["nickname"].ToString();
 		return nickname;
@@ -181,7 +183,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void SetRankData()
 	{
-		DebugManager.ClearLog("Rank Data Insert");
+		if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString()) return;
 
 		string rowInDate = string.Empty;
 
@@ -314,7 +316,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 				PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Guest.ToString());
 
-				GameManager.Scene.LoadScene(SceneName.Main);
+				Invoke(nameof(GeustLoginSuccess), .5f);
 			}
 
 			else
@@ -323,7 +325,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 				{
 					GameManager.Scene.Dim(true);
 
-					Invoke(nameof(Handle), .5f);
+					Invoke(nameof(GusetLoginFailed), .5f);
 				}
 
 				else
@@ -336,7 +338,12 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 		});
 	}
 
-	private void Handle()
+	private void GeustLoginSuccess()
+	{
+		GameManager.Scene.LoadScene(SceneName.Main);
+	}
+
+	private void GusetLoginFailed()
 	{
 		DebugManager.Log("Guest Login Failed");
 
@@ -348,6 +355,16 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 	public void DeleteGuestInfo()
 	{
 		Backend.BMember.DeleteGuestInfo();
+	}
+
+	public void ChangeFederation()
+	{
+		BackendReturnObject bro = Backend.BMember.ChangeCustomToFederation("federationToken", FederationType.Google);
+
+		if (bro.IsSuccess())
+		{
+			Debug.Log("로그인 타입 전환에 성공했습니다");
+		}
 	}
 
 	#endregion
