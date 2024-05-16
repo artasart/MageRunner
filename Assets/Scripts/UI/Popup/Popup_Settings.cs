@@ -72,7 +72,7 @@ public class Popup_Settings : Popup_Base
 		else
 		{
 			btn_Login.gameObject.SetActive(false);
-			btn_SignOut.gameObject.SetActive(true);
+			btn_SignOut.gameObject.SetActive(false);
 			btn_LogOut.gameObject.SetActive(true);
 		}
 
