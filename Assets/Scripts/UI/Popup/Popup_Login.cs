@@ -91,6 +91,8 @@ public class Popup_Login : Popup_Base
 		{
 			Debug.Log("Login to google Success..!");
 
+			GameScene.main.setGameData = false;
+
 			GameManager.UI.StackPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, "Scene will be restarted to initialize data.", "Notice", () =>
 			{
 				GameManager.Scene.LoadScene(SceneName.Main);
@@ -114,6 +116,8 @@ public class Popup_Login : Popup_Base
 		if (bro.IsSuccess())
 		{
 			Debug.Log("Login to apple Success..!");
+
+			GameScene.main.setGameData = false;
 
 			GameManager.UI.StackPopup<Popup_Basic>().SetPopupInfo(ModalType.Confrim, "Scene will be restarted to initialize data.", "Notice", () =>
 			{

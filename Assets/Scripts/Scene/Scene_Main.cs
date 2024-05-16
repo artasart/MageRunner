@@ -27,6 +27,7 @@ public class Scene_Main : SceneLogic
 
 	[HideInInspector] public int payAmount = 10000;
 	[HideInInspector] public float adWaitTime = 120f;
+	[HideInInspector] public bool setGameData;
 
 	#endregion
 
@@ -41,7 +42,10 @@ public class Scene_Main : SceneLogic
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
 
-		GameManager.Backend.SetGameData();
+		if(setGameData)
+		{
+			GameManager.Backend.SetGameData();
+		}
 	}
 
 	private void OnDisable()
@@ -86,6 +90,8 @@ public class Scene_Main : SceneLogic
 		PoolManager.SetPoolData(Define.VFX_PUFF, 10, Define.PATH_VFX);
 
 		GameScene.main = this;
+
+		setGameData = true;
 	}
 
 	private void Start()

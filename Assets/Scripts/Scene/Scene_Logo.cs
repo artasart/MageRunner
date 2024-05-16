@@ -79,7 +79,6 @@ public class Scene_Logo : SceneLogic
 
 		if(PlayerPrefs.GetInt(Define.QUICKLOGIN) == 1)
 		{
-#if UNITY_EDITOR
 			if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString())
 			{
 				BackendReturnObject bro = Backend.BMember.GuestLogin("Sign in with Guest");
@@ -90,7 +89,11 @@ public class Scene_Logo : SceneLogic
 
 					GameManager.Scene.LoadScene(SceneName.Main);
 				}
+
+				return;
 			}
+
+#if UNITY_EDITOR
 
 #elif UNITY_IOS
 		FindObjectOfType<AppleLoginManager>().Init();
