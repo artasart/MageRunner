@@ -99,6 +99,8 @@ public class Panel_Main : Panel_Base
 		GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
 		btn_Mail.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+		GameManager.Scene.ShowToastAndDisappear("Mail is empty.");
 	}
 
 	private void OnClick_Rank()

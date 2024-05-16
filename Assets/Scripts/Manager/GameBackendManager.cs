@@ -306,7 +306,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void GuestLogin()
 	{
-		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.ConfirmCancel, "The game data will be saved locally.\nDo you want to continue?", "Notice", () =>
+		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.ConfirmCancel, "Game data will be saved in local device.\ndo you want to continue?", "Notice", () =>
 		{
 			BackendReturnObject bro = Backend.BMember.GuestLogin("Sign in with Guest");
 
@@ -355,16 +355,6 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 	public void DeleteGuestInfo()
 	{
 		Backend.BMember.DeleteGuestInfo();
-	}
-
-	public void ChangeFederation()
-	{
-		BackendReturnObject bro = Backend.BMember.ChangeCustomToFederation("federationToken", FederationType.Google);
-
-		if (bro.IsSuccess())
-		{
-			Debug.Log("로그인 타입 전환에 성공했습니다");
-		}
 	}
 
 	#endregion

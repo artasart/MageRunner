@@ -139,7 +139,7 @@ public class Scene_Main : SceneLogic
 		{
 			LocalData.gameData.nickname = string.Empty;
 			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
-			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", LocalData.gameData.runnerTag.ToString());
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("Guest", LocalData.gameData.runnerTag.ToString());
 			
 			GameManager.Scene.Fade(false, .5f);
 
@@ -172,6 +172,8 @@ public class Scene_Main : SceneLogic
 
 	private void IOSSetting(string nickname)
 	{
+		if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString()) return;
+
 		if (string.IsNullOrEmpty(nickname))
 		{
 			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
