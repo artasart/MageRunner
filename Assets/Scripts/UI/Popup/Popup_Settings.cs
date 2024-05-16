@@ -84,11 +84,18 @@ public class Popup_Settings : Popup_Base
 
 				else if (loginType == LoginType.Apple)
 				{
-					PlayerPrefs.SetString(Define.LOGINTYPE, string.Empty);
 					PlayerPrefs.DeleteKey(Define.APPLEUSERID);
 
 					GameManager.Scene.LoadScene(SceneName.Logo);
 				}
+
+				else if (loginType == LoginType.Guest)
+				{
+					GameManager.Scene.LoadScene(SceneName.Logo);
+				}
+
+				PlayerPrefs.SetInt(Define.QUICKLOGIN, 0);
+				PlayerPrefs.SetString(Define.LOGINTYPE, string.Empty);
 			}
 		);
 	}
@@ -117,9 +124,23 @@ public class Popup_Settings : Popup_Base
 					GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
 				}
 
+				if(loginType == LoginType.Guest)
+				{
+					GameManager.Backend.DeleteGuestInfo();
+				}
+
 				GameManager.Backend.WithdrawAccount();
 
+				PlayerPrefs.SetInt(Define.QUICKLOGIN, 0);
+				PlayerPrefs.SetString(Define.LOGINTYPE, string.Empty);
+
+#if UNITY_EDITOR
+				GameManager.Scene.LoadScene(SceneName.Logo);
+				GameManager.Scene.Dim(false);
+
+#elif UNITY_IOS
 				Invoke(nameof(QuitApp), .75f);
+#endif
 			});
 	}
 

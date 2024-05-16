@@ -14,7 +14,7 @@ public class GoogleLoginManager : MonoBehaviour
 
 			if (bro.GetStatusCode() == "200" || bro.GetStatusCode() == "201")
 			{
-				FindObjectOfType<Scene_Logo>().StartLogin();
+				GameManager.Scene.LoadScene(SceneName.Main);
 
 				PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
 				PlayerPrefs.SetString(Define.GOOGLETOKEN, token);
@@ -47,7 +47,7 @@ public class GoogleLoginManager : MonoBehaviour
 
 		if (bro.GetStatusCode() == "200" || bro.GetStatusCode() == "201")
 		{
-			FindObjectOfType<Scene_Logo>().StartLogin();
+			GameManager.Scene.LoadScene(SceneName.Main);
 
 			PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Google.ToString());
 			PlayerPrefs.SetString(Define.GOOGLETOKEN, token);
@@ -68,18 +68,18 @@ public class GoogleLoginManager : MonoBehaviour
 
 	private void GoogleSignOutCallback(bool isSuccess, string error)
 	{
-        if (isSuccess == false)
-        {
-            GameManager.Scene.ShowToastAndDisappear("Google sign out failed. Try again.");
-        }
+		if (isSuccess == false)
+		{
+			GameManager.Scene.ShowToastAndDisappear("Google sign out failed. Try again.");
+		}
 
-        else
-        {
+		else
+		{
 			PlayerPrefs.SetString(Define.GOOGLETOKEN, string.Empty);
 
 			GameManager.Scene.LoadScene(SceneName.Logo);
 		}
-    }
+	}
 
 	public void Revoke()
 	{

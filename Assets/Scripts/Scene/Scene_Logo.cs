@@ -10,6 +10,13 @@ public class Scene_Logo : SceneLogic
 	public GameObject player { get; private set; }
 	Animator animator;
 
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		Util.KillCoroutine(nameof(Co_LogoStart));
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -34,23 +41,13 @@ public class Scene_Logo : SceneLogic
 
 		GameManager.Sound.PlayBGM("Dawn");
 
-#if UNITY_EDITOR
 		StartLogin();
-#elif UNITY_ANDROID
-
-#elif UNITY_IOS
-		FindObjectOfType<AppleLoginManager>().Init();
-		FindObjectOfType<GoogleLoginManager>().Init();
-#endif
 	}
 
 	public void StartLogin()
 	{
-		GameManager.UI.FetchPanel<Panel_Logo>().StartLogin(false, GetGameData);
-	}
+		GameManager.UI.FetchPanel<Panel_Logo>().StartLogin();
 
-	public void GetGameData()
-	{
 		Util.RunCoroutine(Co_LogoStart(), nameof(Co_LogoStart));
 	}
 
@@ -62,7 +59,7 @@ public class Scene_Logo : SceneLogic
 
 		if (LocalData.masterData == null)
 		{
-			GameManager.Data.GetSheet(EnterGame);
+			GameManager.Data.GetSheet(ShowLoginPopup);
 
 			animator.SetBool(Define.RUN, true);
 			animator.SetFloat(Define.RUNSTATE, .5f);
@@ -70,21 +67,25 @@ public class Scene_Logo : SceneLogic
 
 		else
 		{
-			GameManager.Data.GetVersion(EnterGame);
+			GameManager.Data.GetVersion(ShowLoginPopup);
 		}
 	}
 
-	private void EnterGame()
+	private void ShowLoginPopup()
 	{
 		JsonManager<MasterData>.SaveData(LocalData.masterData, Define.JSON_MASTERDATA);
 
-		if (isFirst)
+		if(PlayerPrefs.GetInt(Define.QUICKLOGIN) == 1)
 		{
-			GameManager.Scene.LoadScene(SceneName.Game);
-
-			PlayerPrefs.SetInt(nameof(isFirst), Convert.ToInt32(true));
+#if UNITY_IOS
+		FindObjectOfType<AppleLoginManager>().Init();
+		FindObjectOfType<GoogleLoginManager>().Init();
+#endif
 		}
 
-		else GameManager.Scene.LoadScene(SceneName.Main);
+		else
+		{
+			GameManager.UI.StartPopup<Popup_Login>();
+		}
 	}
 }

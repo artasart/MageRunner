@@ -7,8 +7,6 @@ public class SceneLogic : MonoBehaviour
 
 	protected virtual void OnDestroy()
 	{
-		GameManager.Backend.SetGameData();
-
 		Timing.KillCoroutines((int)CoroutineTag.UI);
 		Timing.KillCoroutines((int)CoroutineTag.Content);
 	}

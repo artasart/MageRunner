@@ -68,5 +68,6 @@ public static class Enums
 		None,
 		Google,
 		Apple,
+		Guest,
 	}
 }

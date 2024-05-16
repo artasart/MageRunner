@@ -51,7 +51,7 @@ public class AppleLoginManager : MonoBehaviour
 				switch (state)
 				{
 					case CredentialState.Authorized:
-						GameManager.Backend.QuickLogin(FindObjectOfType<Scene_Logo>().StartLogin);
+						GameManager.Backend.QuickLogin(() => GameManager.Scene.LoadScene(SceneName.Main));
 						return;
 
 					case CredentialState.Revoked:
@@ -97,7 +97,7 @@ public class AppleLoginManager : MonoBehaviour
 				var appleIdCredential = credential as IAppleIDCredential;
 				var identityToken = Encoding.UTF8.GetString(appleIdCredential.IdentityToken, 0, appleIdCredential.IdentityToken.Length);
 
-				GameManager.Backend.Login(identityToken, FindObjectOfType<Scene_Logo>().StartLogin);
+				GameManager.Backend.Login(identityToken, () => GameManager.Scene.LoadScene(SceneName.Main));
 			},
 			error =>
 			{

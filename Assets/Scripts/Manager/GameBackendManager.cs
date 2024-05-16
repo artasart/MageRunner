@@ -2,9 +2,17 @@ using UnityEngine;
 using BackEnd;
 using System;
 using System.Collections.Generic;
+using static Enums;
 
 public class GameBackendManager : SingletonManager<GameBackendManager>
 {
+	public override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		SetGameData();
+	}
+
 	private void Awake()
 	{
 		InitializeBackend();
@@ -98,6 +106,8 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 
 	public void SetGameData(Action success = null)
 	{
+		if (GameManager.UI.IsLogoScene()) return;
+
 		Param param = new Param()
 		{
 			{ "nickname", LocalData.gameData.nickname},
@@ -242,7 +252,7 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 	public void GetMyRank()
 	{
 		var bro = Backend.URank.User.GetMyRank(Define.UUID_RANK);
-		
+
 		if (bro.IsSuccess())
 		{
 			LitJson.JsonData rankDataJson = bro.FlattenRows();
@@ -285,6 +295,59 @@ public class GameBackendManager : SingletonManager<GameBackendManager>
 		{
 			Debug.LogError("Failed : " + bro);
 		}
+	}
+
+	#endregion
+
+
+	#region Guest
+
+	public void GuestLogin()
+	{
+		GameManager.UI.StackPopup<Popup_Basic>(true).SetPopupInfo(ModalType.ConfirmCancel, "The game data will be saved locally.\nDo you want to continue?", "Notice", () =>
+		{
+			BackendReturnObject bro = Backend.BMember.GuestLogin("Sign in with Guest");
+
+			if (bro.IsSuccess())
+			{
+				DebugManager.Log("Guest Success.");
+
+				PlayerPrefs.SetString(Define.LOGINTYPE, LoginType.Guest.ToString());
+
+				GameManager.Scene.LoadScene(SceneName.Main);
+			}
+
+			else
+			{
+				if (bro.GetStatusCode() == Define.STATUSCODE_WITHDRAW)
+				{
+					GameManager.Scene.Dim(true);
+
+					Invoke(nameof(Handle), .5f);
+				}
+
+				else
+				{
+					DebugManager.Log(bro.GetStatusCode());
+
+					GameManager.Scene.ShowToastAndDisappear("Guest login failed.");
+				}
+			}
+		});
+	}
+
+	private void Handle()
+	{
+		DebugManager.Log("Guest Login Failed");
+
+		HandleWithdraw();
+
+		GameManager.Scene.Dim(false);
+	}
+
+	public void DeleteGuestInfo()
+	{
+		Backend.BMember.DeleteGuestInfo();
 	}
 
 	#endregion

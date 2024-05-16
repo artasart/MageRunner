@@ -36,8 +36,12 @@ public class Scene_Main : SceneLogic
 
 	protected override void OnDestroy()
 	{
+		base.OnDestroy();
+
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
+
+		GameManager.Backend.SetGameData();
 	}
 
 	private void OnDisable()
@@ -57,10 +61,12 @@ public class Scene_Main : SceneLogic
 	{
 		base.Awake();
 
+		PlayerPrefs.GetInt(Define.QUICKLOGIN, 1);
+
 		LocalData.LoadMasterData();
 		LocalData.LoadGameData();
 		LocalData.LoadInvenData();
-		
+
 		GameManager.Backend.GetGameData();
 
 		equipmentManager = FindObjectOfType<EquipmentManager>();

@@ -79,6 +79,7 @@ public static class Define
 	public const string SOUND_DIE = "BodyFall_1";
 
 	public const string APPLEUSERID = "AppleUserId";
+	public const string QUICKLOGIN = "QuickLogin";
 
 	[Header("Backend")]
 	public const string USER_DATA = "USER_DATA";

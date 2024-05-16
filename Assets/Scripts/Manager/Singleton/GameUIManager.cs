@@ -728,7 +728,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 	}
 
 
-	private bool IsLogoScene()
+	public bool IsLogoScene()
 	{
 		return GameManager.Scene.GetCurrentSceneName() == "01_" + SceneName.Logo.ToString();
 	}

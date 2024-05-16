@@ -58,6 +58,8 @@ public class Scene_Game : SceneLogic
 
 		SaveGameData();
 
+		GameManager.Backend.SetGameData();
+
 		Util.KillCoroutine(nameof(Co_CheckTimeForAd));
 	}
 
