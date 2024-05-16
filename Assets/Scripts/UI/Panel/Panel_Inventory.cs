@@ -39,11 +39,15 @@ public class Panel_Inventory : Panel_Base
 	private void OnClick_Resources()
 	{
 		btn_Resources.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+		GameManager.Scene.ShowToastAndDisappear("Content is locked currently.");
 	}
 
 	private void OnClick_Craft()
 	{
 		btn_Craft.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+		GameManager.Scene.ShowToastAndDisappear("Content is locked currently.");
 	}
 
 	public void ShowNewIcon(bool enable)

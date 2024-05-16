@@ -40,6 +40,8 @@ public static class LocalData
 
 	public static void InitGameData()
 	{
+		Debug.Log("InitGameData");
+
 		gameData = new GameData();
 		gameData.ride = new Ride("", 0);
 		gameData.equipment = new SerializableDictionary<EquipmentType, Equipment>();
@@ -49,6 +51,12 @@ public static class LocalData
 		gameData.energyTotal = 5;
 		gameData.isPremium = false;
 		gameData.adWatchTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+		gameData.damage = 1;
+		gameData.mana = 100;
+		gameData.speed = 5;
+		gameData.damageLevel = 1;
+		gameData.manaLevel = 1;
+		gameData.speedLevel = 1;
 
 		if (masterData == null) return;
 
@@ -66,7 +74,7 @@ public static class LocalData
 				1));
 		}
 
-		foreach(var item in gameData.equipment)
+		foreach (var item in gameData.equipment)
 		{
 			item.Value.path = string.Empty;
 		}
@@ -103,9 +111,17 @@ public static class LocalData
 			invenData.stashLevel = 1;
 		}
 	}
+
+	public static void InitInvenData()
+	{
+		invenData.invenItemData.Clear();
+		invenData.amount = 0;
+		invenData.totalAmount = 10;
+		invenData.stashLevel = 1;
+	}
 }
 
-public static class Scene
+public static class GameScene
 {
 	public static Scene_Game game;
 	public static Scene_Main main;
@@ -124,11 +140,13 @@ public class MasterData
 	public List<InGameLevel> inGameLevel;
 	public List<SkillEntity> skillEntity;
 	public List<ShopItem> shopItem;
+	public List<Upgrade> upgradeData;
 }
 
 [Serializable]
 public class GameData
 {
+	public string nickname;
 	public int level = 1;
 	public int exp;
 
@@ -140,17 +158,23 @@ public class GameData
 	public bool isPremium;
 	public int runnerTag = 1;
 
+	public int damage = 1;
+	public int mana = 100;
+	public float speed = 5;
+
+	public int damageLevel = 1;
+	public int manaLevel = 1;
+	public int speedLevel = 1;
+
 	public DateTime lastLogin;
 	public string adWatchTime;
 	public bool isAdWatched;
 
 	public SerializableDictionary<EquipmentType, Equipment> equipment;
-	public Ride ride;
-
 	public SerializableDictionary<string, int> bags;
-
-	// public SerializableDictionary<Skills, PlayerPassiveSkill> passiveSkills;
 	public List<ActorSkill> actorSkills;
+
+	public Ride ride;
 }
 
 [Serializable]
@@ -342,4 +366,13 @@ public class ShopItem
 	public int amount;
 	public int price;
 	public string thumbnailPath;
+}
+
+[Serializable]
+public class Upgrade
+{
+	public int gold;
+	public int damage;
+	public int mana;
+	public int speed;
 }

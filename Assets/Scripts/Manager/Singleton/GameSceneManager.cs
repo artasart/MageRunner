@@ -132,7 +132,7 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public string GetSceneNameByBuildIndex(int _buildIndex)
 	{
-		UnityEngine.SceneManagement.Scene scene = SceneManager.GetSceneByBuildIndex(_buildIndex);
+		Scene scene = SceneManager.GetSceneByBuildIndex(_buildIndex);
 
 		return scene.name;
 	}
@@ -332,6 +332,8 @@ public class GameSceneManager : SingletonManager<GameSceneManager>
 
 	public void ShowToastAndDisappear(string message)
 	{
+		CancelInvoke(nameof(CloseToastPopup));
+
 		ShowToastPopup($"{message}", false, () => CancelInvoke(nameof(CloseToastPopup)));
 
 		Invoke(nameof(CloseToastPopup), 2f);

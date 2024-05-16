@@ -54,4 +54,20 @@ public static class Enums
 		Horse,
 		Resources
 	}
+
+	public enum UpgradeType
+	{
+		Damage,
+		Mana,
+		Speed,
+	}
+
+
+	public enum LoginType
+	{
+		None,
+		Google,
+		Apple,
+		Guest,
+	}
 }

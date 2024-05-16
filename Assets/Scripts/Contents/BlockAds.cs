@@ -11,6 +11,11 @@ public class BlockAds : MonoBehaviour
 
 	CanvasGroup canvasGroup;
 
+	private void OnDestroy()
+	{
+		Util.KillCoroutine(nameof(Co_WatchAD) + this.transform.parent.gameObject.GetHashCode());
+	}
+
 	private void Awake()
 	{
 		canvasGroup = GetComponent<CanvasGroup>();
@@ -38,7 +43,7 @@ public class BlockAds : MonoBehaviour
 		LocalData.gameData.isAdWatched = true;
 
 		DateTime adWatchTime = Util.StringToDateTime(LocalData.gameData.adWatchTime);
-		DateTime endTime = adWatchTime.AddSeconds(Scene.main.adWaitTime);
+		DateTime endTime = adWatchTime.AddSeconds(GameScene.main.adWaitTime);
 
 		while (DateTime.Now < endTime)
 		{

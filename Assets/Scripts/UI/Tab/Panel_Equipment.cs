@@ -1,4 +1,6 @@
+using DG.Tweening;
 using EnhancedScrollerDemos.GridSimulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -17,6 +19,7 @@ public class Panel_Equipment : Panel_Base
 	TMP_Text txtmp_Menu;
 	TMP_Text txtmp_SpaceAmount;
 	TMP_Text txtmp_DamageRate;
+	TMP_Text txtmp_ManaRate;
 	TMP_Text txtmp_SpeedRate;
 
 	Button btn_BuyStash;
@@ -47,8 +50,6 @@ public class Panel_Equipment : Panel_Base
 
 		txtmp_Menu = GetUI_TMPText(nameof(txtmp_Menu), "All");
 		txtmp_SpaceAmount = GetUI_TMPText(nameof(txtmp_SpaceAmount), $"{0}/{100}");
-		txtmp_DamageRate = GetUI_TMPText(nameof(txtmp_DamageRate), "1");
-		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), "5");
 
 		btn_Weapon = GetUI_Button(nameof(btn_Weapon), OnClick_Weapons, useAnimation: true);
 		btn_Armor = GetUI_Button(nameof(btn_Armor), OnClick_Armor, useAnimation: true);
@@ -59,6 +60,7 @@ public class Panel_Equipment : Panel_Base
 		btn_All = GetUI_Button(nameof(btn_All), OnClick_All, useAnimation: true);
 
 		btn_BuyStash = GetUI_Button(nameof(btn_BuyStash), OnClick_BuyStash, useAnimation: true);
+		btn_BuyStash.onClick.RemoveListener(OpenSound);
 
 		group_Normal = this.transform.Search(nameof(group_Normal));
 		group_Special = this.transform.Search(nameof(group_Special));
@@ -93,7 +95,7 @@ public class Panel_Equipment : Panel_Base
 	{
 		RemovePlayerEquipSlot(true);
 
-		var equipment = Scene.main.equipmentManager.equipments.
+		var equipment = GameScene.main.equipmentManager.equipments.
 			Where(item => item.Key != EquipmentType.Hair &&
 						  item.Key != EquipmentType.FaceHair).ToList();
 
@@ -126,19 +128,34 @@ public class Panel_Equipment : Panel_Base
 		}
 
 		OnClick_All();
+
+		txtmp_DamageRate = GetUI_TMPText(nameof(txtmp_DamageRate), LocalData.gameData.damage.ToString());
+		txtmp_ManaRate = GetUI_TMPText(nameof(txtmp_ManaRate), LocalData.gameData.mana.ToString());
+		txtmp_SpeedRate = GetUI_TMPText(nameof(txtmp_SpeedRate), LocalData.gameData.speed.ToString("N2"));
 	}
 
 	private void OnClick_BuyStash()
 	{
+		if (LocalData.gameData.gold < GameScene.main.payAmount)
+		{
+			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+			btn_BuyStash.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+			return;
+		}
+
+		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
+
 		GameManager.UI.StackPopup<Popup_Basic>(true);
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to buy stash?\n\ncost : <color=orange>{Scene.main.payAmount}</color>", "Purchase",
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to buy stash?\n\ncost : <color=orange>{GameScene.main.payAmount}</color>", "Purchase",
 			() =>
 			{
 				if (LocalData.invenData.stashLevel > 10) return;
 
-				if (LocalData.gameData.gold > Scene.main.payAmount)
+				if (LocalData.gameData.gold > GameScene.main.payAmount)
 				{
-					LocalData.gameData.gold -= Scene.main.payAmount;
+					LocalData.gameData.gold -= GameScene.main.payAmount;
 					LocalData.invenData.totalAmount += 10;
 					LocalData.invenData.stashLevel++;
 
@@ -286,7 +303,9 @@ public class Panel_Equipment : Panel_Base
 
 	public void SetRideAbility(int damage, int speed)
 	{
-		txtmp_DamageRate.text = damage.ToString();
-		txtmp_SpeedRate.text = speed.ToString();
+		if (txtmp_DamageRate == null || txtmp_SpeedRate == null) return;
+
+		txtmp_DamageRate.text = (LocalData.gameData.damage + damage).ToString();
+		txtmp_SpeedRate.text = speed.ToString("N2");
 	}
 }

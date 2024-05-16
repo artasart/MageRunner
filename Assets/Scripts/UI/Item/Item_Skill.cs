@@ -55,7 +55,7 @@ public class Item_Skill : Item_Base
 
 		while (time >= 0)
 		{
-			yield return Timing.WaitUntilTrue(() => Scene.game.gameState == GameState.Playing);
+			yield return Timing.WaitUntilTrue(() => GameScene.game.gameState == GameState.Playing);
 
 			img_CoolTime.fillAmount = 1f - (time / totalTime);
 

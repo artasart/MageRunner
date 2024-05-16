@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -273,6 +274,11 @@ public static class Util
 		Slider element = _gameObject.transform.Search(_name).GetComponent<Slider>();
 
 		return element;
+	}
+
+	public static Transform FindTransform(GameObject _gameObject, string name)
+	{
+		return _gameObject.transform.Search(name);
 	}
 
 
@@ -726,9 +732,9 @@ public static class Util
 		}
 	}
 
-	public static void AnimateText(TMP_Text text, int target, float _duration = .25f, float delay = 0f) => RunCoroutine(Co_AnimateText(text, target, _duration).Delay(delay), nameof(Co_AnimateText), CoroutineTag.Content);
+	public static void AnimateText(TMP_Text text, int target, float _duration = .25f, float delay = 0f, string addon = "") => RunCoroutine(Co_AnimateText(text, target, _duration, addon).Delay(delay), nameof(Co_AnimateText), CoroutineTag.Content);
 
-	private static IEnumerator<float> Co_AnimateText(TMP_Text txtmp, int target, float _duration = .25f)
+	private static IEnumerator<float> Co_AnimateText(TMP_Text txtmp, int target, float _duration = .25f, string addon = "")
 	{
 		float elapsedTime = 0f;
 
@@ -739,14 +745,14 @@ public static class Util
 			float time = Mathf.SmoothStep(0f, 1f, elapsedTime / _duration);
 			int value = Mathf.RoundToInt(Mathf.Lerp(start, target, time));
 
-			txtmp.text = value.ToString();
+			txtmp.text = value.ToString() + addon;
 
 			elapsedTime += Time.deltaTime;
 
 			yield return Timing.WaitForOneFrame;
 		}
 
-		txtmp.text = target.ToString();
+		txtmp.text = target.ToString() + addon;
 	}
 
 	public static string FormatNumber(int number)
@@ -827,6 +833,36 @@ public static class Util
 
 		RectTransform rectTransform = img.rectTransform;
 		rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectTransform.rect.height * spriteAspectRatio);
+	}
+
+	public static string Generate6DigitNumberFromUUID(string uuidString)
+	{
+		if (string.IsNullOrEmpty(uuidString)) return "Test";
+
+		// UUID 문자열을 바이트 배열로 변환합니다.
+		byte[] uuidBytes = Guid.Parse(uuidString).ToByteArray();
+
+		// 바이트 배열을 SHA256 해시합니다.
+		using (SHA256 sha256 = SHA256.Create())
+		{
+			byte[] hashedBytes = sha256.ComputeHash(uuidBytes);
+
+			// 해시된 값을 6자리 숫자로 변환합니다.
+			int hashedInt = BitConverter.ToInt32(hashedBytes, 0);
+			int sixDigitNumber = Math.Abs(hashedInt % 1000000);
+
+			return sixDigitNumber.ToString("D6"); // 6자리로 포맷팅
+		}
+	}
+
+
+	public static void ResizeImage(Image image, Sprite sprite)
+	{
+		float spriteWidth = sprite.bounds.size.x * sprite.pixelsPerUnit;
+		float spriteHeight = sprite.bounds.size.y * sprite.pixelsPerUnit;
+
+		RectTransform rectTransform = image.GetComponent<RectTransform>();
+		rectTransform.sizeDelta = new Vector2(spriteWidth, spriteHeight);
 	}
 }
 

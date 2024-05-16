@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSound
   m_EditorClassIdentifier: 
   bgm:
-  - {fileID: 8300000, guid: 1f7df1ba9f1fe974c88dfb65643b1b65, type: 3}
+  - {fileID: 8300000, guid: 9e2a42b286e69b249a82b26472bfb504, type: 3}
   soundEffects:
   - {fileID: 8300000, guid: 1aff8da7c9bd5a04194426e287c94018, type: 3}
   - {fileID: 8300000, guid: 3473484a7c7713a4cb10824ab502236f, type: 3}
@@ -46,3 +46,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8fcee510e54d5d54da50281dcf8b28b1, type: 3}
   - {fileID: 8300000, guid: 19a827f34e7374f40bcb91a1edfc4cb5, type: 3}
   - {fileID: 8300000, guid: 5c64da5cab78ffa4aa657fcb5f985ac2, type: 3}
+  - {fileID: 8300000, guid: ed600cf727682ba498118c51b917fcb9, type: 3}
+  - {fileID: 8300000, guid: 3d1089fe66907bb44b051b4dd542caeb, type: 3}

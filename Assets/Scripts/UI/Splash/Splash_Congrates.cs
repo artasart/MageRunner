@@ -24,6 +24,10 @@ public class Splash_Congrates : Splash_Base
 	{
 		txtmp_Score.text = string.Empty;
 
-		Util.AnimateText(txtmp_Score, score, 1f, .25f);
+		Util.AnimateText(txtmp_Score, score, 1f, .25f, " m");
+
+		GameManager.Backend.SetRankData();
+
+		PlayerPrefs.SetInt("NewRank", 1);
 	}
 }

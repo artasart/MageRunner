@@ -77,4 +77,15 @@ public static class Define
 	public const string SOUND_THUNDER = "Spawn";
 	public const string SOUND_DAWN = "Dawn";
 	public const string SOUND_DIE = "BodyFall_1";
+
+	public const string APPLEUSERID = "AppleUserId";
+	public const string QUICKLOGIN = "QuickLogin";
+
+	[Header("Backend")]
+	public const string USER_DATA = "USER_DATA";
+	public const string UUID_RANK = "5b722560-10bf-11ef-b60e-79b280e9ceda";
+	public const string STATUSCODE_WITHDRAW = "410";
+
+	public const string LOGINTYPE = "LoginType";
+	public const string GOOGLETOKEN = "GoogleToken";
 }

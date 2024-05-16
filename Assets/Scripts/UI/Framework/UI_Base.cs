@@ -58,7 +58,7 @@ public class UI_Base : MonoBehaviour
 			return txtmp;
 		}
 
-		else { Debug.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public TMP_Text GetUI_TMPText(string hierarchyName, LocalMasterData masterData)
@@ -72,7 +72,7 @@ public class UI_Base : MonoBehaviour
 			return txtmp;
 		}
 
-		else { Debug.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public virtual Button GetUI_Button(string hierarchyName, Action action = null, Action sound = null, bool useAnimation = false)
@@ -95,7 +95,7 @@ public class UI_Base : MonoBehaviour
 			return button;
 		}
 
-		else { Debug.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public Image GetUI_Image(string _hierarchyName, Sprite _sprite = null, bool _default = true)
@@ -109,7 +109,7 @@ public class UI_Base : MonoBehaviour
 			return image;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public Toggle GetUI_Toggle(string _hierarchyName, bool _isToggleOn = false, UnityAction<bool> onValueChanged = null)
@@ -123,7 +123,7 @@ public class UI_Base : MonoBehaviour
 			return toggle;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public Slider GetUI_Slider(string _hierarchyName, Action<float> _action = null)
@@ -137,7 +137,7 @@ public class UI_Base : MonoBehaviour
 			return slider;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public TMP_InputField GetUI_TMPInputField(string _hierarchyName, Action<string> _action = null)
@@ -168,7 +168,7 @@ public class UI_Base : MonoBehaviour
 			return inputField;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	public ScrollRect GetUI_ScrollRect(string _hierarchyName, Action<Vector2> _action = null)
@@ -182,7 +182,7 @@ public class UI_Base : MonoBehaviour
 			return scrollRect;
 		}
 
-		else { Debug.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
+		else { DebugManager.Log($"WARNING : {_hierarchyName} is not in this hierarchy."); return null; }
 	}
 
 	#endregion
@@ -212,7 +212,7 @@ public class UI_Base : MonoBehaviour
 			childUI[typeof(T).Name].SetActive(true);
 		}
 
-		else Debug.Log($"WARNING: {typeof(T).Name} not found.");
+		else DebugManager.Log($"WARNING: {typeof(T).Name} not found.");
 	}
 
 	public T FetchTab<T>() where T:Component
@@ -227,7 +227,7 @@ public class UI_Base : MonoBehaviour
 			childUI[typeof(T).Name].SetActive(false);
 		}
 
-		else Debug.Log($"WARNING: {typeof(T).Name} not found.");
+		else DebugManager.Log($"WARNING: {typeof(T).Name} not found.");
 	}
 
 	public void CloseTabAll()
@@ -246,7 +246,7 @@ public class UI_Base : MonoBehaviour
 	{
 		foreach (var item in childUI)
 		{
-			Debug.Log($"Key: {item.Key}, Value: {item.Value}");
+			DebugManager.Log($"Key: {item.Key}, Value: {item.Value}");
 		}
 	}
 

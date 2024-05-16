@@ -37,6 +37,11 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	#region Initialize
 
+	public override void OnDestroy()
+	{
+		base.OnDestroy();
+	}
+
 	private void Awake()
 	{
 		group_MasterCanvas = GameObject.Find("go_Canvas");
@@ -189,11 +194,11 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		return panels[typeof(T).ToString()].GetComponent<T>();
 	}
 
-	public void StackPanel<T>(bool instant = false) where T : Panel_Base
+	public T StackPanel<T>(bool instant = false) where T : Panel_Base
 	{
 		string panelName = typeof(T).ToString();
 
-		if (openPanels.Contains(panelName)) return;
+		if (openPanels.Contains(panelName)) return default;
 
 		if (panels.ContainsKey(panelName))
 		{
@@ -216,20 +221,27 @@ public class GameUIManager : SingletonManager<GameUIManager>
 				panels[panelName].GetComponent<CanvasGroup>().blocksRaycasts = true;
 				panels[panelName].GetComponent<Panel_Base>().isInstant = true;
 			}
-
-			else ShowPanel(panels[panelName], true);
+			else
+			{
+				ShowPanel(panels[panelName], true);
+			}
 
 			DebugManager.Log($"Push: {panelName}", DebugColor.UI);
-		}
 
-		else DebugManager.Log($"{panelName} does not exist in this scene.", DebugColor.UI);
+			return panels[panelName].GetComponent<T>();
+		}
+		else
+		{
+			DebugManager.Log($"{panelName} does not exist in this scene.", DebugColor.UI);
+			return default;
+		}
 	}
 
-	public void SwitchPanel<T>(bool instant = false) where T : Panel_Base
+	public T SwitchPanel<T>(bool instant = false) where T : Panel_Base
 	{
 		string panelName = typeof(T).ToString();
 
-		if (openPanels.Contains(panelName)) return;
+		if (openPanels.Contains(panelName)) return default;
 
 		if (panels.ContainsKey(panelName))
 		{
@@ -254,14 +266,22 @@ public class GameUIManager : SingletonManager<GameUIManager>
 				panels[panelName].GetComponent<CanvasGroup>().blocksRaycasts = true;
 				panels[panelName].GetComponent<Panel_Base>().isInstant = true;
 			}
-
-			else ShowPanel(panels[panelName], true);
+			else
+			{
+				ShowPanel(panels[panelName], true);
+			}
 
 			DebugManager.Log($"Push: {panelName}", DebugColor.UI);
-		}
 
-		else DebugManager.Log($"{panelName} does not exist in this scene.", DebugColor.UI);
+			return panels[panelName].GetComponent<T>();
+		}
+		else
+		{
+			DebugManager.Log($"{panelName} does not exist in this scene.", DebugColor.UI);
+			return default;
+		}
 	}
+
 
 	public void PopPanel()
 	{
@@ -336,11 +356,11 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		return popups[typeof(T).ToString()].GetComponent<T>();
 	}
 
-	public void StackPopup<T>(bool _instant = false) where T : Popup_Base
+	public T StackPopup<T>(bool instant = false) where T : Popup_Base
 	{
 		string popupName = typeof(T).Name;
 
-		if (openPopups.Contains(popupName)) return;
+		if (openPopups.Contains(popupName)) return default;
 
 		if (popups.ContainsKey(popupName))
 		{
@@ -348,7 +368,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 			popups[popupName].transform.SetAsLastSibling();
 
-			if (_instant)
+			if (instant)
 			{
 				popups[popupName].SetActive(true);
 				popups[popupName].GetComponent<CanvasGroup>().alpha = 1f;
@@ -356,14 +376,22 @@ public class GameUIManager : SingletonManager<GameUIManager>
 				popups[popupName].GetComponent<Popup_Base>().isInstant = true;
 				popups[popupName].transform.Search("group_Modal").localScale = Vector3.one;
 			}
-
-			else ShowPopup(popups[popupName], true);
+			else
+			{
+				ShowPopup(popups[popupName], true);
+			}
 
 			DebugManager.Log($"Push: {popupName}", DebugColor.UI);
-		}
 
-		else DebugManager.Log($"{popupName} does not exist in this scene.", DebugColor.UI);
+			return popups[popupName].GetComponent<T>();
+		}
+		else
+		{
+			DebugManager.Log($"{popupName} does not exist in this scene.", DebugColor.UI);
+			return default;
+		}
 	}
+
 
 	public void PopPopup(bool instant = false)
 	{
@@ -427,7 +455,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 		return splashs[typeof(T).ToString()].GetComponent<T>();
 	}
 
-	public void StackSplash<T>(bool _instant = false) where T : Splash_Base
+	public T StackSplash<T>(bool instant = false) where T : Splash_Base
 	{
 		string splashName = typeof(T).Name;
 
@@ -437,21 +465,29 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 			splashs[splashName].transform.SetAsLastSibling();
 
-			if (_instant)
+			if (instant)
 			{
 				splashs[splashName].SetActive(true);
 				splashs[splashName].GetComponent<CanvasGroup>().alpha = 1f;
 				splashs[splashName].GetComponent<CanvasGroup>().blocksRaycasts = true;
 				splashs[splashName].GetComponent<Splash_Base>().isInstant = true;
 			}
-
-			else Show(splashs[splashName], true);
+			else
+			{
+				Show(splashs[splashName], true);
+			}
 
 			DebugManager.Log($"Push: {splashName}", DebugColor.UI);
-		}
 
-		else DebugManager.Log($"{splashName} does not exist in this scene.", DebugColor.UI);
+			return splashs[splashName].GetComponent<T>();
+		}
+		else
+		{
+			DebugManager.Log($"{splashName} does not exist in this scene.", DebugColor.UI);
+			return default;
+		}
 	}
+
 
 	public void PopSplash()
 	{
@@ -607,6 +643,8 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 	public void FadeCanvasGroup(CanvasGroup _current, float _target, float _lerpspeed = 1f, float _delay = 0f, Action _start = null, Action _end = null)
 	{
+		if (_current == null) return;
+
 		Util.RunCoroutine(Co_FadeCanvasGroup(_current, _target, _lerpspeed, _start, _end).Delay(_delay), _current.GetHashCode().ToString(), CoroutineTag.UI);
 	}
 
@@ -631,7 +669,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 
 		if (_current != null) _current.alpha = _target;
 
-		if (_target == 1f && _current == null) _current.blocksRaycasts = true;
+		if (_target == 1f && _current != null) _current.blocksRaycasts = true;
 
 		_end?.Invoke();
 	}
@@ -695,7 +733,7 @@ public class GameUIManager : SingletonManager<GameUIManager>
 	}
 
 
-	private bool IsLogoScene()
+	public bool IsLogoScene()
 	{
 		return GameManager.Scene.GetCurrentSceneName() == "01_" + SceneName.Logo.ToString();
 	}

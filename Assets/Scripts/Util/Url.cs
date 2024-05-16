@@ -13,4 +13,5 @@ public static class Url
 	public const long SKILL_ENTITY_SHEETID = 993841488;
 	public const long INGAME_SHEETID = 1321708079;
 	public const long SHOP_SHEETID = 1696518094;
+	public const long UPGRADE_SHEETID = 665207741;
 }

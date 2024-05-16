@@ -43,7 +43,7 @@ public class Popup_Skill : Popup_Base
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Hide();
 
-		btn_Refresh.interactable = Scene.game.gold > 100;
+		btn_Refresh.interactable = GameScene.game.gold > 100;
 	}
 
 	protected override void Awake()
@@ -71,7 +71,7 @@ public class Popup_Skill : Popup_Base
 
 	private void OnClick_Refresh()
 	{
-		Scene.game.gold -= 100;
+		GameScene.game.gold -= 100;
 
 		SetCard();
 

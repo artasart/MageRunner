@@ -9,16 +9,13 @@ public static class JsonManager<T>
 
 		string filePath = Path.Combine(folderPath, fileName + ".json");
 
-		// 폴더가 존재하지 않으면 생성합니다.
 		if (!Directory.Exists(folderPath))
 		{
 			Directory.CreateDirectory(folderPath);
 		}
 
-		// 데이터를 JSON 문자열로 직렬화합니다.
 		string json = JsonUtility.ToJson(data);
 
-		// 데이터를 파일에 저장합니다.
 		File.WriteAllText(filePath, json);
 
 		DebugManager.Log($"{fileName} saved safely!", DebugColor.Data);

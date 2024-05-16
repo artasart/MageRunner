@@ -53,8 +53,8 @@ public class Popup_Basic : Popup_Base
 		btn_Dim = GetUI_Button(nameof(btn_Dim), OnClick_Close, () => GameManager.Sound.PlaySound(Define.SOUND_CLOSE));
 
 		txtmp_Description = GetUI_TMPText(nameof(txtmp_Description), string.Empty);
-		txtmp_Confirm = GetUI_TMPText(nameof(txtmp_Confirm), "OK");
-		txtmp_Close = GetUI_TMPText(nameof(txtmp_Close), "CANCEL");
+		txtmp_Confirm = GetUI_TMPText(nameof(txtmp_Confirm), "ok");
+		txtmp_Close = GetUI_TMPText(nameof(txtmp_Close), "cancel");
 		txtmp_Alert = GetUI_TMPText(nameof(txtmp_Alert), "Alert");
 	}
 
@@ -70,6 +70,11 @@ public class Popup_Basic : Popup_Base
 		{
 			txtmp_Alert.text = name;
 		}
+
+		if(_modalType == ModalType.Confrim)
+        {
+			btn_Back.gameObject.SetActive(false);
+        }
 	}
 
 	public void Clear()
@@ -80,5 +85,7 @@ public class Popup_Basic : Popup_Base
 		callback_cancel = null;
 
 		modalType = ModalType.ConfirmCancel;
+		btn_Back.gameObject.SetActive(true);
+		btn_Confirm.gameObject.SetActive(true);
 	}
 }

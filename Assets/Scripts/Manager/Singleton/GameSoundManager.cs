@@ -230,4 +230,9 @@ public class GameSoundManager : SingletonManager<GameSoundManager>
 
 		_action?.Invoke();
 	}
+
+	public void MuteBGM(bool isMute)
+    {
+		bgm.mute = isMute;
+	}
 }

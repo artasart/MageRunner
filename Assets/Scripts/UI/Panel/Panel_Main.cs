@@ -1,8 +1,10 @@
 using DG.Tweening;
-using System;
+using MEC;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static Enums;
 
 public class Panel_Main : Panel_Base
 {
@@ -23,6 +25,12 @@ public class Panel_Main : Panel_Base
 	Button btn_BuyGold;
 	Button btn_BuyEnergy;
 
+	Button btn_ChangeNickname;
+	Button btn_Stat;
+
+	Button btn_Mail;
+	Button btn_Rank;
+
 	public Transform group_TopMenu { get; private set; }
 
 	Button btn_Energy;
@@ -41,8 +49,20 @@ public class Panel_Main : Panel_Base
 		btn_PlayGame = GetUI_Button(nameof(btn_PlayGame), OnClick_PlayGame, useAnimation: true);
 		btn_PlayGame.onClick.RemoveListener(OpenSound);
 
+		btn_Mail = GetUI_Button(nameof(btn_Mail), OnClick_Mail, useAnimation: true);
+		btn_Mail.onClick.RemoveListener(OpenSound);
+
+		btn_Rank = GetUI_Button(nameof(btn_Rank), OnClick_Rank, useAnimation: true);
+
 		btn_Settings = GetUI_Button(nameof(btn_Settings), OnClick_Settings, useAnimation: true);
 		btn_Inventory = GetUI_Button(nameof(btn_Inventory), OnClick_Inventory, useAnimation: true);
+		btn_Stat = GetUI_Button(nameof(btn_Stat), OnClick_Stat, useAnimation: true);
+
+		btn_ChangeNickname = GetUI_Button(nameof(btn_ChangeNickname), OnClick_ChangeNickname, useAnimation: true);
+
+#if UNITY_EDITOR
+		btn_ChangeNickname.interactable = false;
+#endif
 
 		btn_Coin = GetUI_Button(nameof(btn_Coin), OnClick_BuyGold, useAnimation: true);
 		btn_Coin.onClick.RemoveListener(OpenSound);
@@ -68,14 +88,38 @@ public class Panel_Main : Panel_Base
 
 	private void Start()
 	{
-		SetEnergy();
-
+		txtmp_Gold.text = LocalData.gameData.gold.ToString("N0");
 		txtmp_Message.StartPingPong(1f);
+
+		UpdateRank();
+	}
+
+	private void OnClick_Mail()
+	{
+		GameManager.Sound.PlaySound(Define.SOUND_DENIED);
+
+		btn_Mail.GetComponent<RectTransform>().DOShakePosition(.35f, new Vector3(10, 10, 0), 40, 90, false);
+
+		GameManager.Scene.ShowToastAndDisappear("Mail is empty.");
+	}
+
+	private void OnClick_Rank()
+	{
+		GameManager.UI.StackPopup<Popup_Rank>(true).GetRankList();
+
+		btn_Rank.transform.Search("img_NewRank").gameObject.SetActive(false);
+
+		PlayerPrefs.SetInt("NewRank", 0);
+	}
+
+	private void OnClick_ChangeNickname()
+	{
+		GameManager.UI.StackPopup<Popup_InputField>(true);
 	}
 
 	private void OnClick_BuyGold()
 	{
-		if(LocalData.gameData.isAdWatched)
+		if (LocalData.gameData.isAdWatched)
 		{
 			GameManager.Sound.PlaySound(Define.SOUND_DENIED);
 
@@ -83,18 +127,19 @@ public class Panel_Main : Panel_Base
 
 			return;
 		}
-		
+
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{10000} gold</color> after wathching AD?", "Reward",
+		// after wathching AD
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>Gold Box</color>\nafter watching AD?", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
 
-			Invoke(nameof(GoldAd), .75f);
-			// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(GoldAd), 1f));
+			// Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content);
+			GameManager.AdMob.ShowRewardedInterstitialAd(() => Util.RunCoroutine(GoldAd().Delay(.75f), nameof(GoldAd), CoroutineTag.Content));
 		},
 
 		() =>
@@ -113,18 +158,19 @@ public class Panel_Main : Panel_Base
 
 			return;
 		}
-		
+
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
 		GameManager.UI.StackPopup<Popup_Basic>(true);
 
-		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color> after wathching AD?", "Reward",
+		// after wathching AD?
+		GameManager.UI.FetchPopup<Popup_Basic>().SetPopupInfo(ModalType.ConfirmCancel, $"Do you want to get <color=#FFC700>{5} Energy</color>\nafter watching AD?", "Reward",
 		() =>
 		{
 			GameManager.Scene.Dim(true);
 
-			Invoke(nameof(EnergyAd), .75f);
-			// GameManager.AdMob.ShowRewardedAd(() => Invoke(nameof(EnergyAd), 1f));
+			// Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content);
+			GameManager.AdMob.ShowRewardedInterstitialAd(() => Util.RunCoroutine(EnergyAd().Delay(.75f), nameof(EnergyAd), CoroutineTag.Content));
 		},
 		() =>
 		{
@@ -132,29 +178,18 @@ public class Panel_Main : Panel_Base
 		});
 	}
 
-	public void GoldAd()
+	public IEnumerator<float> GoldAd()
 	{
-		LocalData.gameData.gold += 10000;
+		yield return Timing.WaitForOneFrame;
 
-		GameManager.Scene.callback_ShowToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(false);
-		GameManager.Scene.callback_CloseToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
-		GameManager.Scene.callback_ClickToast = () => GameManager.UI.FetchPanel<Panel_Main>()?.ShowTopMenu(true);
-		GameManager.Scene.ShowToastAndDisappear($"You gained {100000} gold..!");
-
-		SetGoldUI(LocalData.gameData.gold);
-
-		GameManager.UI.PopPopup();
-
-		GameManager.Scene.Dim(false);
-
-		//Scene.main.BlockAd(Scene.main.adWaitTime);
-		BlockUI();
-
-		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
+		GameManager.UI.StackSplash<Splash_Gold>();
+		GameManager.UI.FetchSplash<Splash_Gold>().OpenBox();
 	}
 
-	public void EnergyAd()
+	private IEnumerator<float> EnergyAd()
 	{
+		yield return Timing.WaitForOneFrame;
+
 		LocalData.gameData.energy += 5;
 
 		SetEnergy();
@@ -168,16 +203,24 @@ public class Panel_Main : Panel_Base
 
 		GameManager.Scene.Dim(false);
 
-		//Scene.main.BlockAd(Scene.main.adWaitTime);
 		BlockUI();
 
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
-	public void SetUserInfo(string username, int runnerTag)
+	public void SetUserInfo(string username, string runnerTag)
 	{
 		txtmp_UserName.text = username;
 		txtmp_RunnerTag.text = $"<color=#FFC700>RUNNER #{runnerTag}</color>";
+	}
+
+	public void SetUserNickname(string nickname)
+	{
+		txtmp_UserName.text = nickname;
+
+		LocalData.gameData.nickname = nickname;
+
+		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 	}
 
 	private void OnClick_Shop()
@@ -205,9 +248,9 @@ public class Panel_Main : Panel_Base
 
 		LocalData.gameData.energy -= 1;
 
-		Scene.main.particle_RingShield.DOScale(Vector3.one * .75f, .5f);
+		GameScene.main.particle_RingShield.DOScale(Vector3.one * .75f, .5f);
 
-		Util.Zoom(Scene.main.virtualCamera, .1f, .025f);
+		Util.Zoom(GameScene.main.virtualCamera, .1f, .025f);
 
 		GameManager.Scene.LoadScene(SceneName.Game, fadeSpeed: .25f);
 	}
@@ -225,14 +268,9 @@ public class Panel_Main : Panel_Base
 		ShowNewIcon(false);
 	}
 
-	private void OnClick_Mail()
+	private void OnClick_Stat()
 	{
-		GameManager.UI.StackPopup<Popup_Mail>();
-	}
-
-	private void OnClick_Rank()
-	{
-		GameManager.UI.StackPopup<Popup_Rank>();
+		GameManager.UI.SwitchPanel<Panel_Stat>(true).Init();
 	}
 
 	private void OnClick_DayCheck()
@@ -285,5 +323,12 @@ public class Panel_Main : Panel_Base
 	{
 		btn_Energy.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
 		btn_Coin.transform.Search("img_BlockAds").GetComponent<BlockAds>().WatchAd();
+	}
+
+	public void UpdateRank()
+	{
+		if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString()) return;
+
+		btn_Rank.transform.Search("img_NewRank").gameObject.SetActive(PlayerPrefs.GetInt("NewRank") == 1);
 	}
 }

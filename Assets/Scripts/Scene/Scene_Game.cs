@@ -57,6 +57,10 @@ public class Scene_Game : SceneLogic
 		base.OnDestroy();
 
 		SaveGameData();
+
+		GameManager.Backend.SetGameData();
+
+		Util.KillCoroutine(nameof(Co_CheckTimeForAd));
 	}
 
 	private void OnDisable()
@@ -74,7 +78,7 @@ public class Scene_Game : SceneLogic
 	{
 		base.Awake();
 
-		Scene.game = this;
+		GameScene.game = this;
 
 		LoadGameData();
 		MakePool();
@@ -114,6 +118,8 @@ public class Scene_Game : SceneLogic
 
 	private void Start()
 	{
+		GameManager.AdMob.initialClosed += () => { initialClosed = true; Time.timeScale = 1f; };
+
 		GameManager.Scene.Fade(false, .075f);
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Pause>();
@@ -133,7 +139,7 @@ public class Scene_Game : SceneLogic
 	{
 		DebugManager.Log("GameStart", DebugColor.Game);
 
-		var target = isRide ? 3.5f : 3f;
+		var target = isRide ? 3.5f : 3.2f;
 
 		Util.Zoom(virtualCamera, target, .025f);
 
@@ -164,17 +170,24 @@ public class Scene_Game : SceneLogic
 
 		GameManager.UI.StartPanel<Panel_HUD>();
 
-		playerActor.mana = 100;
+		playerActor.AddDamage(LocalData.gameData.damage);
+
+		playerActor.mana = LocalData.gameData.mana;
+		playerActor.manaTotal = LocalData.gameData.mana;
+
+		levelController.moveSpeedOrigin = LocalData.gameData.speed;
+		levelController.moveSpeed = LocalData.gameData.speed;
+
 		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		if (isRide) playerActor.AddDamage(50);
+
+		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
 	}
 
 	public void Replay()
 	{
 		DebugManager.Log("Retry", DebugColor.Game);
-
-		ShowInterstitialAd();
 
 		LocalData.InitSkill();
 		LocalData.gameData.energy -= 1;
@@ -184,12 +197,8 @@ public class Scene_Game : SceneLogic
 		goldMultiplier = 1;
 		expMultiplier = 1;
 		cooltimeMultiplier = 0;
-		playerActor.mana = 100;
-		playerActor.manaTotal = 100;
 		isThunderRunning = false;
 		isSkillUsed = false;
-
-		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
 
 		actorSkills = new SerializableDictionary<string, ActorSkill>();
 
@@ -200,6 +209,15 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_Replay()
 	{
+		GameScene.game.ShowInterstitialAd();
+
+		if(initialClosed== false && isWatched)
+		{ 
+		yield return Timing.WaitUntilTrue(() => initialClosed);
+
+					initialClosed = false;
+				}
+
 		GameManager.Scene.Fade(true);
 
 		yield return Timing.WaitUntilTrue(GameManager.Scene.IsFaded);
@@ -214,7 +232,7 @@ public class Scene_Game : SceneLogic
 
 		virtualCamera.m_Lens.OrthographicSize = 5f;
 
-		var target = isRide ? 3.5f : 3f;
+		var target = isRide ? 3.5f : 3.2f;
 		Util.Zoom(virtualCamera, target, .025f);
 
 		MoveEnviroment();
@@ -233,6 +251,16 @@ public class Scene_Game : SceneLogic
 
 		playerActor.isDead = false;
 
+		playerActor.AddDamage(LocalData.gameData.damage);
+
+		playerActor.mana = LocalData.gameData.mana;
+		playerActor.manaTotal = LocalData.gameData.mana;
+
+		levelController.moveSpeedOrigin = LocalData.gameData.speed;
+		levelController.moveSpeed = LocalData.gameData.speed;
+
+		GameManager.UI.FetchPanel<Panel_HUD>().SetManaUI();
+
 		if (isRide) playerActor.AddDamage(50);
 
 		GameManager.UI.FetchPanel<Panel_HUD>().Refresh();
@@ -249,30 +277,32 @@ public class Scene_Game : SceneLogic
 
 	private void ShowGameResult()
 	{
-		if (Scene.game.score > LocalData.gameData.highScore)
+		if (GameScene.game.score > LocalData.gameData.highScore)
 		{
+			LocalData.gameData.highScore = GameScene.game.score;
+
 			GameManager.UI.StackSplash<Splash_Congrates>();
 
 			GameManager.UI.FetchSplash<Splash_Congrates>().SetEndAction(() =>
 			{
 				GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
-						Scene.game.score,
-						Scene.game.gold,
-						Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
+						GameScene.game.score,
+						GameScene.game.gold,
+						GameScene.game.exp = Mathf.RoundToInt(GameScene.game.score * .45f)
 				);
 
 				Invoke(nameof(ShowGameOverUI), .15f);
 			});
 
-			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(Scene.game.score);
+			GameManager.UI.FetchSplash<Splash_Congrates>().SetScore(GameScene.game.score);
 		}
 
 		else
 		{
 			GameManager.UI.FetchPopup<Popup_GameOver>().SetResult(
-			Scene.game.score,
-			Scene.game.gold,
-			Scene.game.exp = Mathf.RoundToInt(Scene.game.score * .45f)
+			GameScene.game.score,
+			GameScene.game.gold,
+			GameScene.game.exp = Mathf.RoundToInt(GameScene.game.score * .45f)
 			);
 
 			GameManager.UI.PopPopupAll();
@@ -333,12 +363,16 @@ public class Scene_Game : SceneLogic
 
 	private IEnumerator<float> Co_StartDifficulty()
 	{
+		var seconds = 10f;
+
 		while (true)
 		{
-			yield return Timing.WaitForSeconds(10);
+			yield return Timing.WaitForSeconds(seconds);
 
 			levelController.moveSpeed = Mathf.Clamp(levelController.moveSpeed += (levelController.moveSpeed * .01f), 0f, 8.5f);
 			levelController.groundProbability += (levelController.groundProbability * .05f);
+
+			if (score > 7000) seconds = 5f;
 
 			yield return Timing.WaitUntilTrue(() => gameState == GameState.Playing);
 		}
@@ -526,7 +560,7 @@ public class Scene_Game : SceneLogic
 			MonsterActor closestMonster = null;
 			float closestDistance = Mathf.Infinity;
 
-			yield return Timing.WaitUntilTrue(() => Scene.game.gameState == GameState.Playing);
+			yield return Timing.WaitUntilTrue(() => GameScene.game.gameState == GameState.Playing);
 
 			foreach (MonsterActor monster in monsters)
 			{
@@ -580,30 +614,34 @@ public class Scene_Game : SceneLogic
 	public int goldMultiplier = 1;
 	public int expMultiplier = 1;
 
-	private void ShowInterstitialAd()
+	public void ShowInterstitialAd()
 	{
-		if (replayCount == 0)
-		{
-			replayRandomCount = UnityEngine.Random.Range(3, 5);
-		}
+		if (!isWatched) return;
 
-		replayCount++;
+		GameManager.AdMob.ShowInterstitialAd();
 
-		if (replayCount >= replayRandomCount)
-		{
-			replayCount = 0;
+		Time.timeScale = 0f;
 
-			// GameManager.AdMob.ShowInterstitialAd();
+		Util.RunCoroutine(Co_CheckTimeForAd(), nameof(Co_CheckTimeForAd));
+	}
 
-			DebugManager.Log("Showing Interstitial Ad.", DebugColor.AD);
-		}
+	bool isWatched = false;
+	bool initialClosed = false;
+
+	IEnumerator<float> Co_CheckTimeForAd()
+	{
+		isWatched = false;
+
+		yield return Timing.WaitForSeconds(90f);
+
+		isWatched = true;
 	}
 
 	public void AddGameExp()
 	{
-		if (Scene.game.level == 30) return;
+		if (GameScene.game.level == 30) return;
 
-		var amount = LocalData.masterData.inGameLevel[Scene.game.level - 1].monsterExp * expMultiplier;
+		var amount = LocalData.masterData.inGameLevel[GameScene.game.level - 1].monsterExp * expMultiplier;
 
 		GameManager.UI.FetchPanel<Panel_HUD>().SetExpUI(amount);
 	}

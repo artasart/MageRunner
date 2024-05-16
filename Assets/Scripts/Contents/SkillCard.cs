@@ -20,13 +20,13 @@ public class SkillCard : MonoBehaviour
 	private void Start()
 	{
 		graphic.DOScale(targetScale, duration)
-			.SetEase(Ease.OutQuad) // 애니메이션 이징 설정
+			.SetEase(Ease.OutQuad) // ????? ?? ??
 			.SetLoops(-1, LoopType.Yoyo);
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (Scene.game.playerActor.isDead) return;
+		if (GameScene.game.playerActor.isDead) return;
 
 		if (other.CompareTag(Define.PLAYER))
 		{

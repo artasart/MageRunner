@@ -35,8 +35,6 @@ public class LevelLoadManager : MonoBehaviour
 		if (levelData == null)
 		{
 			levelData = new LevelData();
-
-			DebugManager.ClearLog("No Data.");
 		}
 
 		else
@@ -60,8 +58,6 @@ public class LevelLoadManager : MonoBehaviour
 					gameObject.GetComponent<Ground>().isDefault = levelData.elements[i].isDefault;
 				}
 			}
-
-			DebugManager.ClearLog("Levels Loaded!");
 		}
 	}
 
@@ -191,8 +187,6 @@ public class LevelLoadManager : MonoBehaviour
 
 	public void GenerateCoin(int coinCount)
 	{
-		DebugManager.ClearLog("Generate Coin");
-
 		var prefab = Resources.Load<GameObject>(Define.PATH_CONTENTS + Define.COIN);
 		var bigCoinPrefab = Resources.Load<GameObject>(Define.PATH_CONTENTS + Define.BIGCOIN);
 		var levelHolder = CreateHolder("CoinHolder");

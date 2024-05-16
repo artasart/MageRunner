@@ -18,13 +18,13 @@ public class EquipmentManager : MonoBehaviour
 
 	private void Start()
 	{
-		if (Scene.main != null)
+		if (GameScene.main != null)
 		{
-			spumPrefabs = Scene.main.playerActor.GetComponent<SPUM_Prefabs>();
+			spumPrefabs = GameScene.main.playerActor.GetComponent<SPUM_Prefabs>();
 		}
-		if (Scene.game != null)
+		if (GameScene.game != null)
 		{
-			spumPrefabs = Scene.game.playerActor.GetComponent<SPUM_Prefabs>();
+			spumPrefabs = GameScene.game.playerActor.GetComponent<SPUM_Prefabs>();
 		}
 
 		equipments = LocalData.gameData.equipment;

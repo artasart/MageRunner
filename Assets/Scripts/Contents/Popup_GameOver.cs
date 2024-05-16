@@ -23,7 +23,7 @@ public class Popup_GameOver : Popup_Base
 		txtmp_Score = GetUI_TMPText(nameof(txtmp_Score), string.Empty);
 		txtmp_Energy = GetUI_TMPText(nameof(txtmp_Energy), string.Empty);
 
-		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation:true);
+		btn_Reward = GetUI_Button(nameof(btn_Reward), OnClick_Reward, useAnimation: true);
 
 		btn_Retry = GetUI_Button(nameof(btn_Retry), OnClick_Retry, useAnimation: true);
 		btn_Retry.onClick.RemoveListener(OpenSound);
@@ -35,20 +35,28 @@ public class Popup_GameOver : Popup_Base
 
 	private void OnClick_Reward()
 	{
+		btn_Reward.GetComponent<CanvasGroup>().alpha = .1f;
+		btn_Reward.GetComponent<CanvasGroup>().blocksRaycasts = false;
+
 		GameManager.Scene.Dim(true);
 
-		Invoke(nameof(DoubleGold), 1f);
+		Invoke(nameof(StackSplash), .5f);
 	}
 
-	private void DoubleGold()
+	private void StackSplash()
 	{
-		GameManager.Scene.Dim(false);
+		GameManager.Scene.Dim(true);
 
-		btn_Reward.interactable = false;
+		GameManager.UI.StackSplash<Splash_Gold>();
+		GameManager.UI.FetchSplash<Splash_Gold>().OpenBox(10);
 
-		Scene.game.gold *= 2;
+		Invoke(nameof(PopSplash), 3f);
+	}
 
-		GameManager.Scene.ShowToastAndDisappear($"You recieved + {Scene.game.gold.ToString("N0")}");
+	private void PopSplash()
+	{
+		GameManager.UI.FetchSplash<Splash_Gold>().ShowMessage();
+		GameManager.UI.PopSplash();
 	}
 
 	private void OnClick_Retry()
@@ -68,22 +76,26 @@ public class Popup_GameOver : Popup_Base
 
 		GameManager.Sound.PlaySound(Define.SOUND_OPEN);
 
-		Scene.game.Replay();
+		GameScene.game.Replay();
 	}
 
 	private void OnClick_Home()
 	{
-		Scene.game.SaveGameData();
+		GameScene.game.SaveGameData();
 
 		GameManager.Scene.LoadScene(SceneName.Main);
 	}
 
 	public void SetResult(int score, int gold, int exp)
 	{
-		txtmp_Score.text = $"You ran {score}m, gaiend {gold} Golds & {exp} exp!";
+		txtmp_Score.text = $"You ran {score}m, gaiend {gold} golds & {exp} exp!";
 
-		Scene.game.AddExp(exp);
-		Scene.game.SaveGameData();
+		GameScene.game.AddExp(exp);
+		GameScene.game.SaveGameData();
+
+		btn_Reward.GetComponent<CanvasGroup>().alpha = 1f;
+		btn_Reward.GetComponent<CanvasGroup>().blocksRaycasts = true;
+		btn_Reward.gameObject.SetActive(UnityEngine.Random.Range(0f, 1f) < .5f);
 
 		string amount = string.Empty;
 

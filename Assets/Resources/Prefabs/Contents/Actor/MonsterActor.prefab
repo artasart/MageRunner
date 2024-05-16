@@ -6235,7 +6235,6 @@ Transform:
   m_Children:
   - {fileID: 4807910958447557485}
   - {fileID: 9019794281340518710}
-  - {fileID: 3720821482172618171}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6528579502076908362
@@ -6276,6 +6275,7 @@ MonoBehaviour:
   damage: 10
   mana: 100
   isDead: 0
+  manaTotal: 0
   score: 100
   gold: 10
   exp: 34
@@ -12151,6 +12151,7 @@ Transform:
   - {fileID: 4077586299184994691}
   - {fileID: 7762682216706676072}
   - {fileID: 1565958724317522145}
+  - {fileID: 3720821482172618171}
   m_Father: {fileID: 4807910958447557485}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7755754130363214410
@@ -13825,14 +13826,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9151148394481430314}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.8660254, y: -0.5, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.8660254, y: -0.50000006, z: -1.4551915e-11, w: -2.3590019e-11}
+  m_LocalPosition: {x: -0.1, y: 0.375, z: 0}
+  m_LocalScale: {x: 1.2499999, y: 1.2499998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 552941435498987934}
   - {fileID: 8369177675354282277}
-  m_Father: {fileID: 7503472870551049613}
+  m_Father: {fileID: 4575949909242350276}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 240}
 --- !u!198 &1745011028166172827
 ParticleSystem:
@@ -13907,7 +13908,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
   randomSeed: 0

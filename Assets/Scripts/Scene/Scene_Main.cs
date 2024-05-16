@@ -8,6 +8,7 @@ using Cinemachine;
 using TMPro;
 using static Enums;
 using MEC;
+using BackEnd;
 
 public class Scene_Main : SceneLogic
 {
@@ -24,7 +25,8 @@ public class Scene_Main : SceneLogic
 	public Transform renderTextureCam { get; private set; }
 	public GameObject navigator { get; private set; }
 
-	public int payAmount = 10000;
+	[HideInInspector] public int payAmount = 10000;
+	[HideInInspector] public float adWaitTime = 120f;
 
 	#endregion
 
@@ -34,8 +36,12 @@ public class Scene_Main : SceneLogic
 
 	protected override void OnDestroy()
 	{
+		base.OnDestroy();
+
 		JsonManager<GameData>.SaveData(LocalData.gameData, Define.JSON_GAMEDATA);
 		JsonManager<InvenData>.SaveData(LocalData.invenData, Define.JSON_INVENDATA);
+
+		GameManager.Backend.SetGameData();
 	}
 
 	private void OnDisable()
@@ -55,9 +61,13 @@ public class Scene_Main : SceneLogic
 	{
 		base.Awake();
 
+		PlayerPrefs.SetInt(Define.QUICKLOGIN, 1);
+
 		LocalData.LoadMasterData();
 		LocalData.LoadGameData();
 		LocalData.LoadInvenData();
+
+		GameManager.Backend.GetGameData();
 
 		equipmentManager = FindObjectOfType<EquipmentManager>();
 		rideManager = FindObjectOfType<RideManager>();
@@ -75,45 +85,118 @@ public class Scene_Main : SceneLogic
 		PoolManager.InitPool();
 		PoolManager.SetPoolData(Define.VFX_PUFF, 10, Define.PATH_VFX);
 
-		Scene.main = this;
+		GameScene.main = this;
 	}
 
 	private void Start()
 	{
-		GameManager.Scene.Fade(false, .1f);
-
 		GameManager.UI.Restart();
 		GameManager.UI.StackLastPopup<Popup_Basic>();
 		GameManager.UI.StartPanel<Panel_Main>(true);
-		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("artasart", LocalData.gameData.runnerTag);
+
+		GameManager.UI.FetchPanel<Panel_Main>().SetEnergy();
 		GameManager.UI.FetchPanel<Panel_Main>().SetGoldUI(LocalData.gameData.gold);
+		GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("nickname-empty", "1");
+
+		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
 
 		Util.RunCoroutine(Co_MainStart(), nameof(Co_MainStart));
 	}
 
 	private IEnumerator<float> Co_MainStart()
 	{
-		if (PlayerPrefs.GetInt("isBGMPlayed") == 0)
+		yield return Timing.WaitForOneFrame;
+
+#if UNITY_EDITOR
+		GameManager.Scene.Fade(false, .5f);
+
+		if(PlayerPrefs.GetString(Define.LOGINTYPE) != LoginType.Guest.ToString())
 		{
-			GameManager.Sound.PlayBGM("Dawn");
-			PlayerPrefs.SetInt("isBGMPlayed", 1);
+			if (PlayerPrefs.GetInt("isLogin") == 0)
+			{
+				GameManager.Backend.Login("admin", "1234");
+
+				PlayerPrefs.SetInt("isLogin", 1);
+			}
+
+			var tag = UnityEngine.Random.Range(100000, 999999);
+			LocalData.gameData.nickname = GameManager.Backend.GetNickname();
+			LocalData.gameData.runnerTag = tag;
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(LocalData.gameData.nickname, tag.ToString());
 		}
 
-		navigator = GameManager.UI.FetchPanel<Panel_Main>().group_TopMenu.gameObject;
+		else
+		{
+			PlayerPrefs.SetString(Define.GOOGLETOKEN, string.Empty);
+			PlayerPrefs.SetString(Define.APPLEUSERID, string.Empty);
+		}
 
+#elif UNITY_IOS
+
+		var bro = Backend.BMember.GetUserInfo();
+		yield return Timing.WaitUntilTrue(() => bro != null);
+		if (bro.GetReturnValuetoJSON()["row"]["nickname"] == null)
+		{
+			LocalData.gameData.nickname = string.Empty;
+			LocalData.gameData.runnerTag = UnityEngine.Random.Range(100000, 999999);
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo("Guest", LocalData.gameData.runnerTag.ToString());
+			
+			GameManager.Scene.Fade(false, .5f);
+
+			yield return Timing.WaitUntilTrue(() => GameManager.Scene.IsFaded());
+
+			IOSSetting(string.Empty);
+		}
+		else
+		{
+			IOSSetting(bro.GetReturnValuetoJSON()["row"]["nickname"].ToString());
+			GameManager.Scene.Fade(false, .5f);
+		}
+#endif
 		GetFarmedItem();
 		CheckLogin();
-
-		yield return Timing.WaitForOneFrame;
 
 		if (!string.IsNullOrEmpty(LocalData.gameData.ride.name))
 		{
 			rideManager.Ride();
 			rideManager.ChangeRide(LocalData.gameData.ride.name, 4);
 		}
+
+		if (PlayerPrefs.GetInt("isLogin") == 0)
+		{
+			GameManager.Backend.SetGameData();
+
+			PlayerPrefs.SetInt("isLogin", 1);
+		}
 	}
 
-	public float adWaitTime = 90;
+	private void IOSSetting(string nickname)
+	{
+		if (PlayerPrefs.GetString(Define.LOGINTYPE) == LoginType.Guest.ToString()) return;
+
+		if (string.IsNullOrEmpty(nickname))
+		{
+			GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = false;
+			GameManager.UI.StackSplash<Splash_Notice>().SetTimer();
+			GameManager.UI.FetchSplash<Splash_Notice>().SetEndAction(() =>
+			{
+				Invoke(nameof(InsertNickname), .75f);
+			});
+		}
+
+		else
+		{
+			GameManager.UI.FetchPanel<Panel_Main>().SetUserInfo(nickname, LocalData.gameData.runnerTag.ToString());
+		}
+	}
+
+	private void InsertNickname()
+	{
+		GameManager.UI.StackPopup<Popup_InputField>(true);
+
+		GameManager.UI.FetchPanel<Panel_Main>().GetComponent<CanvasGroup>().blocksRaycasts = true;
+	}
+
 
 	private void CheckLogin()
 	{
